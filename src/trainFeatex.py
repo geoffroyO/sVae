@@ -1,27 +1,21 @@
 import lightfeaturesextract
 import load_model as lm
 
+from sklearn.model_selection import KFold
 import tensorflow as tf
 from tensorflow.keras.optimizers import Adam
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import roc_curve, auc
 
 import numpy as np
 import random
-import matplotlib.pyplot as plt
+import cv2
 from tqdm import tqdm
 
-
 def load_data():
-    print("... Load images")
     spliced, copy_moved, spliced_mask, copy_moved_mask = lm.load_images("../data/CASIA2/Tp/", "../data/CASIA2/gt/")
-    print("... Patch images")
-    data, labels = lm.patch_images(spliced[:500], spliced_mask[:500])
-    print("... Normalization")
-    data = [rgb.astype('float32') / 255. for rgb in tqdm(data)]
+    data, labels = lm.patch_images(spliced, spliced_mask)
+    data = [rgb.astype('float32') / 255. for rgb in data]
     labels2 = []
-    print("... Labeling")
-    for label in tqdm(labels):
+    for label in labels:
         tp = np.sum(label) / 255
         percent = tp * 100 / (32 * 32)
         if 10 < percent < 70:
@@ -33,8 +27,7 @@ def load_data():
     count = 0
     dataf = []
     labelsf = []
-    print("... Balancing class")
-    for k, img in enumerate(tqdm(data)):
+    for k, img in enumerate(data):
         if labels[k] == 0:
             if count <= tt:
                 count += 1
@@ -53,33 +46,8 @@ def load_data():
     return data, labels
 
 
-if __name__=="__main__":
-    model = lightfeaturesextract.light_featex()
-
-    print("... Loading weights")
-    model.load_weights('../pretrained_model/model_1.h5')
-
+if __name__=='__main__':
     data, labels = load_data()
-
-    train_data, test_data, train_labels, test_labels = train_test_split(data, labels, test_size=0.2, random_state=42)
-
-    train_data, test_data = np.array(train_data), np.array(test_data)
-    train_labels, test_labels = np.array(train_labels), np.array(test_labels)
-
-    print("... Prediction")
-    preds = model.predict(test_data)
-
-    fpr, tpr, _ = roc_curve(test_labels, preds)
-    roc_auc = auc(fpr, tpr)
-    plt.figure()
-    lw = 2
-    plt.plot(fpr, tpr, color='darkorange',
-             lw=lw, label='ROC curve (area = %0.2f)' % roc_auc)
-    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('Receiver operating characteristic example')
-    plt.legend(loc="lower right")
-    plt.savefig("./testfig")
+    data, labels = np.array(data), np.array(labels)
+    np.save("./data.npy", data)
+    np.save("./labels.npy", labels)
