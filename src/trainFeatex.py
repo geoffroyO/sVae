@@ -54,10 +54,13 @@ if __name__ == '__main__':
 
     train_data, test_data, train_label, test_label = train_test_split(data, labels, test_size=0.2, random_state=42)
 
+    train_data, test_data = np.array(train_data), np.array(test_data)
+    train_label, test_label = np.array(train_label), np.array(test_label)
+
     model = lightfeaturesextract.light_featex()
     optimizer = Adam(lr=1e-6)
     model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy'])
-
+    """
     checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/featex.h5",
                                                     monitor='val_accuracy', verbose=1,
                                                     save_best_only=True, mode='max')
@@ -66,9 +69,10 @@ if __name__ == '__main__':
 
     history = model.fit(train_data, train_label, epochs=3, batch_size=128,
                         validation_data=(test_data, test_label), callbacks=callbacks_list)
-
+    """
     model.load_weights("../pretrained_model/featex.h5")
 
+    """
     fig = plt.figure()
     plt.plot(history.history['accuracy'])
     plt.plot(history.history['val_accuracy'])
@@ -87,18 +91,16 @@ if __name__ == '__main__':
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
     plt.savefig("./loss")
-    plt.close(fig)
+    plt.close(fig)"""
 
     preds = model.predict(test_data, verbose=1)
     fpr, tpr, _ = roc_curve(test_data, preds)
     roc_auc = auc(fpr, tpr)
-    print("***********")
-    print(roc_auc)
 
     fig = plt.figure()
     lw = 2
     plt.plot(fpr, tpr, color='darkorange',
-             lw=lw, label='ROC curve (area = {})'.format(roc_auc))
+             lw=lw, label='ROC curve (area = %0.2f)' % roc_auc)
     plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])
