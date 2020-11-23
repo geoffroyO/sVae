@@ -7,7 +7,7 @@ from tensorflow.python.keras.layers import Conv2D, Flatten, Dense, Dropout, Batc
 from tensorflow.python.keras.models import Model
 
 import numpy as np
-
+import os
 
 def _get_srm_list():
     hsb = np.zeros([5, 5]).astype('float32')
@@ -146,6 +146,7 @@ def load_featex(dir):
         if 'classifier' in model_class.layers[index].name:
             break
     return model
+
 
 if __name__ == '__main__':
     model = light_featex()

@@ -54,6 +54,10 @@ def load_data():
 
 
 if __name__=="__main__":
+    model = lightfeaturesextract.light_featex()
+
+    model.load_weights('../pretrained_model/model_1.h5')
+
     data, labels = load_data()
 
     train_data, test_data, train_labels, test_labels = train_test_split(data, labels, test_size=0.2, random_state=42)
@@ -61,20 +65,6 @@ if __name__=="__main__":
     train_data, test_data = np.array(train_data), np.array(test_data)
     train_labels, test_labels = np.array(train_labels), np.array(test_labels)
 
-    model = lightfeaturesextract.light_featex()
-    optimizer = Adam(lr=1e-6)
-    model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy'])
-
-    checkpoint = tf.keras.callbacks.ModelCheckpoint('../pretrained_model/model_featex.h5',
-                                                    monitor='val_accuracy', verbose=1,
-                                                    save_best_only=True, mode='max')
-
-    callbacks_list = [checkpoint]
-
-    model.fit(train_data, train_labels, epochs=40, batch_size=128,
-              validation_data=(test_data, test_labels), callbacks=callbacks_list)
-
-    model.load_weights('../pretrained_model/model_featex.h5')
     preds = model.predict(test_data)
 
     fpr, tpr, _ = roc_curve(test_labels, preds)
