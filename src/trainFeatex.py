@@ -92,6 +92,8 @@ if __name__ == '__main__':
     preds = model.predict(test_data, verbose=1)
     fpr, tpr, _ = roc_curve(test_data, preds)
     roc_auc = auc(fpr, tpr)
+    print("***********")
+    print(roc_auc)
 
     fig = plt.figure()
     lw = 2
