@@ -67,8 +67,7 @@ if __name__ == '__main__':
     history = model.fit(train_data, train_label, epochs=50, batch_size=128,
                         validation_data=(test_data, test_label), callbacks=callbacks_list)
 
-    model.load_weights("../pretrained_model/model_1.h5")
-
+    model.load_weights("../pretrained_model/featex.h5")
 
     fig = plt.figure()
     plt.plot(history.history['accuracy'])
@@ -78,7 +77,6 @@ if __name__ == '__main__':
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
     plt.savefig("./accuracy")
-
 
     fig = plt.figure()
     plt.plot(history.history['loss'])
