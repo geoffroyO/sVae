@@ -56,6 +56,7 @@ def load_data():
 if __name__=="__main__":
     model = lightfeaturesextract.light_featex()
 
+    print("... Loading weights")
     model.load_weights('../pretrained_model/model_1.h5')
 
     data, labels = load_data()
