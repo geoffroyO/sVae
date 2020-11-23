@@ -5,6 +5,7 @@ from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.callbacks import CSVLogger
 
 import numpy as np
 import random
@@ -56,13 +57,14 @@ if __name__ == '__main__':
 
     model = lightfeaturesextract.light_featex()
     optimizer = Adam(lr=1e-6)
-    model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy', 'recall', 'precision'])
 
     checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/featex.h5",
                                                     monitor='val_accuracy', verbose=1,
                                                     save_best_only=True, mode='max')
+    csv_logger = CSVLogger("model_history_log.csv", append=True)
 
-    callbacks_list = [checkpoint]
+    callbacks_list = [checkpoint, csv_logger]
 
     history = model.fit(train_data, train_label, epochs=50, batch_size=128,
                         validation_data=(test_data, test_label), callbacks=callbacks_list)
