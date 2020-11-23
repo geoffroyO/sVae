@@ -94,7 +94,7 @@ if __name__ == '__main__':
     plt.close(fig)"""
 
     preds = model.predict(test_data, verbose=1)
-    fpr, tpr, _ = roc_curve(test_data, preds)
+    fpr, tpr, _ = roc_curve(test_label, preds)
     roc_auc = auc(fpr, tpr)
 
     fig = plt.figure()
