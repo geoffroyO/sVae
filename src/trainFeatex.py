@@ -16,7 +16,7 @@ def load_data():
     print("... Load images")
     spliced, copy_moved, spliced_mask, copy_moved_mask = lm.load_images("../data/CASIA2/Tp/", "../data/CASIA2/gt/")
     print("... Patch images")
-    data, labels = lm.patch_images(spliced, spliced_mask)
+    data, labels = lm.patch_images(spliced[:500], spliced_mask[:500])
     print("... Normalization")
     data = [rgb.astype('float32') / 255. for rgb in tqdm(data)]
     labels2 = []
@@ -66,6 +66,7 @@ if __name__=="__main__":
     train_data, test_data = np.array(train_data), np.array(test_data)
     train_labels, test_labels = np.array(train_labels), np.array(test_labels)
 
+    print("... Prediction")
     preds = model.predict(test_data)
 
     fpr, tpr, _ = roc_curve(test_labels, preds)
