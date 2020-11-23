@@ -57,7 +57,9 @@ if __name__ == '__main__':
 
     model = lightfeaturesextract.light_featex()
     optimizer = Adam(lr=1e-6)
-    model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy', 'recall', 'precision'])
+    model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy', tf.keras.metrics.Recall(),
+                                                                            tf.keras.metrics.AUC(),
+                                                                            tf.keras.metrics.Precision()])
 
     checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/featex.h5",
                                                     monitor='val_accuracy', verbose=1,
