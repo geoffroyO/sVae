@@ -5,6 +5,7 @@ from tensorflow.keras.optimizers import Adam
 from tqdm import tqdm
 import numpy as np
 import cv2
+import matplotlib.pyplot as plt
 
 
 def enum_matrix(N, M, block_size):
@@ -38,10 +39,9 @@ if __name__ == '__main__':
     optimizer = Adam(lr=1e-6)
     model.compile(optimizer=optimizer, loss='binary_crossentropy')
     model.load_weights("../pretrained_model/featex.h5")
-
-    img = cv2.imread("./test.tif", 1)
-    img = img[..., ::-1]
-    img = img.astype('float32') / 255.
-
-    pred = pred_map(model, img, 32)
-    np.save("./prediction.npy", pred)
+    for k in range(1, 7):
+        img = cv2.imread("./img_test/{}.jpg".format(k), 1)
+        img = img[..., ::-1]
+        img = img.astype('float32') / 255.
+        pred = pred_map(model, img, 32)
+        plt.imsave("./img_test/1_gt.pnh", cmap='gray', format='png')
