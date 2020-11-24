@@ -99,14 +99,11 @@ def tmp():
 
 if __name__ == '__main__':
     print("ok")
-    data1 = list(np.load("./splicedData.npy"))
-    print("ok")
-    data2 = list(np.load("./cpData1.npy"))
-    print("ok")
-    data3 = list(np.load("./cpData1.npy"))
-    print("ok")
-    data = data1+data2+data3
-    print("ok")
-    np.save("./dataAll.npy", np.array(data))
+    data1 =np.load("./splicedData.npy")
+    data2 = np.load("./cpData1.npy")
+    data = np.concatenate((data1, data2), axis=0)
+    np.save("./dataAll.npy", data)
+
+
 
 
