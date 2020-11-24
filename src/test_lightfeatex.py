@@ -2,17 +2,39 @@ import lightfeaturesextract
 
 from tensorflow.keras.optimizers import Adam
 
+from tqdm import tqdm
 import numpy as np
+import cv2
+
+
+def enum_matrix(N, M, block_size):
+    matrix = np.zeros((N, M))
+    for i in range(N-block_size + 1):
+        for j in range(M-block_size + 1):
+            matrix[i:(i + block_size), j:(j + block_size)] += 1
+    return matrix
+
+
+def pred_map(model, image, block_size):
+    N, M, _ = image.shape
+    pred_map = np.zeros((N, M))
+    for i in tqdm(range(N-block_size+1)):
+        for j in range(M-block_size+1):
+            block = image[i:(i + block_size), j:(j + block_size)]
+            label = model.predict(np.array([block]))[0, 0]
+            pred_map[i:(i + block_size), j:(j + block_size)] += label
+    enum_mat = enum_matrix(N, M, block_size)
+    return pred_map / enum_mat
 
 
 if __name__ == '__main__':
-    data = np.load("./data.npy", )
-    labels = np.load("./labels.npy")
-
     model = lightfeaturesextract.light_featex()
     optimizer = Adam(lr=1e-6)
     model.compile(optimizer=optimizer, loss='binary_crossentropy')
     model.load_weights("../pretrained_model/featex.h5")
 
-    res = model.predict(data[:20], verbose=1)
-    print(res)
+    img = cv2.imread("./test.tif", 1)
+    img = img[..., ::-1]
+    img = img.astype('float32') / 255.
+
+    pred = pred_map(model, img, 32)
