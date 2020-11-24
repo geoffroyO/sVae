@@ -98,10 +98,15 @@ def tmp():
 
 
 if __name__ == '__main__':
+    print("ok")
     data1 = list(np.load("./splicedData.npy"))
+    print("ok")
     data2 = list(np.load("./cpData1.npy"))
+    print("ok")
     data3 = list(np.load("./cpData1.npy"))
+    print("ok")
     data = data1+data2+data3
-    np.save("./dataAll.npy", data)
+    print("ok")
+    np.save("./dataAll.npy", np.array(data))
 
 
