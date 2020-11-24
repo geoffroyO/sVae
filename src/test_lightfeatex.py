@@ -44,4 +44,4 @@ if __name__ == '__main__':
         img = img[..., ::-1]
         img = img.astype('float32') / 255.
         pred = pred_map(model, img, 32)
-        plt.imsave("./img_test/1_gt.pnh", cmap='gray', format='png')
+        plt.imsave("./img_test/1_gt.pnh", pred, cmap='gray', format='png')
