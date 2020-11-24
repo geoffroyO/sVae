@@ -95,14 +95,16 @@ def tmp():
 
 
 if __name__ == '__main__':
+    print("... Loading labels")
     labels = np.load("./allLabels.npy")
-    labels2 = []
-    for label in labels:
-        tp = np.sum(label) / 255
-        percent = tp * 100 / (32 * 32)
-        if 10 < percent:
-            labels2.append(1)
-        else:
-            labels2.append(0)
-    labels = labels2
-    np.save("./allLabels.npy", labels)
+    print("... Loading data")
+    data = np.load("./allData.npy")
+    print("... Dealing with data")
+    tt = np.sum(labels)
+    count = 0
+    for k in range(len(labels)):
+        if labels[k] == 0:
+            if count > tt:
+                del data[k]
+                del labels[k]
+            count += 1
