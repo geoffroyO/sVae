@@ -110,6 +110,6 @@ if __name__ == '__main__':
             count += 1
 
     print("... Saving data")
-    np.save("./allData.npy", data)
+    np.save("./allData.npy", np.array(data))
     print("... Saving labels")
-    np.save("./allLabels.npy", labels)
+    np.save("./allLabels.npy", np.array(labels))
