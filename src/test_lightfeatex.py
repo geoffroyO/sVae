@@ -18,11 +18,17 @@ def enum_matrix(N, M, block_size):
 def pred_map(model, image, block_size):
     N, M, _ = image.shape
     pred_map = np.zeros((N, M))
+    blocks = []
     for i in tqdm(range(N-block_size+1)):
         for j in range(M-block_size+1):
             block = image[i:(i + block_size), j:(j + block_size)]
-            label = model.predict(np.array([block]))[0, 0]
-            pred_map[i:(i + block_size), j:(j + block_size)] += label
+            blocks.append(block)
+    labels = model.predict(np.array(blocks))
+    count = 0
+    for i in tqdm(range(N-block_size+1)):
+        for j in range(M-block_size+1):
+            pred_map[i:(i + block_size), j:(j + block_size)] += labels[count][0]
+            count += 1
     enum_mat = enum_matrix(N, M, block_size)
     return pred_map / enum_mat
 
@@ -38,3 +44,4 @@ if __name__ == '__main__':
     img = img.astype('float32') / 255.
 
     pred = pred_map(model, img, 32)
+    np.save("./prediction.npy", pred)
