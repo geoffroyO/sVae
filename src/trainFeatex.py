@@ -12,10 +12,9 @@ import random
 import matplotlib.pyplot as plt
 
 
-
 def load_data():
     spliced, copy_moved, spliced_mask, copy_moved_mask = lm.load_images("../data/CASIA2/Tp/", "../data/CASIA2/gt/")
-    data, labels = lm.patch_images(spliced, spliced_mask)
+    data, labels = lm.patch_images(spliced+copy_moved, spliced_mask+copy_moved_mask)
     data = [rgb.astype('float32') / 255. for rgb in data]
     labels2 = []
     for label in labels:
@@ -49,7 +48,7 @@ def load_data():
     return data, labels
 
 
-if __name__ == '__main__':
+def tmp():
     data = np.load("./data.npy", )
     labels = np.load("./labels.npy")
 
@@ -90,3 +89,10 @@ if __name__ == '__main__':
     plt.legend(loc="lower right")
     plt.savefig("./ROC")
     plt.close(fig)
+    return None
+
+
+if __name__ == '__main__':
+    data, labels = load_data()
+    np.save("./allData.npy", data)
+    np.save("./labels.npy", labels)
