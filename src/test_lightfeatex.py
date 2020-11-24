@@ -20,7 +20,7 @@ def pred_map(model, image, block_size):
     N, M, _ = image.shape
     pred_map = np.zeros((N, M))
     blocks = []
-    for i in tqdm(range(N-block_size+1)):
+    for i in range(N-block_size+1):
         for j in range(M-block_size+1):
             block = image[i:(i + block_size), j:(j + block_size)]
             blocks.append(block)
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     optimizer = Adam(lr=1e-6)
     model.compile(optimizer=optimizer, loss='binary_crossentropy')
     model.load_weights("../pretrained_model/featex.h5")
-    for k in range(1, 7):
+    for k in tqdm(range(1, 7)):
         img = cv2.imread("./img_test/{}.jpg".format(k), 1)
         img = img[..., ::-1]
         img = img.astype('float32') / 255.
