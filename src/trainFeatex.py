@@ -108,3 +108,8 @@ if __name__ == '__main__':
                 del data[k]
                 del labels[k]
             count += 1
+
+    print("... Saving data")
+    np.save("./allData.npy", data)
+    print("... Saving labels")
+    np.save("./allLabels.npy", labels)
