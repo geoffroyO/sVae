@@ -99,13 +99,13 @@ def tmp():
 
 if __name__ == '__main__':
     print("ok")
-    data1 =np.load("./dataAll.npy")
+    data1 =np.load("./splicedLabels.npy")
     print("ok")
-    data2 = np.load("./cpData2.npy")
+    data2 = np.load("./cpLabels1.npy")
     print("ok")
     data = np.concatenate((data1, data2), axis=0)
     print("ok")
-    np.save("./dataAll.npy", data)
+    np.save("./labelsAll.npy", data)
 
 
 
