@@ -21,7 +21,7 @@ def load_data():
     for label in labels:
         tp = np.sum(label) / 255
         percent = tp * 100 / (32 * 32)
-        if 10 < percent < 70:
+        if 10 < percent:
             labels2.append(1)
         else:
             labels2.append(0)
