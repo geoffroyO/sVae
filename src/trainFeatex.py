@@ -96,9 +96,9 @@ def tmp():
 
 if __name__ == '__main__':
     print("... Loading labels")
-    labels = np.load("./allLabels.npy")
+    labels = list(np.load("./allLabels.npy"))
     print("... Loading data")
-    data = np.load("./allData.npy")
+    data = list(np.load("./allData.npy"))
     print("... Dealing with data")
     tt = np.sum(labels)
     count = 0
