@@ -15,3 +15,4 @@ if __name__ == '__main__':
     model.load_weights("../pretrained_model/featex.h5")
 
     res = model.predict(data[0], verbose=1)
+    print(res)
