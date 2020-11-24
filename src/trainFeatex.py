@@ -73,25 +73,6 @@ if __name__ == '__main__':
 
     model.load_weights("../pretrained_model/featex.h5")
 
-    fig = plt.figure()
-    plt.plot(history.history['accuracy'])
-    plt.plot(history.history['val_accuracy'])
-    plt.title('model accuracy')
-    plt.ylabel('accuracy')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
-    plt.savefig("./accuracy")
-
-    fig = plt.figure()
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.title('model loss')
-    plt.ylabel('loss')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
-    plt.savefig("./loss")
-    plt.close(fig)
-
     preds = model.predict(test_data, verbose=1)
     fpr, tpr, _ = roc_curve(test_label, preds)
     roc_auc = auc(fpr, tpr)
