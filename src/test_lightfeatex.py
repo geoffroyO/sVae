@@ -38,7 +38,7 @@ if __name__ == '__main__':
     model = lightfeaturesextract.light_featex()
     optimizer = Adam(lr=1e-6)
     model.compile(optimizer=optimizer, loss='binary_crossentropy')
-    model.load_weights("../pretrained_model/featex.h5")
+    model.load_weights("../pretrained_model/featex_all_50.h5")
     for k in tqdm(range(1, 7)):
         img = cv2.imread("./img_test/{}.jpg".format(k), 1)
         img = img[..., ::-1]
