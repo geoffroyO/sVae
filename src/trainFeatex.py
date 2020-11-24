@@ -8,7 +8,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import CSVLogger
 
 import numpy as np
-import random
+from tqdm import tqdm
 import matplotlib.pyplot as plt
 
 
@@ -102,7 +102,7 @@ if __name__ == '__main__':
     print("... Dealing with data")
     tt = np.sum(labels)
     count = 0
-    for k in range(len(labels)):
+    for k in tqdm(range(len(labels))):
         if labels[k] == 0:
             if count > tt:
                 del data[k]
