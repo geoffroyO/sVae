@@ -14,5 +14,5 @@ if __name__ == '__main__':
     model.compile(optimizer=optimizer, loss='binary_crossentropy')
     model.load_weights("../pretrained_model/featex.h5")
 
-    res = model.predict(np.array([data[0]]), verbose=1)
+    res = model.predict(data[:20], verbose=1)
     print(res)
