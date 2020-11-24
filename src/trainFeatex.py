@@ -17,7 +17,7 @@ def load_data():
     print("... Loading data")
     spliced, copy_moved, spliced_mask, copy_moved_mask = lm.load_images("../data/CASIA2/Tp/", "../data/CASIA2/gt/")
     print("... Patching images")
-    data, labels = lm.patch_images(spliced, spliced_mask)
+    data, labels = lm.patch_images(copy_moved, copy_moved_mask)
     print("... Normalizing images")
     data = [rgb.astype('float32') / 255. for rgb in data]
     labels2 = []
@@ -99,5 +99,5 @@ def tmp():
 
 if __name__ == '__main__':
     data, labels = load_data()
-    np.save("./splicedData.npy", data)
-    np.save("./splicedLabels.npy", labels)
+    np.save("./cpData.npy", data)
+    np.save("./cpLabels.npy", labels)
