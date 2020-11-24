@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 def load_data():
     spliced, copy_moved, spliced_mask, copy_moved_mask = lm.load_images("../data/CASIA2/Tp/", "../data/CASIA2/gt/")
     data, labels = lm.patch_images(spliced+copy_moved, spliced_mask+copy_moved_mask)
+    """
     data = [rgb.astype('float32') / 255. for rgb in data]
     labels2 = []
     for label in labels:
@@ -45,6 +46,7 @@ def load_data():
     data, labels = zip(*tmp)
     data = np.array(data)
     labels = np.array(labels)
+    """
     return data, labels
 
 
