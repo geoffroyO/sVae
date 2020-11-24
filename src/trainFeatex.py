@@ -9,16 +9,20 @@ from tensorflow.keras.callbacks import CSVLogger
 
 import numpy as np
 from tqdm import tqdm
+import random
 import matplotlib.pyplot as plt
 
 
 def load_data():
+    print("... Loading data")
     spliced, copy_moved, spliced_mask, copy_moved_mask = lm.load_images("../data/CASIA2/Tp/", "../data/CASIA2/gt/")
-    data, labels = lm.patch_images(spliced+copy_moved, spliced_mask+copy_moved_mask)
-    """
+    print("... Patching images")
+    data, labels = lm.patch_images(spliced, spliced_mask)
+    print("... Normalizing images")
     data = [rgb.astype('float32') / 255. for rgb in data]
     labels2 = []
-    for label in labels:
+    print("... Labelizing")
+    for label in tqdm(labels):
         tp = np.sum(label) / 255
         percent = tp * 100 / (32 * 32)
         if 10 < percent:
@@ -30,7 +34,7 @@ def load_data():
     count = 0
     dataf = []
     labelsf = []
-    for k, img in enumerate(data):
+    for k, img in tqdm(enumerate(data)):
         if labels[k] == 0:
             if count <= tt:
                 count += 1
@@ -46,7 +50,6 @@ def load_data():
     data, labels = zip(*tmp)
     data = np.array(data)
     labels = np.array(labels)
-    """
     return data, labels
 
 
@@ -95,21 +98,6 @@ def tmp():
 
 
 if __name__ == '__main__':
-    print("... Loading labels")
-    labels = list(np.load("./allLabels.npy"))
-    print("... Loading data")
-    data = list(np.load("./allData.npy"))
-    print("... Dealing with data")
-    tt = np.sum(labels)
-    count = 0
-    for k in tqdm(range(len(labels))):
-        if labels[k] == 0:
-            if count > tt:
-                del data[k]
-                del labels[k]
-            count += 1
-
-    print("... Saving data")
-    np.save("./allData.npy", np.array(data))
-    print("... Saving labels")
-    np.save("./allLabels.npy", np.array(labels))
+    data, labels = load_data()
+    np.save("./splicedData.npy", data)
+    np.save("./splicedLabels.npy", labels)
