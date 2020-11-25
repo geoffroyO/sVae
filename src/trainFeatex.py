@@ -99,11 +99,12 @@ def tmp():
 
 if __name__ == '__main__':
     print("... Loading data")
-    train_data = np.load("./train_data.npy")
+    # train_data = np.load("./train_data.npy")
     test_data = np.load("./test_data.npy")
 
+
     print("... Loading Labels")
-    train_label = np.load("./train_label.npy")
+    # train_label = np.load("./train_label.npy")
     test_label = np.load("./test_label.npy")
 
     model = lightfeaturesextract.light_featex()
@@ -112,6 +113,7 @@ if __name__ == '__main__':
                                                                             tf.keras.metrics.AUC(),
                                                                             tf.keras.metrics.Precision()])
 
+    """
     checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/featexAll80.h5",
                                                     monitor='val_accuracy', verbose=1,
                                                     save_best_only=True, mode='max')
@@ -121,6 +123,7 @@ if __name__ == '__main__':
 
     history = model.fit(train_data, train_label, epochs=80, batch_size=128,
                         validation_data=(test_data, test_label), callbacks=callbacks_list)
+    """
 
     model.load_weights("../pretrained_model/featexAll80.h5")
 
