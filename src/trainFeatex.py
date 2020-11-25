@@ -99,12 +99,12 @@ def tmp():
 
 if __name__ == '__main__':
     print("... Loading data")
-    # train_data = np.load("./train_data.npy")
+    train_data = np.load("./train_data.npy")
     test_data = np.load("./test_data.npy")
 
 
     print("... Loading Labels")
-    # train_label = np.load("./train_label.npy")
+    train_label = np.load("./train_label.npy")
     test_label = np.load("./test_label.npy")
 
     model = lightfeaturesextract.light_featex()
