@@ -17,7 +17,7 @@ def load_data():
     print("... Loading data")
     spliced, copy_moved, spliced_mask, copy_moved_mask = lm.load_images("../data/CASIA2/Tp/", "../data/CASIA2/gt/")
     print("... Patching images")
-    data, labels = lm.patch_images(copy_moved[1500:], copy_moved_mask[1500:])
+    data, labels = lm.patch_images(spliced, spliced_mask)
     print("... Normalizing images")
     data = [rgb.astype('float32') / 255. for rgb in tqdm(data)]
     labels2 = []
@@ -98,6 +98,10 @@ def tmp():
 
 
 if __name__ == '__main__':
+    spliced, spliced_mask = load_data()
+    np.save("./spliced.npy", spliced)
+    np.save("./spliced_mask.npy", spliced_mask)
+    """
     print("... Loading data")
     train_data = np.load("./train_data.npy")
     test_data = np.load("./test_data.npy")
@@ -144,6 +148,7 @@ if __name__ == '__main__':
     plt.legend(loc="lower right")
     plt.savefig("./ROC")
     plt.close(fig)
+    """
 
 
 
