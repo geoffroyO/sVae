@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     dir = "../pretrained_model/featex_test.h5"
     model = ds.load_dsvae(dir)
-
+    model.featex.summary()
     data = np.load("./spliced.npy")
 
     optimizer = Adam(learning_rate=1e-3)
