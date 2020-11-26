@@ -18,6 +18,6 @@ if __name__ == '__main__':
 
     print("... Training")
 
-    model.fit(data, epochs=20, batch_size=128)
+    model.fit(data, epochs=20, batch_size=1)
     model.save_weights("../pretrained_model/model.h5")
 
