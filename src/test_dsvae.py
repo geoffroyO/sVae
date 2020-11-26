@@ -15,6 +15,6 @@ if __name__ == '__main__':
     train, test = data[:int(len(data)*0.7)], data[int(len(data)*0.7):]
     print("... Training")
 
-    model.fit(train, epochs=20, batch_size=128, validation_data=test)
+    model.fit(train, epochs=20, batch_size=128, validation_data=(test))
     model.save_weights("../pretrained_model/model_test.h5")
 
