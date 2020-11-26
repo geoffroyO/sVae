@@ -10,8 +10,7 @@ import random
 
 
 if __name__ == '__main__':
-
-    dir = '../pretrained_model/model_1.h5'
+    dir = '../pretrained_model/featex_test.h5'
     model = ds.load_dsvae(dir)
     vae_optimizer = Adam(lr=1e-6)
     model.compile(vae_optimizer, ds.vaeLoss)
