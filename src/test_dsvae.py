@@ -25,7 +25,9 @@ if __name__ == '__main__':
     loss_metric = Mean()
 
     train_dataset = tf.data.Dataset.from_tensor_slices(data)
+    print(train_dataset.shape)
     train_dataset = train_dataset.shuffle(buffer_size=1024).batch(64)
+    print(train_dataset.shape)
 
     epochs = 2
 
