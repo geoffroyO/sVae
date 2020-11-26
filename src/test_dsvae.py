@@ -12,7 +12,7 @@ if __name__ == '__main__':
     vae_optimizer = Adam(lr=1e-6)
     model.compile(vae_optimizer, ds.vaeLoss)
     data = np.load("./spliced.npy")
-    train, test = data[:int(len(data)*0.5)]
+    train = data[:int(len(data)*0.5)]
     print("... Training")
 
     model.fit(train, epochs=20, batch_size=128)
