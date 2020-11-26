@@ -35,6 +35,8 @@ class falseModel(Model):
         return output
 
     def train_step(self, data):
+        if isinstance(data, tuple):
+            data = data[0]
         features = self.featex(data)
 
         with tf.GradientTape() as tape:

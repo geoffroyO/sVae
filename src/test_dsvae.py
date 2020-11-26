@@ -1,12 +1,9 @@
 import dsvae as ds
-import load_model as lm
 
-from sklearn.model_selection import train_test_split
 from tensorflow.keras.optimizers import Adam
 
 import numpy as np
-from tqdm import tqdm
-import random
+
 
 
 if __name__ == '__main__':
@@ -15,9 +12,9 @@ if __name__ == '__main__':
     vae_optimizer = Adam(lr=1e-6)
     model.compile(vae_optimizer, ds.vaeLoss)
     data = np.load("./spliced.npy")
-
+    train, test = data[:int(len(data)*0.7)], data[int(len(data)*0.7):]
     print("... Training")
 
-    model.fit(data, epochs=20, batch_size=1)
-    model.save_weights("../pretrained_model/model.h5")
+    model.fit(train, epochs=20, batch_size=128, validation=test)
+    model.save_weights("../pretrained_model/model_test.h5")
 
