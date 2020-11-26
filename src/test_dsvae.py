@@ -25,9 +25,7 @@ if __name__ == '__main__':
     loss_metric = Mean()
 
     train_dataset = tf.data.Dataset.from_tensor_slices(data)
-    print(train_dataset.shape)
     train_dataset = train_dataset.shuffle(buffer_size=1024).batch(64)
-    print(train_dataset.shape)
 
     epochs = 2
 
@@ -37,6 +35,7 @@ if __name__ == '__main__':
 
         # Iterate over the batches of the dataset.
         for step, x_batch_train in enumerate(tqdm(train_dataset)):
+            x_batch_train.shape
             with tf.GradientTape() as tape:
                 reconstructed = model(x_batch_train)
                 # Compute reconstruction loss
