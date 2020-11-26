@@ -21,28 +21,20 @@ class falseModel(Model):
         self.featex = featex
         self.encoder = encoder
         self.decoder = decoder
-    """
+
     def compile(self, svae_optimizer, vaeLoss):
         super(falseModel, self).compile()
-        self.svae_optimizer = svae_optimizer
+        self.vae_optimizer = svae_optimizer
         self.vaeLoss = vaeLoss
-    """
+
 
     def call(self, inputs):
         features = self.featex(inputs)
         z_mu, z_log_sigma, z_sigma, z = self.encoder(features)
         output = self.decoder(z)
-        kl_loss = tf.reduce_mean(0.5 * tf.reduce_sum(tf.math.square(z_mu) +
-                                                     tf.math.square(z_sigma) - tf.math.log(tf.square(z_sigma)) - 1,
-                                                     axis=1))
-        self.add_loss(kl_loss)
+        return output
 
-        return output, features
-    """
     def train_step(self, data):
-        if isinstance(data, tuple):
-            data = data[0]
-
         features = self.featex(data)
 
         with tf.GradientTape() as tape:
@@ -51,7 +43,7 @@ class falseModel(Model):
             reconstrution_loss, kl_loss = self.vaeLoss(features, z_mu, z_sigma, reconstruction)
             vae_loss = reconstrution_loss + kl_loss
         grads = tape.gradient(vae_loss, self.trainable_weights)
-        self.svae_optimizer.apply_gradients(
+        self.vae_optimizer.apply_gradients(
             zip(grads, self.trainable_weights)
         )
         return {
@@ -59,7 +51,7 @@ class falseModel(Model):
             "reconstruction_loss": reconstrution_loss,
             "kl_loss": kl_loss,
         }
-        """
+
 
 
 def load_dsvae(dir):
