@@ -37,7 +37,7 @@ class falseModel(Model):
                                                      axis=1))
         self.add_loss(kl_loss)
 
-        return output
+        return output, features
     """
     def train_step(self, data):
         if isinstance(data, tuple):

@@ -35,11 +35,10 @@ if __name__ == '__main__':
 
         # Iterate over the batches of the dataset.
         for step, x_batch_train in enumerate(tqdm(train_dataset)):
-            x_batch_train.shape
             with tf.GradientTape() as tape:
-                reconstructed = model(x_batch_train)
+                reconstructed, features = model(x_batch_train)
                 # Compute reconstruction loss
-                loss = mse_loss_fn(x_batch_train, reconstructed)
+                loss = mse_loss_fn(features, reconstructed)
                 loss += sum(model.losses)  # Add KLD regularization loss
 
             grads = tape.gradient(loss, model.trainable_weights)
