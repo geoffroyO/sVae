@@ -14,17 +14,17 @@ import random
 
 if __name__ == '__main__':
 
-    dir = '../pretrained_model/model_1.h5'
+    dir = "../pretrained_model/featex_test.h5"
     model = ds.load_dsvae(dir)
 
-    data = np.load("./dataSpliced.npy")
+    data = np.load("./spliced.npy")
 
     optimizer = Adam(learning_rate=1e-3)
     mse_loss_fn = MeanSquaredError()
 
     loss_metric = Mean()
 
-    train_dataset = tf.data.Dataset.from_tensor_slices(x_train)
+    train_dataset = tf.data.Dataset.from_tensor_slices(data)
     train_dataset = train_dataset.shuffle(buffer_size=1024).batch(64)
 
     epochs = 2

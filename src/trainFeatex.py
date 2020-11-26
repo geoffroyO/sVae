@@ -98,9 +98,9 @@ def tmp():
 
 
 if __name__ == '__main__':
-    spliced, spliced_mask = load_data()
-    np.save("./spliced.npy", spliced)
-    np.save("./spliced_mask.npy", spliced_mask)
+    data = np.load("./spliced.npy", )
+    labels = np.load("./spliced_mask.npy")
+    train_data, test_data, train_label, test_label = train_test_split(data, labels, test_size=0.2, random_state=42)
     """
     print("... Loading data")
     train_data = np.load("./train_data.npy")
@@ -110,7 +110,7 @@ if __name__ == '__main__':
     print("... Loading Labels")
     train_label = np.load("./train_label.npy")
     test_label = np.load("./test_label.npy")
-
+    """
     model = lightfeaturesextract.light_featex()
     optimizer = Adam(lr=1e-6)
     model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy', tf.keras.metrics.Recall(),
@@ -118,7 +118,7 @@ if __name__ == '__main__':
                                                                             tf.keras.metrics.Precision()])
 
 
-    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/featexAll80.h5",
+    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/featex_test.h5",
                                                     monitor='val_accuracy', verbose=1,
                                                     save_best_only=True, mode='max')
     csv_logger = CSVLogger("model_history_log.csv", append=True)
@@ -129,7 +129,7 @@ if __name__ == '__main__':
                         validation_data=(test_data, test_label), callbacks=callbacks_list)
 
 
-    model.load_weights("../pretrained_model/featexAll80.h5")
+    model.load_weights("../pretrained_model/featex_test.h5")
 
     preds = model.predict(test_data, verbose=1)
     fpr, tpr, _ = roc_curve(test_label, preds)
@@ -148,7 +148,7 @@ if __name__ == '__main__':
     plt.legend(loc="lower right")
     plt.savefig("./ROC")
     plt.close(fig)
-    """
+
 
 
 
