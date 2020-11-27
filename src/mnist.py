@@ -103,7 +103,7 @@ class VAE(keras.Model):
 
 if __name__ == '__main__':
     data = np.load("./spliced.npy")
-    data = data[int(len(data)*0.1):]
+    data = data[:int(len(data)*0.01)]
 
     dir = "../pretrained_model/featex_test.h5"
     featex = lf.load_featex(dir)
