@@ -22,30 +22,35 @@ class Sampling(tf.keras.layers.Layer):
 
 
 def encoder():
-    latent_dim = 2
+    latent_dim = 128
     encoder_inputs = Input(shape=(32, 32, 128))
 
-    x = Conv2D(256, 3, strides=2, padding="same")(encoder_inputs)
+    x = Conv2D(256, 5, strides=2, padding="same")(encoder_inputs)
     x = BatchNormalization()(x)
     x = LeakyReLU()(x)
 
-    x = Conv2D(512, 3, activation="relu", strides=2, padding="same")(x)
+    x = Conv2D(512, 5, activation="relu", strides=2, padding="same")(x)
     x = BatchNormalization()(x)
     x = LeakyReLU()(x)
+
+    x = Conv2D(512, 1, padding='same')(x)
 
     x = Flatten()(x)
-    x = Dropout(0.25)(Dense(16, activation="relu")(x))
+
     z_mean = Dropout(0.25)(Dense(latent_dim, name="z_mean")(x))
     z_log_var = Dropout(0.25)(Dense(latent_dim, name="z_log_var")(x))
+
     z = Sampling()([z_mean, z_log_var])
+
     encoder = Model(encoder_inputs, [z_mean, z_log_var, z], name="encoder")
     return encoder
 
 
 def decoder():
-    latent_inputs = keras.Input(shape=(2,))
+    latent_inputs = keras.Input(shape=(128,))
     x = Dropout(0.25)(Dense(8 * 8 * 512)(latent_inputs))
     x = Reshape((8, 8, 512))(x)
+    x = Conv2D(512, 1, padding='same')(x)
     x = BatchNormalization()(x)
     x = LeakyReLU()(x)
 
