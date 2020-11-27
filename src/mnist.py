@@ -2,10 +2,9 @@ import lightfeaturesextract as lf
 
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras import datasets
 from tensorflow.python.keras import Input, Model
 from tensorflow.python.keras.layers import Conv2D, Dense, Flatten, \
-    Conv2DTranspose, Reshape
+    Conv2DTranspose, Reshape, BatchNormalization, LeakyReLU, Dropout
 from tensorflow.keras.optimizers import Adam
 
 import numpy as np
@@ -25,12 +24,19 @@ class Sampling(tf.keras.layers.Layer):
 def encoder():
     latent_dim = 2
     encoder_inputs = Input(shape=(32, 32, 128))
-    x = Conv2D(256, 3, activation="relu", strides=2, padding="same")(encoder_inputs)
+
+    x = Conv2D(256, 3, strides=2, padding="same")(encoder_inputs)
+    x = BatchNormalization()(x)
+    x = LeakyReLU()(x)
+
     x = Conv2D(512, 3, activation="relu", strides=2, padding="same")(x)
+    x = BatchNormalization()(x)
+    x = LeakyReLU()(x)
+
     x = Flatten()(x)
-    x = Dense(16, activation="relu")(x)
-    z_mean = Dense(latent_dim, name="z_mean")(x)
-    z_log_var = Dense(latent_dim, name="z_log_var")(x)
+    x = Dropout(0.25)(Dense(16, activation="relu")(x))
+    z_mean = Dropout(0.25)(Dense(latent_dim, name="z_mean")(x))
+    z_log_var = Dropout(0.25)(Dense(latent_dim, name="z_log_var")(x))
     z = Sampling()([z_mean, z_log_var])
     encoder = Model(encoder_inputs, [z_mean, z_log_var, z], name="encoder")
     return encoder
@@ -38,11 +44,25 @@ def encoder():
 
 def decoder():
     latent_inputs = keras.Input(shape=(2,))
-    x = Dense(8 * 8 * 512, activation="relu")(latent_inputs)
+    x = Dropout(0.25)(Dense(8 * 8 * 512)(latent_inputs))
     x = Reshape((8, 8, 512))(x)
-    x = Conv2DTranspose(512, 3, activation="relu", strides=2, padding="same")(x)
-    x = Conv2DTranspose(256, 3, activation="relu", strides=2, padding="same")(x)
-    decoder_outputs = Conv2DTranspose(128, 3, activation="sigmoid", padding="same")(x)
+    x = BatchNormalization()(x)
+    x = LeakyReLU()(x)
+
+    x = Conv2DTranspose(512, 3, strides=2, padding="same")(x)
+    x = BatchNormalization()(x)
+    x = LeakyReLU()(x)
+
+    x = Conv2DTranspose(256, 3, strides=2, padding="same")(x)
+    x = BatchNormalization()(x)
+    x = LeakyReLU()(x)
+
+    x = Conv2DTranspose(128, 3, padding="same")(x)
+    x = BatchNormalization()(x)
+    x = LeakyReLU()(x)
+
+    decoder_outputs = Conv2D(128, 1, strides=1,  padding='same', activation='sigmoid')(x)
+
     decoder = Model(latent_inputs, decoder_outputs, name="decoder")
     return decoder
 
@@ -77,6 +97,9 @@ class VAE(keras.Model):
 
 
 if __name__ == '__main__':
+    encoder = encoder()
+    encoder.summary()
+    """
     data = np.load("./spliced.npy")
 
     dir = "../pretrained_model/featex_test.h5"
@@ -86,3 +109,4 @@ if __name__ == '__main__':
     vae = VAE(featex, encoder, decoder)
     vae.compile(optimizer=Adam(lr=1e-6))
     vae.fit(data, epochs=30, batch_size=128)
+    """
