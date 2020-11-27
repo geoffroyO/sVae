@@ -98,10 +98,6 @@ def tmp():
 
 
 if __name__ == '__main__':
-    data, labels = load_data()
-    np.save("./data_to_load/spliced.npy", data)
-    np.save("./data_to_load/spliced_labels.npy", labels)
-    """
     data = np.load("./spliced.npy", )
     labels = np.load("./spliced_mask.npy")
     train_data, test_data, train_label, test_label = train_test_split(data, labels, test_size=0.2, random_state=42)
@@ -143,7 +139,7 @@ if __name__ == '__main__':
     plt.legend(loc="lower right")
     plt.savefig("./ROC")
     plt.close(fig)
-    """
+
 
 
 

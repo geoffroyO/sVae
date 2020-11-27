@@ -164,7 +164,6 @@ if __name__ == '__main__':
     plt.savefig("./ROC_featex_spliced_250")
     plt.close(fig)
 
-
     dir = "../pretrained_model/featex_spliced_250.h5"
     featex = lf.load_featex(dir)
     encoder = encoder()
@@ -173,15 +172,11 @@ if __name__ == '__main__':
 
     vae.compile(optimizer=Adam(lr=1e-6))
 
-    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/anodec_spliced_100.h5",
+    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/anodec_spliced_250.h5",
                                                     monitor='val_accuracy', verbose=1,
                                                     save_best_only=True, mode='max')
-    csv_logger = CSVLogger("anodec_spliced_100.csv", append=True)
+    csv_logger = CSVLogger("anodec_spliced_250.csv", append=True)
 
     callbacks_list = [checkpoint, csv_logger]
 
-    vae.fit(train_data, epochs=100, batch_size=128, callbacks=callbacks_list)
-
-    vae.load_weights("../pretrained_model/anodec_spliced_100.h5")
-
-
+    vae.fit(train_data, epochs=250, batch_size=128, callbacks=callbacks_list)
