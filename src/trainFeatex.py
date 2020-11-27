@@ -25,7 +25,7 @@ def load_data():
     for label in tqdm(labels):
         tp = np.sum(label) / 255
         percent = tp * 100 / (32 * 32)
-        if 10 < percent:
+        if 12.5 < percent < 87.5:
             labels2.append(1)
         else:
             labels2.append(0)
@@ -98,19 +98,14 @@ def tmp():
 
 
 if __name__ == '__main__':
+    data, labels = load_data()
+    np.save("./data_to_load/spliced.npy", data)
+    np.save("./data_to_load/spliced_labels.npy", labels)
+    """
     data = np.load("./spliced.npy", )
     labels = np.load("./spliced_mask.npy")
     train_data, test_data, train_label, test_label = train_test_split(data, labels, test_size=0.2, random_state=42)
-    """
-    print("... Loading data")
-    train_data = np.load("./train_data.npy")
-    test_data = np.load("./test_data.npy")
 
-
-    print("... Loading Labels")
-    train_label = np.load("./train_label.npy")
-    test_label = np.load("./test_label.npy")
-    """
     model = lightfeaturesextract.light_featex()
     optimizer = Adam(lr=1e-6)
     model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy', tf.keras.metrics.Recall(),
@@ -148,7 +143,7 @@ if __name__ == '__main__':
     plt.legend(loc="lower right")
     plt.savefig("./ROC")
     plt.close(fig)
-
+    """
 
 
 
