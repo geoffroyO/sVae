@@ -97,9 +97,6 @@ class VAE(keras.Model):
 
 
 if __name__ == '__main__':
-    encoder = encoder()
-    encoder.summary()
-    """
     data = np.load("./spliced.npy")
 
     dir = "../pretrained_model/featex_test.h5"
@@ -109,4 +106,4 @@ if __name__ == '__main__':
     vae = VAE(featex, encoder, decoder)
     vae.compile(optimizer=Adam(lr=1e-6))
     vae.fit(data, epochs=30, batch_size=128)
-    """
+
