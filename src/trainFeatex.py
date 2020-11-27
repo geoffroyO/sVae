@@ -118,18 +118,18 @@ if __name__ == '__main__':
                                                                             tf.keras.metrics.Precision()])
 
 
-    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/featex_test.h5",
+    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/featex_spliced_250.h5",
                                                     monitor='val_accuracy', verbose=1,
                                                     save_best_only=True, mode='max')
     csv_logger = CSVLogger("model_history_log.csv", append=True)
 
     callbacks_list = [checkpoint, csv_logger]
 
-    history = model.fit(train_data, train_label, epochs=1, batch_size=128,
+    history = model.fit(train_data, train_label, epochs=250, batch_size=128,
                         validation_data=(test_data, test_label), callbacks=callbacks_list)
 
 
-    model.load_weights("../pretrained_model/featex_test.h5")
+    model.load_weights("../pretrained_model/featex_spliced_250.h5")
 
     preds = model.predict(test_data, verbose=1)
     fpr, tpr, _ = roc_curve(test_label, preds)
