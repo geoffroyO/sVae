@@ -156,7 +156,7 @@ if __name__ == '__main__':
 
     checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/anodec_spliced_250.h5",
                                                     monitor='val_loss', verbose=1,
-                                                    save_best_only=True, mode='max')
+                                                    save_best_only=True, mode='min')
     csv_logger = CSVLogger("anodec_spliced_250.csv", append=True)
 
     callbacks_list = [checkpoint, csv_logger]
