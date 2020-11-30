@@ -121,6 +121,24 @@ class VAE(keras.Model):
             "kl_loss": kl_loss,
         }
 
+    def test_step(self, data):
+        if isinstance(data, tuple):
+            data = data[0]
+        features = self.featex(data)
+        z_mean, z_log_var, z = self.encoder(features)
+        reconstruction = self.decoder(z)
+        L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
+        reconstruction_loss = tf.reduce_mean(tf.reduce_sum(L1, axis=[1, 2, 3]))
+        kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
+        kl_loss = tf.reduce_mean(kl_loss)
+        kl_loss *= -0.5
+        total_loss = reconstruction_loss + kl_loss
+        return {
+            "val_loss": total_loss,
+            "val_reconstruction_loss": reconstruction_loss,
+            "val_kl_loss": kl_loss,
+        }
+
 
 if __name__ == '__main__':
     data = np.load("./data_to_load/spliced.npy")
@@ -137,10 +155,10 @@ if __name__ == '__main__':
     vae.compile(optimizer=Adam(lr=1e-6))
 
     checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/anodec_spliced_250.h5",
-                                                    monitor='loss', verbose=1,
+                                                    monitor='val_loss', verbose=1,
                                                     save_best_only=True, mode='max')
     csv_logger = CSVLogger("anodec_spliced_250.csv", append=True)
 
     callbacks_list = [checkpoint, csv_logger]
 
-    vae.fit(train_data, epochs=250, batch_size=128, callbacks=callbacks_list)
+    vae.fit(train_data, epochs=250, batch_size=128, validation_data=test_data, callbacks=callbacks_list)
