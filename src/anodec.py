@@ -128,42 +128,6 @@ if __name__ == '__main__':
 
     train_data, test_data, train_label, test_label = train_test_split(data, labels, test_size=0.2, random_state=42)
 
-    model = lf.light_featex()
-    optimizer = Adam(lr=1e-6)
-    model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy', tf.keras.metrics.Recall(),
-                                                                            tf.keras.metrics.AUC(),
-                                                                            tf.keras.metrics.Precision()])
-
-    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/featex_spliced_250.h5",
-                                                    monitor='val_accuracy', verbose=1,
-                                                    save_best_only=True, mode='max')
-    csv_logger = CSVLogger("featex_spliced_250.csv", append=True)
-
-    callbacks_list = [checkpoint, csv_logger]
-
-    history = model.fit(train_data, train_label, epochs=250, batch_size=128,
-                        validation_data=(test_data, test_label), callbacks=callbacks_list)
-
-    model.load_weights("../pretrained_model/featex_spliced_250.h5")
-
-    preds = model.predict(test_data, verbose=1)
-    fpr, tpr, _ = roc_curve(test_label, preds)
-    roc_auc = auc(fpr, tpr)
-
-    fig = plt.figure()
-    lw = 2
-    plt.plot(fpr, tpr, color='darkorange',
-             lw=lw, label='ROC curve (area = %0.2f)' % roc_auc)
-    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('Receiver operating characteristic example')
-    plt.legend(loc="lower right")
-    plt.savefig("./ROC_featex_spliced_250")
-    plt.close(fig)
-
     dir = "../pretrained_model/featex_spliced_250.h5"
     featex = lf.load_featex(dir)
     encoder = encoder()
@@ -173,7 +137,7 @@ if __name__ == '__main__':
     vae.compile(optimizer=Adam(lr=1e-6))
 
     checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/anodec_spliced_250.h5",
-                                                    monitor='val_accuracy', verbose=1,
+                                                    monitor='loss', verbose=1,
                                                     save_best_only=True, mode='max')
     csv_logger = CSVLogger("anodec_spliced_250.csv", append=True)
 
