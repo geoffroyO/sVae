@@ -134,9 +134,9 @@ class VAE(keras.Model):
         kl_loss *= -0.5
         total_loss = reconstruction_loss + kl_loss
         return {
-            "val_loss": total_loss,
-            "val_reconstruction_loss": reconstruction_loss,
-            "val_kl_loss": kl_loss,
+            "loss": total_loss,
+            "reconstruction_loss": reconstruction_loss,
+            "kl_loss": kl_loss,
         }
 
 
