@@ -18,8 +18,8 @@ if __name__ == '__main__':
 
     model = Model(anodec.encoder.input, anodec.encoder.layers[8].output)
 
-    x = model.predict(features_data[:5])
+    x = model.predict(features_data)
     print("****{}****".format(x.shape))
-    z_mean, z_log_var, z = anodec.encoder.predict(features_data[:5])
+    z_mean, z_log_var, z = anodec.encoder.predict(features_data)
     print("****{}****".format(z.shape))
 
