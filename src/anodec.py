@@ -82,6 +82,12 @@ class VAE(keras.Model):
         self.encoder = encoder
         self.decoder = decoder
 
+    def call(self, inputs):
+        features = self.featex(inputs)
+        _, _, z = self.encoder(features)
+        reconstruction = self.decoder(z)
+        return reconstruction
+
     def train_step(self, data):
         if isinstance(data, tuple):
             data = data[0]
