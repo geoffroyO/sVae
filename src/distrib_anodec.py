@@ -15,9 +15,11 @@ if __name__ == '__main__':
     anodec = ano.load_anodec(dirFeatex, dirAno)
 
     features_data = anodec.featex.predict(data[:5])
-    print("****{}****".format(features_data.shape))
+
     model = Model(anodec.encoder.input, anodec.encoder.layers[8].output)
 
     x = model.predict(features_data[:5])
+    print("****{}****".format(x.shape))
     z_mean, z_log_var, z = anodec.encoder.predict(features_data[:5])
+    print("****{}****".format(z.shape))
 
