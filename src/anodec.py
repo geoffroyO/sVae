@@ -124,10 +124,8 @@ class VAE(keras.Model):
 
 def load_anodec(dirFeatex, dirAno):
     featex = lf.load_featex(dirFeatex)
-    encoder = encoder()
-    decoder = decoder()
 
-    anodec = VAE(featex, encoder, decoder)
+    anodec = VAE(featex, encoder(), decoder())
     anodec.load_weights(dirAno)
     return anodec
 
