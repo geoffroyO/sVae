@@ -74,7 +74,7 @@ def load_data():
 if __name__ == '__main__':
     data, mask = load_data()
     np.save("./data_to_load/splicedFinal.npy", data)
-    np.save("./data_to_laod/maskSplicedFinal.npy", mask)
+    np.save("./data_to_load/maskSplicedFinal.npy", mask)
     """
     dirFeatex = "../pretrained_model/featex_spliced_250.h5"
     dirAno = "../pretrained_model/anodec_spliced_250.h5"
