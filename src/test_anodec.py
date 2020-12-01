@@ -41,7 +41,7 @@ def dice(img1, img2):
     print("*****{}*****".format(img2.shape))
     print("*****{}*****".format(type(img1)))
     print("*****{}*****".format(type(img2)))
-    print("*****{}*****".format(img1.eval(session=tf.compat.v1.Session()).shape))
+    print("*****{}*****".format(tf.make_ndarray(img1).shape))
 
     inter = 0
     tt1, tt2 = 0, 0
