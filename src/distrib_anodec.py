@@ -23,4 +23,8 @@ if __name__ == '__main__':
     print("****{}****".format(x.shape))
     z_mean, z_log_var, z = anodec.encoder.predict(features_data)
     print("****{}****".format(z.shape))
+    model = Model(anodec.decoder.input, anodec.decoder.layers[1].output)
+    x_hat = model.predict(z)
+    print("****{}****".format(x_hat.shape))
+
 
