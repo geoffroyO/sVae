@@ -41,7 +41,4 @@ if __name__ == '__main__':
 
     model = Model(anodec.decoder.input, anodec.decoder.layers[1].output)
     x_hat = model.predict(z)
-    np.save("x.npy", x)
-    np.save("x_hat.npy", x_hat)
-
-
+    np.save("z.npy", z)
