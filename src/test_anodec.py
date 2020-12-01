@@ -20,14 +20,16 @@ class postTreat(keras.Model):
     def __init__(self, anodec, **kwargs):
         super(postTreat, self).__init__(**kwargs)
         self.anodec = anodec
+        self.batchNorm = BatchNormalization()
         self.subtract = Subtract()
-        self.finalConv = Conv2D(1, 3, padding='same', activation='sigmoid', name='finalConv')
+        self.finalConv = Conv2D(1, 3, padding='same', activation='softmax', name='finalConv')
 
     def call(self, input):
         features = self.anodec.featex(input)
         anoFeat = self.anodec(input)
 
         sub = self.subtract([features, anoFeat])
+        sub = self.batchNorm(sub)
         mask = self.finalConv(sub)
         return mask
 
