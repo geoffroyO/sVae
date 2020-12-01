@@ -46,11 +46,11 @@ def dice(img1, img2):
         for i in range(N):
             for j in range(M):
                 ind1, ind2 = img1[i, j], img2[i, j]
-                if ind1:
+                if ind1 > 0.5:
                     tt1 += 1
                 if ind2:
                     tt2 += 1
-                if ind1 and ind2:
+                if ind1 > 0.5 and ind2:
                     inter += 1
                 dice = 2 * inter / (tt1 + tt2)
         mean_dice += dice
