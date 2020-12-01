@@ -32,6 +32,7 @@ class postTreat(keras.Model):
 
 
 def dice(img1, img2):
+    print("******{}******".format(img1.shape))
     inter = 0
     tt1, tt2 = 0, 0
     N, M = img1.shape
