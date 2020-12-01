@@ -135,7 +135,7 @@ def load_anodec(dirFeatex, dirAno):
     anodec.compile(optimizer=Adam(lr=1e-6))
     data = np.load("./data_to_load/spliced.npy")
     anodec.predict(data[:1])
-    anodec.load_weights(dirAno)
+    # anodec.load_weights(dirAno)
     anodec.trainable = False
     return anodec
 
