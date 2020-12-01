@@ -41,6 +41,10 @@ def dice(y_true, y_pred, smooth=1):
                                            + tf.reduce_sum(tf.square(y_pred), -1) + smooth)
 
 
+def dice_loss(y_true, y_pred):
+    return 1-dice(y_true, y_pred)
+
+
 if __name__ == '__main__':
 
     dirFeatex = "../pretrained_model/featex_spliced_250.h5"
@@ -48,7 +52,7 @@ if __name__ == '__main__':
     anodec = ano.load_anodec(dirFeatex, dirAno)
 
     model = postTreat(anodec)
-    model.compile(loss='mse', optimizer=Adam(lr=1e-6), metrics=[dice])
+    model.compile(loss=dice_loss, optimizer=Adam(lr=1e-6), metrics=[dice])
 
     data = np.load("./data_to_load/splicedFinal.npy")
     mask = np.load("./data_to_load/maskSplicedFinal.npy")
