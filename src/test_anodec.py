@@ -36,12 +36,12 @@ class postTreat(keras.Model):
 
 
 def dice(img1, img2):
-    tf.compat.v1.enable_eager_execution()
+
     print("*****{}*****".format(img1.shape))
     print("*****{}*****".format(img2.shape))
     print("*****{}*****".format(type(img1)))
     print("*****{}*****".format(type(img2)))
-    print("*****{}*****".format(img1.numpy()))
+    print("*****{}*****".format(img1.eval(session=tf.compat.v1.Session()).shape))
 
     inter = 0
     tt1, tt2 = 0, 0
