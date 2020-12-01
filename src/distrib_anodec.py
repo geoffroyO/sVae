@@ -10,7 +10,7 @@ if __name__ == '__main__':
     dirFeatex = "../pretrained_model/featex_spliced_250.h5"
     dirAno = "../pretrained_model/anodec_spliced_250.h5"
     anodec = ano.load_anodec(dirFeatex, dirAno)
-    print("****{}****".format(len(anodec.encoder.layers)))
+    anodec.encoder.summary()
 
     z_mean, z_log_var, z = anodec.encoder.predict(data[:5])
 
