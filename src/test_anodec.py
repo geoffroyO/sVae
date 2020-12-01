@@ -52,8 +52,8 @@ if __name__ == '__main__':
 
     model = postTreat(anodec)
     model.compile(loss='binary_crossentropy', optimizer=Adam(lr=1e-6), metrics=[dice, tf.keras.metrics.Recall(),
-                                                                    tf.keras.metrics.AUC(),
-                                                                    tf.keras.metrics.Precision()])
+                                                                                tf.keras.metrics.AUC(),
+                                                                                tf.keras.metrics.Precision()])
 
     data = np.load("./data_to_load/splicedFinal.npy")
     mask = np.load("./data_to_load/maskSplicedFinal.npy")
