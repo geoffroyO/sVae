@@ -1,17 +1,16 @@
 import lightfeaturesextract as lf
 
 import tensorflow as tf
-from sklearn.metrics import roc_curve, auc
+
 from sklearn.model_selection import train_test_split
 from tensorflow import keras
 from tensorflow.python.keras import Input, Model
 from tensorflow.python.keras.callbacks import CSVLogger
 from tensorflow.python.keras.layers import Conv2D, Dense, Flatten, \
-    Conv2DTranspose, Reshape, BatchNormalization, LeakyReLU, Dropout, LayerNormalization
+    Conv2DTranspose, Reshape, BatchNormalization, LeakyReLU, Dropout
 from tensorflow.keras.optimizers import Adam
 
 import numpy as np
-import matplotlib.pyplot as plt
 from tensorflow.python.ops.losses.losses_impl import absolute_difference, Reduction
 
 
@@ -24,24 +23,7 @@ class Sampling(tf.keras.layers.Layer):
         epsilon = tf.keras.backend.random_normal(shape=(batch, dim))
         return z_mean + tf.exp(0.5 * z_log_var) * epsilon
 
-def discriminator():
-    discriminator_inputs = Input(shape=(32, 32, 128))
 
-    x = Conv2D(256, 5, strides=2, padding="same")(discriminator_inputs)
-    x = LayerNormalization([1, 2])(x)
-    x = LeakyReLU()(x)
-
-    x = Conv2D(512, 5, activation="relu", strides=2, padding="same")(x)
-    x = LayerNormalization([1, 2])(x)
-    x = LeakyReLU()(x)
-
-    x = Conv2D(512, 1, padding='same')(x)
-
-    discriminator_outputs = Dense(1)(x)
-
-    discriminator = Model(discriminator_inputs, discriminator_outputs, name="discriminator")
-
-    return discriminator
 def encoder():
     latent_dim = 128
     encoder_inputs = Input(shape=(32, 32, 128))
@@ -138,6 +120,16 @@ class VAE(keras.Model):
             "reconstruction_loss": reconstruction_loss,
             "kl_loss": kl_loss,
         }
+
+
+def load_anodec(dirFeatex, dirAno):
+    featex = lf.load_featex(dirFeatex)
+    encoder = encoder()
+    decoder = decoder()
+
+    anodec = VAE(featex, encoder, decoder)
+    anodec.load_weights(dirAno)
+    return anodec
 
 
 if __name__ == '__main__':
