@@ -22,7 +22,7 @@ class postTreat(keras.Model):
         self.anodec = anodec
         self.batchNorm = BatchNormalization()
         self.subtract = Subtract()
-        self.finalConv = Conv2D(1, 3, padding='same', activation='softmax', name='finalConv')
+        self.finalConv = Conv2D(1, 3, padding='same', activation='sigmoid', name='finalConv')
 
     def call(self, input):
         features = self.anodec.featex(input)
