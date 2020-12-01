@@ -22,3 +22,4 @@ if __name__ == '__main__':
 
     np.save("./z_mean.npy", z_mean)
     np.save("./z_log_var.npy", z_log_var)
+    np.save("./labels.npy", labels)
