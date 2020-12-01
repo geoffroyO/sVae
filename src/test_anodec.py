@@ -42,6 +42,9 @@ def dice_loss(y_true, y_pred):
 
 
 if __name__ == '__main__':
+    data = np.load("./data_to_load/splicedFinal.npy")
+    mask = np.load("./data_to_load/maskSplicedFinal.npy")
+
     dirFeatex = "../pretrained_model/featex_spliced_250.h5"
     dirAno = "../pretrained_model/anodec_spliced_250.h5"
     anodec = ano.load_anodec(dirFeatex, dirAno)
@@ -57,9 +60,6 @@ if __name__ == '__main__':
     csv_logger = CSVLogger("model_history_final_250.csv", append=True)
 
     callbacks_list = [checkpoint, csv_logger]
-
-    data = np.load("./data_to_load/splicedFinal.npy")
-    mask = np.load("./data_to_load/maskSplicedFinal.npy")
 
     train_data, test_data, train_mask, test_mask = train_test_split(data, mask, test_size=0.2, random_state=42)
     model.fit(train_data, train_mask, epochs=10, validation_data=(test_data, test_mask),
