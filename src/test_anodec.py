@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
     data = np.load("./data_to_load/splicedFinal.npy")
     mask = np.load("./data_to_load/maskSplicedFinal.npy")
-    np.save("./data_to_load/maskSplicedFinal.npy", [rgb.astype('float32') / 255. for rgb in mask])
+
 
     train_data, test_data, train_mask, test_mask = train_test_split(data, mask, test_size=0.2, random_state=42)
     pred = model.predict(np.array([train_data[0]]))
