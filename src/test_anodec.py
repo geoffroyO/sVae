@@ -45,7 +45,7 @@ def dice(img1, img2):
         tt1, tt2 = 0, 0
         for i in range(N):
             for j in range(M):
-                ind1, ind2 = img1[i, j], img2[i, j]
+                ind1, ind2 = img1[k, i, j], img2[k, i, j]
                 if ind1 > 0.5:
                     tt1 += 1
                 if ind2:
