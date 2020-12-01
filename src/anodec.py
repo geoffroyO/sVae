@@ -126,9 +126,9 @@ def load_anodec(dirFeatex, dirAno):
     featex = lf.load_featex(dirFeatex)
 
     anodec = VAE(featex, encoder(), decoder())
-    vae.compile(optimizer=Adam(lr=1e-6))
+    anodec.compile(optimizer=Adam(lr=1e-6))
     data = np.load("./data_to_load/spliced.npy")
-    vae.predict(data[:1])
+    anodec.predict(data[:1])
     anodec.load_weights(dirAno)
     return anodec
 
