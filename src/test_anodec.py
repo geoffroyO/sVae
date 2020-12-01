@@ -35,37 +35,20 @@ class postTreat(keras.Model):
         return mask
 
 
-def dice(img1, img2):
-    img1 = img1.numpy()
-    img2 = img2.numpy()
-    mean_dice = 0
-    batch_size, N, M = img1.shape
-    for k in range(batch_size):
-        inter = 0
-        tt1, tt2 = 0, 0
-        for i in range(N):
-            for j in range(M):
-                ind1, ind2 = img1[k, i, j], img2[k, i, j]
-                if ind1 > 0.5:
-                    tt1 += 1
-                if ind2:
-                    tt2 += 1
-                if ind1 > 0.5 and ind2:
-                    inter += 1
-                dice = 2 * inter / (tt1 + tt2)
-        mean_dice += dice
-    return mean_dice/batch_size
+def dice(y_true, y_pred, smooth=1):
+    intersection = tf.reduce_sum(tf.abs(y_true * y_pred), axis=-1)
+    return (2. * intersection + smooth) / (tf.reduce_sum(tf.square(y_true), -1)
+                                           + tf.reduce_sum(tf.square(y_pred), -1) + smooth)
 
 
 if __name__ == '__main__':
-    tf.config.experimental_run_functions_eagerly(True)
 
     dirFeatex = "../pretrained_model/featex_spliced_250.h5"
     dirAno = "../pretrained_model/anodec_spliced_250.h5"
     anodec = ano.load_anodec(dirFeatex, dirAno)
 
     model = postTreat(anodec)
-    model.compile(loss='mse', optimizer=Adam(lr=1e-6), metrics=[dice], run_eagerly=True)
+    model.compile(loss='mse', optimizer=Adam(lr=1e-6), metrics=[dice])
 
     data = np.load("./data_to_load/splicedFinal.npy")
     mask = np.load("./data_to_load/maskSplicedFinal.npy")
