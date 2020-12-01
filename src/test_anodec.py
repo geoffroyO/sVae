@@ -33,6 +33,7 @@ if __name__ == '__main__':
     anodec = ano.load_anodec(dirFeatex, dirAno)
 
     model = postTreat(anodec)
+    model.built = True
     model.summary()
     """
     data = np.load("./data_to_load/spliced.npy")
