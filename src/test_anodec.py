@@ -54,7 +54,7 @@ if __name__ == '__main__':
     anodec = ano.load_anodec(dirFeatex, dirAno)
 
     model = postTreat(anodec)
-    model.compile(loss=dice, optimizer=Adam(lr=1e-6))
+    model.compile(loss='mse', optimizer=Adam(lr=1e-6))
 
     data = np.load("./data_to_load/splicedFinal.npy")
     mask = np.load("./data_to_load/maskSplicedFinal.npy")
