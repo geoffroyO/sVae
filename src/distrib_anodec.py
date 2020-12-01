@@ -20,7 +20,7 @@ if __name__ == '__main__':
             data_tmp.append(data[k])
         k += 1
 
-    data = data_tmp
+    data = np.array(data_tmp)
 
     dirFeatex = "../pretrained_model/featex_spliced_250.h5"
     dirAno = "../pretrained_model/anodec_spliced_250.h5"
