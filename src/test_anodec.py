@@ -36,13 +36,8 @@ class postTreat(keras.Model):
 
 
 def dice(img1, img2):
-    print("*****{}*****".format(img1.shape))
-    print("*****{}*****".format(img2.shape))
-    print("*****{}*****".format(type(img1)))
-    print("*****{}*****".format(type(img2)))
     img1 = img1.numpy()
-    print("*****{}*****".format(type(img1)))
-
+    img2 = img2.numpy()
     mean_dice = 0
     batch_size, N, M = img1.shape
     for k in range(batch_size):
