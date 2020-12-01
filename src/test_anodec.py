@@ -39,6 +39,7 @@ def dice(img1, img2):
     print("*****{}*****".format(img2.shape))
     print("*****{}*****".format(type(img1)))
     print("*****{}*****".format(type(img2)))
+    print("*****{}*****".format(img1.numpy()))
 
     inter = 0
     tt1, tt2 = 0, 0
