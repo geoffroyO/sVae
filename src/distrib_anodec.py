@@ -15,9 +15,12 @@ if __name__ == '__main__':
         if labels[k]:
             count_tamp += 1
             data_tmp.append(data[k])
+            print("******T*******")
         else:
             count_ori += 1
             data_tmp.append(data[k])
+            print("******O*******")
+
         k += 1
 
     data = np.array(data_tmp)
@@ -28,16 +31,17 @@ if __name__ == '__main__':
     anodec = ano.load_anodec(dirFeatex, dirAno)
 
     features_data = anodec.featex.predict(data)
-    print("****{}****".format(features_data.shape))
+
 
     model = Model(anodec.encoder.input, anodec.encoder.layers[8].output)
 
     x = model.predict(features_data)
-    print("****{}****".format(x.shape))
+
     z_mean, z_log_var, z = anodec.encoder.predict(features_data)
-    print("****{}****".format(z.shape))
+
     model = Model(anodec.decoder.input, anodec.decoder.layers[1].output)
     x_hat = model.predict(z)
-    print("****{}****".format(x_hat.shape))
+    np.save("x.npy", x)
+    np.save("x_hat.npy", x_hat)
 
 
