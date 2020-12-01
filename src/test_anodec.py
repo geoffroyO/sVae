@@ -35,6 +35,8 @@ class postTreat(keras.Model):
 
 
 def dice(img1, img2):
+    print("*****{}*****".format(img1.shape))
+    print("*****{}*****".format(img2.shape))
     inter = 0
     tt1, tt2 = 0, 0
     _, N, M = img1.shape
@@ -56,7 +58,7 @@ if __name__ == '__main__':
     anodec = ano.load_anodec(dirFeatex, dirAno)
 
     model = postTreat(anodec)
-    model.compile(loss='mse', optimizer=Adam(lr=1e-6))
+    model.compile(loss='mse', optimizer=Adam(lr=1e-6), metrics=[dice])
 
     data = np.load("./data_to_load/splicedFinal.npy")
     mask = np.load("./data_to_load/maskSplicedFinal.npy")
