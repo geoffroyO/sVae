@@ -43,19 +43,23 @@ def dice(img1, img2):
     img1 = img1.numpy()
     print("*****{}*****".format(type(img1)))
 
-    inter = 0
-    tt1, tt2 = 0, 0
-    _, N, M = img1.shape
-    for i in range(N):
-        for j in range(M):
-            ind1, ind2 = img1[i, j], img2[i, j]
-            if ind1:
-                tt1 += 1
-            if ind2:
-                tt2 += 1
-            if ind1 and ind2:
-                inter += 1
-    return 2*inter/(tt1 + tt2)
+    mean_dice = 0
+    batch_size, N, M = img1.shape
+    for k in range(batch_size):
+        inter = 0
+        tt1, tt2 = 0, 0
+        for i in range(N):
+            for j in range(M):
+                ind1, ind2 = img1[i, j], img2[i, j]
+                if ind1:
+                    tt1 += 1
+                if ind2:
+                    tt2 += 1
+                if ind1 and ind2:
+                    inter += 1
+                dice = 2 * inter / (tt1 + tt2)
+        mean_dice += dice
+    return mean_dice/batch_size
 
 
 if __name__ == '__main__':
