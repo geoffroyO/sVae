@@ -13,8 +13,11 @@ if __name__ == '__main__':
     dirAno = "../pretrained_model/anodec_spliced_250.h5"
 
     anodec = ano.load_anodec(dirFeatex, dirAno)
-    model = Model(anodec.encoder.input, anodec.encoder.layers[8].output)
-    model.summary()
 
-    z_mean, z_log_var, z = anodec.encoder.predict(data[:5])
+    features_data = anodec.featex.predict(data[:5])
+    print("****{}****".format(features_data.shape))
+    model = Model(anodec.encoder.input, anodec.encoder.layers[8].output)
+
+    x = model.predict(features_data[:5])
+    z_mean, z_log_var, z = anodec.encoder.predict(features_data[:5])
 
