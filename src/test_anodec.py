@@ -3,6 +3,7 @@ import random
 import anodec as ano
 import load_model as lm
 
+import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from tensorflow import keras
 from tensorflow.python.keras import Input, Model
@@ -35,6 +36,7 @@ class postTreat(keras.Model):
 
 
 def dice(img1, img2):
+    tf.compat.v1.enable_eager_execution()
     print("*****{}*****".format(img1.shape))
     print("*****{}*****".format(img2.shape))
     print("*****{}*****".format(type(img1)))
