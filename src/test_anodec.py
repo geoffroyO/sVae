@@ -36,7 +36,7 @@ class postTreat(keras.Model):
 
 
 def dice(img1, img2):
-
+    tf.config.experimental_run_functions_eagerly(True)
     print("*****{}*****".format(img1.shape))
     print("*****{}*****".format(img2.shape))
     print("*****{}*****".format(type(img1)))
