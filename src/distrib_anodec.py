@@ -11,7 +11,7 @@ if __name__ == '__main__':
     data_tmp = []
     count_tamp, count_ori = 0, 0
     k = 0
-    while count_tamp < 3 and count_ori < 3:
+    while count_tamp < 3 or count_ori < 3:
         if labels[k]:
             count_tamp += 1
             data_tmp.append(data[k])
