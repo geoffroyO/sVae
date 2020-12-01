@@ -9,9 +9,10 @@ from tensorflow.python.keras.callbacks import CSVLogger
 from tensorflow.python.keras.layers import Conv2D, Dense, Flatten, \
     Conv2DTranspose, Reshape, BatchNormalization, LeakyReLU, Dropout
 from tensorflow.keras.optimizers import Adam
+from tensorflow.python.ops.losses.losses_impl import absolute_difference, Reduction
 
 import numpy as np
-from tensorflow.python.ops.losses.losses_impl import absolute_difference, Reduction
+
 
 
 class Sampling(tf.keras.layers.Layer):
@@ -129,12 +130,14 @@ class VAE(keras.Model):
 
 
 def load_anodec(dirFeatex, dirAno):
-    #featex = lf.load_featex(dirFeatex)
-    featex = lf.light_featex()
+    featex = lf.load_featex(dirFeatex)
+
     anodec = VAE(featex, encoder(), decoder())
     anodec.compile(optimizer=Adam(lr=1e-6))
+
     data = np.load("./data_to_load/spliced.npy")
     anodec.predict(data[:1])
+
     anodec.load_weights(dirAno)
     anodec.trainable = False
     return anodec
