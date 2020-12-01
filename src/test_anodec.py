@@ -21,11 +21,12 @@ class postTreat(keras.Model):
         super(postTreat, self).__init__(**kwargs)
         self.anodec = anodec
         self.subtract = Subtract()
-        self.finalConv = Conv2D(1, 3, strides=1, padding='same', activation='sigmoid', name='finalConv')
+        self.finalConv = Conv2D(1, 3, padding='same', activation='sigmoid', name='finalConv')
 
     def call(self, input):
-        anoFeat = self.anodec(input)
         features = self.anodec.featex(input)
+        anoFeat = self.anodec(input)
+
         sub = self.subtract([features, anoFeat])
         mask = self.finalConv(sub)
         return mask
@@ -60,4 +61,6 @@ if __name__ == '__main__':
     mask = np.load("./data_to_load/maskSplicedFinal.npy")
 
     train_data, test_data, train_mask, test_mask = train_test_split(data, mask, test_size=0.2, random_state=42)
-    model.fit(train_data, train_mask, epochs=10, validation_data=(test_data, test_mask), batch_size=128)
+    pred = model.predict(train_data[:1])
+    pred.shape
+    #model.fit(train_data, train_mask, epochs=10, validation_data=(test_data, test_mask), batch_size=128)
