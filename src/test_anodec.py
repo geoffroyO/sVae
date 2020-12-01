@@ -1,4 +1,4 @@
-from random import random
+from random
 
 import anodec as ano
 import load_model as lm
