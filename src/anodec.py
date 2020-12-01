@@ -129,13 +129,13 @@ class VAE(keras.Model):
 
 
 def load_anodec(dirFeatex, dirAno):
-    featex = lf.load_featex(dirFeatex)
-
+    #featex = lf.load_featex(dirFeatex)
+    featex = lf.light_featex()
     anodec = VAE(featex, encoder(), decoder())
     anodec.compile(optimizer=Adam(lr=1e-6))
     data = np.load("./data_to_load/spliced.npy")
     anodec.predict(data[:1])
-    # anodec.load_weights(dirAno)
+    anodec.load_weights(dirAno)
     anodec.trainable = False
     return anodec
 
