@@ -18,11 +18,7 @@ if __name__ == '__main__':
 
     features_data = anodec.featex.predict(data)
 
-    model = Model(anodec.encoder.input, anodec.encoder.layers[8].output)
-
-    x = model.predict(features_data)
-
     z_mean, z_log_var, z = anodec.encoder.predict(features_data)
 
-    np.load("./z_mean.npy", z_mean)
-    np.load("./z_log_var.npy", z_log_var)
+    np.save("./z_mean.npy", z_mean)
+    np.save("./z_log_var.npy", z_log_var)
