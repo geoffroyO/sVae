@@ -1,5 +1,7 @@
 import anodec as ano
 
+from tensorflow.python.keras import Model
+
 import numpy as np
 
 if __name__ == '__main__':
@@ -9,8 +11,10 @@ if __name__ == '__main__':
 
     dirFeatex = "../pretrained_model/featex_spliced_250.h5"
     dirAno = "../pretrained_model/anodec_spliced_250.h5"
+
     anodec = ano.load_anodec(dirFeatex, dirAno)
-    anodec.encoder.summary()
+    model = Model(anodec.input, anodec.layers[8].output)
+    model.summary()
 
     z_mean, z_log_var, z = anodec.encoder.predict(data[:5])
 

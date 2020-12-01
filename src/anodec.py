@@ -2,10 +2,9 @@ import lightfeaturesextract as lf
 
 import tensorflow as tf
 
-from sklearn.model_selection import train_test_split
+
 from tensorflow import keras
 from tensorflow.python.keras import Input, Model
-from tensorflow.python.keras.callbacks import CSVLogger
 from tensorflow.python.keras.layers import Conv2D, Dense, Flatten, \
     Conv2DTranspose, Reshape, BatchNormalization, LeakyReLU, Dropout
 from tensorflow.keras.optimizers import Adam
