@@ -1,20 +1,16 @@
-import random
-
 import anodec as ano
-import load_model as lm
 
 import tensorflow as tf
+from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import train_test_split
 from tensorflow import keras
-from tensorflow.python.keras import Input, Model
+
 from tensorflow.python.keras.callbacks import CSVLogger
-from tensorflow.python.keras.layers import Conv2D, Dense, Flatten, \
-    Conv2DTranspose, Reshape, BatchNormalization, LeakyReLU, Dropout, Subtract
+from tensorflow.python.keras.layers import Conv2D, BatchNormalization, Subtract
 from tensorflow.keras.optimizers import Adam
-from tensorflow.python.ops.losses.losses_impl import absolute_difference, Reduction
 
 import numpy as np
-from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 
 class postTreat(keras.Model):
@@ -55,8 +51,36 @@ if __name__ == '__main__':
                                                                                 tf.keras.metrics.AUC(),
                                                                                 tf.keras.metrics.Precision()])
 
+    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/final_250.h5",
+                                                    monitor='val_dice', verbose=1,
+                                                    save_best_only=True, mode='max')
+    csv_logger = CSVLogger("model_history_final_250.csv", append=True)
+
+    callbacks_list = [checkpoint, csv_logger]
+
     data = np.load("./data_to_load/splicedFinal.npy")
     mask = np.load("./data_to_load/maskSplicedFinal.npy")
 
     train_data, test_data, train_mask, test_mask = train_test_split(data, mask, test_size=0.2, random_state=42)
-    model.fit(train_data, train_mask, epochs=10, validation_data=(test_data, test_mask), batch_size=128)
+    model.fit(train_data, train_mask, epochs=10, validation_data=(test_data, test_mask),
+              batch_size=128, callbacks=callbacks_list)
+
+    model.load_weights("../pretrained_model/final_250.h5")
+
+    preds = model.predict(test_data, verbose=1)
+    fpr, tpr, _ = roc_curve(test_mask, preds)
+    roc_auc = auc(fpr, tpr)
+
+    fig = plt.figure()
+    lw = 2
+    plt.plot(fpr, tpr, color='darkorange',
+             lw=lw, label='ROC curve (area = %0.2f)' % roc_auc)
+    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver operating characteristic example')
+    plt.legend(loc="lower right")
+    plt.savefig("./ROC")
+    plt.close(fig)
