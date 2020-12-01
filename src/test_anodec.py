@@ -35,7 +35,7 @@ def dice(img1, img2):
     print("******{}******".format(img1.shape))
     inter = 0
     tt1, tt2 = 0, 0
-    N, M = img1.shape
+    _, N, M = img1.shape
     for i in range(N):
         for j in range(M):
             ind1, ind2 = img1[i, j], img2[i, j]
