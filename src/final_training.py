@@ -50,7 +50,7 @@ if __name__ == '__main__':
     anodec = ano.load_anodec(dirFeatex, dirAno)
 
     model = postTreat(anodec)
-    model.compile(loss='binary_crossentropy', optimizer=Adam(lr=1e-6), metrics=[dice, tf.keras.metrics.Recall(),
+    model.compile(loss=dice_loss, optimizer=Adam(lr=1e-6), metrics=[dice, tf.keras.metrics.Recall(),
                                                                                 tf.keras.metrics.AUC(),
                                                                                 tf.keras.metrics.Precision()])
 
