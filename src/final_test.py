@@ -36,7 +36,7 @@ def pred(model, img, block_size):
 
 
 if __name__=='__main__':
-    path = "./img_test/1.jpg"
+    path = "./img_test/2.jpg"
     img = cv2.imread(path, 1)
     img = img[..., ::-1]
     img = img.astype('float32') / 255.
