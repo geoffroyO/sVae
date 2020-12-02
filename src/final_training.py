@@ -36,6 +36,7 @@ class postTreat(keras.Model):
 
         sub = self.subtract([sqrtFeat, sqrtanoFeat])
         sub = self.batchNorm(sub)
+        print("*****{}*****".format(sub.shape))
         mask = self.finalConv(sub)
         return mask
 
