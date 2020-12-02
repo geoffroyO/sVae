@@ -38,7 +38,7 @@ if __name__=='__main__':
     anodec = ano.load_anodec(dirFeatex, dirAno)
 
     model = ft.postTreat(anodec)
-    model.load_weight("../pretrained_model/final_250.h5")
+    model.load_weights("../pretrained_model/final_250.h5")
 
     pred(model, img, 32)
 
