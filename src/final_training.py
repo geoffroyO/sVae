@@ -51,15 +51,6 @@ def dice_loss(y_true, y_pred):
 
 
 if __name__ == '__main__':
-    dirFeatex = "../pretrained_model/featex_spliced_250.h5"
-    dirAno = "../pretrained_model/anodec_spliced_250.h5"
-    anodec = ano.load_anodec(dirFeatex, dirAno)
-
-    model = postTreat(anodec)
-    model.build(input_shape=(32, 32, 3, None))
-    model.summary()
-
-if __name__ == '__main__':
     data = np.load("./data_to_load/splicedFinal.npy")
     mask = np.load("./data_to_load/maskSplicedFinal.npy")
 
