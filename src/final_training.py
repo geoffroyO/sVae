@@ -25,7 +25,16 @@ class postTreat(keras.Model):
         features = self.anodec.featex(input)
         anoFeat = self.anodec(input)
 
-        sub = self.subtract([features, anoFeat])
+        squareFeat = tf.math.square(features)
+        squareanoFeat = tf.math.square(anoFeat)
+
+        sumFeat = tf.reduce_sum(squareFeat, axis=-1)
+        sumanoFeat = tf.reduce_sum(squareanoFeat, axis=-1)
+
+        sqrtFeat = tf.math.sqrt(sumFeat)
+        sqrtanoFeat = tf.math.sqrt(sumanoFeat)
+
+        sub = self.subtract([sqrtFeat, sqrtanoFeat])
         sub = self.batchNorm(sub)
         mask = self.finalConv(sub)
         return mask
@@ -40,6 +49,14 @@ def dice(y_true, y_pred, smooth=1):
 def dice_loss(y_true, y_pred):
     return 1 - dice(y_true, y_pred)
 
+
+if __name__ == '__main__':
+    dirFeatex = "../pretrained_model/featex_spliced_250.h5"
+    dirAno = "../pretrained_model/anodec_spliced_250.h5"
+    anodec = ano.load_anodec(dirFeatex, dirAno)
+
+    model = postTreat(anodec)
+    model.summary()
 
 if __name__ == '__main__':
     data = np.load("./data_to_load/splicedFinal.npy")
