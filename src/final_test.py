@@ -23,6 +23,7 @@ def pred(model, img, block_size):
             blocks.append(img[i:(i+block_size), j:(j+block_size)])
     blocks = np.array(blocks)
     pred = model.predict(blocks)
+    print("****{}****".format(pred.shape))
     count = 0
     for i in tqdm(range(N-block_size+1)):
         for j in range(M-block_size+1):
