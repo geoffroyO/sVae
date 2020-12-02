@@ -50,5 +50,5 @@ if __name__=='__main__':
     model.load_weights("../pretrained_model/final_250.h5")
 
     mask = pred(model, img, 32)
-    plt.imsave("./test.jpg", arr=mask, format='jpg', color='gray')
+    plt.imsave("./test.jpg", arr=mask, format='jpg')
 
