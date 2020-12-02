@@ -19,7 +19,7 @@ def pred(model, img, block_size):
     mask = np.zeros((N, M))
     for i in tqdm(range(N-block_size+1)):
         for j in range(M-block_size+1):
-            mask_pred = model.predict(img[i:(i+block_size), j:(j+block_size)])
+            mask_pred = model.predict(np.array([img[i:(i+block_size), j:(j+block_size)]]))
             print("****{}****".format(mask_pred.shape))
             mask[i:(i+block_size), j:(j+block_size)] += mask_pred
     enum = enumMatrix(N, M, block_size)
