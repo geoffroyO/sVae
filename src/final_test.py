@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 import final_training as ft
 import anodec as ano
@@ -23,12 +24,10 @@ def pred(model, img, block_size):
             blocks.append(img[i:(i+block_size), j:(j+block_size)])
     blocks = np.array(blocks)
     pred = model.predict(blocks)
-    print("****{}****".format(pred.shape))
     count = 0
     for i in tqdm(range(N-block_size+1)):
         for j in range(M-block_size+1):
             mask_pred = pred[count]
-            print("****{}****".format(mask_pred.shape))
             mask[i:(i+block_size), j:(j+block_size)] += mask_pred[:, :, 0]
             count += 1
     enum = enumMatrix(N, M, block_size)
@@ -50,5 +49,6 @@ if __name__=='__main__':
     model.predict(np.array([img[0:32,0:32]]))
     model.load_weights("../pretrained_model/final_250.h5")
 
-    pred(model, img, 32)
+    mask = pred(model, img, 32)
+    plt.imsave("./test.jpg", format='jpg', color='gray')
 
