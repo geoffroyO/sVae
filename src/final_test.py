@@ -55,5 +55,5 @@ if __name__=='__main__':
         img = img.astype('float32') / 255.
 
         mask = pred(model, img, 32)
-        plt.imsave("./img_test/{}_pred_gt.jpg".format(k), arr=mask, format='jpg')
+        plt.imsave("./img_test/{}_pred_gt.jpg".format(k), arr=mask, format='jpg', cmap="gray")
 
