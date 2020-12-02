@@ -55,5 +55,12 @@ if __name__=='__main__':
         img = img.astype('float32') / 255.
 
         mask = pred(model, img, 32)
+        N, M = mask.shape
+        for i in range(N):
+            for j in range(M):
+                if mask[i, j] > 0.6:
+                    mask[i, j] = 255
+                else:
+                    mask[i, j] = 0
         plt.imsave("./img_test/{}_pred_gt.jpg".format(k), arr=mask, format='jpg', cmap="gray")
 
