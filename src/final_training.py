@@ -56,6 +56,7 @@ if __name__ == '__main__':
     anodec = ano.load_anodec(dirFeatex, dirAno)
 
     model = postTreat(anodec)
+    model.build(input_shape=(32,32,3))
     model.summary()
 
 if __name__ == '__main__':
