@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 from tensorflow import keras
 
 from tensorflow.python.keras.callbacks import CSVLogger
-from tensorflow.python.keras.layers import Conv2D, BatchNormalization, Subtract
+from tensorflow.python.keras.layers import Conv2D, BatchNormalization, Subtract, Reshape
 from tensorflow.keras.optimizers import Adam
 
 import numpy as np
@@ -19,6 +19,7 @@ class postTreat(keras.Model):
         self.anodec = anodec
         self.batchNorm = BatchNormalization()
         self.subtract = Subtract()
+        self.reshape = Reshape((32, 32, 1))
         self.finalConv = Conv2D(1, 3, padding='same', activation='sigmoid', name='finalConv')
 
     def call(self, input):
@@ -36,6 +37,7 @@ class postTreat(keras.Model):
 
         sub = self.subtract([sqrtFeat, sqrtanoFeat])
         sub = self.batchNorm(sub)
+        sub = self.reshape(sub)
         print("*****{}*****".format(sub.shape))
         mask = self.finalConv(sub)
         return mask
