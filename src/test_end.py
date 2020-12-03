@@ -56,6 +56,6 @@ if __name__ == '__main__':
 
         mask = pred(model, img, 32)
         figure = plt.figure()
-        sn.heatmap(mask)
-        plt.imsave("./img_test/{}_pred_gt.jpg".format(k), arr=mask, format='jpg', cmap="gray")
+        sn.heatmap(mask, cmap="YlGnBu", center=np.mean(mask))
+        plt.imsave("./img_test/{}_pred_gt.jpg".format(k), arr=mask, format='jpg')
         plt.close(figure)
