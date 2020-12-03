@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+import seaborn as sn
 
 import endVae as ev
 
@@ -22,12 +23,11 @@ def pred(model, img, block_size):
             blocks.append(img[i:(i+block_size), j:(j+block_size)])
     blocks = np.array(blocks)
     pred = model.predict(blocks)
-    print("****{}****".format(pred.shape))
     count = 0
     for i in range(N-block_size+1):
         for j in range(M-block_size+1):
             mask_pred = pred[count]
-            mask[i:(i+block_size), j:(j+block_size)] += mask_pred[:, :, 0]
+            mask[i:(i+block_size), j:(j+block_size)] += mask_pred
             count += 1
     enum = enumMatrix(N, M, block_size)
     mask /= enum
@@ -55,11 +55,7 @@ if __name__ == '__main__':
         img = img.astype('float32') / 255.
 
         mask = pred(model, img, 32)
-        N, M = mask.shape
-        for i in range(N):
-            for j in range(M):
-                if mask[i, j] > 0.6:
-                    mask[i, j] = 255
-                else:
-                    mask[i, j] = 0
+        figure = plt.figure()
+        sn.heatmap(mask)
         plt.imsave("./img_test/{}_pred_gt.jpg".format(k), arr=mask, format='jpg', cmap="gray")
+        plt.close(figure)
