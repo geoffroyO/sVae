@@ -3,9 +3,7 @@ import cv2
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-import final_training as ft
-import anodec as ano
-
+import endVae as ev
 
 def enumMatrix(N, M, block_size):
     enum = np.zeros((N, M))
@@ -35,32 +33,16 @@ def pred(model, img, block_size):
     return mask
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     path = "./img_test/1.jpg"
     img = cv2.imread(path, 1)
     img = img[..., ::-1]
     img = img.astype('float32') / 255.
-    dirFeatex = "../pretrained_model/featex_spliced_250.h5"
-    dirAno = "../pretrained_model/anodec_spliced_250.h5"
-    anodec = ano.load_anodec(dirFeatex, dirAno)
 
-    model = ft.postTreat(anodec)
+
+    encoder = ev.encoder()
+    decoder = ev.decoder()
+
+    model = ev.srmAno(encoder, decoder)
     model.predict(np.array([img[0:32, 0:32]]))
-    model.load_weights("../pretrained_model/srmAno.h5")
-
-    for k in tqdm(range(1, 7)):
-        path = "./img_test/{}.jpg".format(k)
-        img = cv2.imread(path, 1)
-        img = img[..., ::-1]
-        img = img.astype('float32') / 255.
-
-        mask = pred(model, img, 32)
-        N, M = mask.shape
-        for i in range(N):
-            for j in range(M):
-                if mask[i, j] > 0.6:
-                    mask[i, j] = 255
-                else:
-                    mask[i, j] = 0
-        plt.imsave("./img_test/{}_pred_gt.jpg".format(k), arr=mask, format='jpg', cmap="gray")
-
+    model.load_weights("../pretrained_model/final_250.h5")
