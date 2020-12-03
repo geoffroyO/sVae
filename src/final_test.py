@@ -46,7 +46,7 @@ if __name__=='__main__':
 
     model = ft.postTreat(anodec)
     model.predict(np.array([img[0:32, 0:32]]))
-    model.load_weights("../pretrained_model/srmAno.h5")
+    model.load_weights("../pretrained_model/final_250.h5")
 
     for k in tqdm(range(1, 7)):
         path = "./img_test/{}.jpg".format(k)
