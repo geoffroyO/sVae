@@ -9,7 +9,7 @@ from tensorflow.python.keras.optimizers import Adam
 import numpy as np
 
 if __name__ == '__main__':
-    data = np.load("./data_to_load/orriSpliced.npy")
+    data = np.load("./data_to_load/oriSpliced.npy")
 
     train_data, test_data, _, _ = train_test_split(data, data, test_size=0.2, random_state=42)
 
