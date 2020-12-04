@@ -65,3 +65,4 @@ def extractPatchesMask(msk, window_shape, stride):
     patches = np.reshape(patches, (nWindow, H, W))
 
     return patches
+

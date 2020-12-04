@@ -57,6 +57,10 @@ def light_featex():
     x = BatchNormalization()(x)
     x = Dropout(0.25)(x)
 
+    x = Conv2D(nb_filters, (3, 3), activation='relu', padding='same', name=bname + 'c2')(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.25)(x)
+
     # block 2
     bname = 'b2'
     nb_filters = 2 * base
@@ -100,6 +104,7 @@ def featex():
     x = Conv2D(nb_filters, (3, 3), activation='relu', padding='same', name=bname+'c2')(x)
     x = BatchNormalization()(x)
     x = Dropout(0.25)(x)
+
     x = Conv2D(nb_filters, (3, 3), activation='relu', padding='same', name=bname + 'c2')(x)
     x = BatchNormalization()(x)
     x = Dropout(0.25)(x)
