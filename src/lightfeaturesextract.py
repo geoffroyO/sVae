@@ -40,20 +40,16 @@ def _build_SRM_kernel():
 def light_featex():
     base = 32
     img_input = Input(shape=(32, 32, 3), name='image_in')
-
-    # block 1
-    bname = 'b1'
-    nb_filters = base
-
-    # conv = Conv2D(filters=17, kernel_size=5, padding='same', name='c1_bis')(img_input)
     x = Conv2D(filters=3,
                kernel_size=[5,5],
                kernel_initializer=_build_SRM_kernel(),
                padding='same',
-               name=bname+'c1',
+               name='srm',
                trainable=False)(img_input)
-    # x = Concatenate()([x, conv])
-    x = Conv2D(nb_filters, (3, 3), activation='relu', padding='same', name=bname+'c2')(x)
+    # block 1
+    bname = 'b1'
+    nb_filters = base
+    x = Conv2D(nb_filters, (3, 3), activation='relu', padding='same', name=bname+'c1')(x)
     x = BatchNormalization()(x)
     x = Dropout(0.25)(x)
 
@@ -88,20 +84,16 @@ def light_featex():
 def featex():
     base = 32
     img_input = Input(shape=(32, 32, 3), name='image_in')
-
+    x = Conv2D(filters=3,
+               kernel_size=[5, 5],
+               kernel_initializer=_build_SRM_kernel(),
+               padding='same',
+               name='srm',
+               trainable=False)(img_input)
     # block 1
     bname = 'b1'
     nb_filters = base
-
-    conv = Conv2D(filters=17, kernel_size=5, padding='same', name='c1_bis')(img_input)
-    x = Conv2D(filters=15,
-               kernel_size = 5,
-               kernel_initializer=_build_SRM_kernel(),
-               padding='same',
-               name=bname+'c1',
-               trainable=False)(img_input)
-    x = Concatenate()([x, conv])
-    x = Conv2D(nb_filters, (3, 3), activation='relu', padding='same', name=bname+'c2')(x)
+    x = Conv2D(nb_filters, (3, 3), activation='relu', padding='same', name=bname + 'c1')(x)
     x = BatchNormalization()(x)
     x = Dropout(0.25)(x)
 
@@ -112,16 +104,16 @@ def featex():
     # block 2
     bname = 'b2'
     nb_filters = 2 * base
-    x = Conv2D(nb_filters, (3, 3), activation='relu', padding='same', name=bname+'c1')(x)
-    x = Conv2D(nb_filters, (3, 3), activation='relu', padding='same', name=bname+'c2')(x)
+    x = Conv2D(nb_filters, (3, 3), activation='relu', padding='same', name=bname + 'c1')(x)
+    x = Conv2D(nb_filters, (3, 3), activation='relu', padding='same', name=bname + 'c2')(x)
     x = BatchNormalization()(x)
     x = Dropout(0.25)(x)
 
     # block 3
     bname = 'b3'
     nb_filters = 4 * base
-    x = Conv2D(nb_filters, (3, 3), activation='relu', padding='same', name=bname+'c1')(x)
-    x = Conv2D(nb_filters, (3, 3), activation='relu', padding='same', name=bname+'c2')(x)
+    x = Conv2D(nb_filters, (3, 3), activation='relu', padding='same', name=bname + 'c1')(x)
+    x = Conv2D(nb_filters, (3, 3), activation='relu', padding='same', name=bname + 'c2')(x)
     x = BatchNormalization()(x)
     x = Dropout(0.25)(x)
 

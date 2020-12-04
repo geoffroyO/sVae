@@ -140,7 +140,3 @@ def load_anodec(dirFeatex, dirAno):
     anodec.load_weights(dirAno)
     anodec.trainable = False
     return anodec
-
-if __name__ == '__main__':
-    model = VAE(decoder(), encoder())
-    model.history()
