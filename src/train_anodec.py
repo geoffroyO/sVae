@@ -3,8 +3,8 @@ import lightfeaturesextract as lf
 
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
-from tensorflow.python.keras.callbacks import CSVLogger
-from tensorflow.python.keras.optimizers import Adam
+from tensorflow.keras.callbacks import CSVLogger
+from tensorflow.keras.optimizers import Adam
 
 import numpy as np
 
