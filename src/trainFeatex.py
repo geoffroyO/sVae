@@ -54,8 +54,9 @@ def load_data():
 
 
 if __name__ == '__main__':
-    data = np.load("./spliced.npy", )
-    labels = np.load("./spliced_mask.npy")
+    data = np.load("./data_to_load/spliced.npy", )
+    labels = np.load("./data_to_load/spliced_labels.npy")
+
     train_data, test_data, train_label, test_label = train_test_split(data, labels, test_size=0.2, random_state=42)
 
     model = lightfeaturesextract.light_featex()
@@ -65,7 +66,7 @@ if __name__ == '__main__':
                                                                             tf.keras.metrics.Precision()])
 
 
-    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/featex_spliced_250.h5",
+    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/featex_srm_only_class.h5",
                                                     monitor='val_accuracy', verbose=1,
                                                     save_best_only=True, mode='max')
     csv_logger = CSVLogger("model_history_log.csv", append=True)
@@ -76,7 +77,7 @@ if __name__ == '__main__':
                         validation_data=(test_data, test_label), callbacks=callbacks_list)
 
 
-    model.load_weights("../pretrained_model/featex_spliced_250.h5")
+    model.load_weights("../pretrained_model/featex_srm_only_class.h5")
 
     preds = model.predict(test_data, verbose=1)
     fpr, tpr, _ = roc_curve(test_label, preds)
