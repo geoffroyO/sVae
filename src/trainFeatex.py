@@ -56,7 +56,7 @@ def load_data():
 
 
 if __name__ == '__main__':
-    name = "new_featex_250.h5"
+    name = "blurred_featex_250.h5"
     data = np.load("./data_to_load/spliced.npy", )
     labels = np.load("./data_to_load/spliced_labels.npy")
 

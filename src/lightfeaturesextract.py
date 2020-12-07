@@ -1,9 +1,10 @@
 # TensorFlow and tf.keras
-
+import cv2
 from tensorflow.python.keras import Input
 
 import tensorflow as tf
-from tensorflow.python.keras.layers import Conv2D, Flatten, Dense, Dropout, BatchNormalization, Concatenate
+import tensorflow_probability as tfp
+from tensorflow.python.keras.layers import Conv2D, Flatten, Dense, Dropout, BatchNormalization, Concatenate, Subtract
 from tensorflow.python.keras.models import Model
 
 import numpy as np
@@ -37,15 +38,50 @@ def _build_SRM_kernel():
     return initializer_srm
 
 
+def _gaussian_kernel(size, mean, std,):
+    d = tfp.distributions.Normal(mean, std)
+
+    vals = d.prob(tf.range(start=-size, limit=size + 1, dtype=tf.float32))
+
+    gauss_kernel = tf.einsum('i,j->ij', vals, vals)
+    gauss_kernel = gauss_kernel / tf.reduce_sum(gauss_kernel)
+    gauss_kernel = np.asarray(gauss_kernel, dtype=float)
+    gauss_kernel = [[gauss_kernel, gauss_kernel, gauss_kernel],
+                    [gauss_kernel, gauss_kernel, gauss_kernel],
+                    [gauss_kernel, gauss_kernel, gauss_kernel]]
+    gauss_kernel = np.einsum('klij->ijlk', gauss_kernel)
+    gauss_kernel = gauss_kernel.flatten()
+    initializer_gauss = tf.constant_initializer(gauss_kernel)
+
+    return initializer_gauss
+
+
 def light_featex():
     base = 32
     img_input = Input(shape=(32, 32, 3), name='image_in')
+
+    blur = Conv2D(filters=3,
+               kernel_size=[5, 5],
+               kernel_initializer=_gaussian_kernel(2, 0, 11),
+               padding='same',
+               name='gaussian_blur',
+               trainable=False)(img_input)
+
+    blur = Conv2D(filters=3,
+               kernel_size=[5,5],
+               kernel_initializer=_build_SRM_kernel(),
+               padding='same',
+               name='srm_blur',
+               trainable=False)(blur)
+
     x = Conv2D(filters=3,
                kernel_size=[5,5],
                kernel_initializer=_build_SRM_kernel(),
                padding='same',
                name='srm',
                trainable=False)(img_input)
+
+    x = Subtract()([x, blur])
     # block 1
     bname = 'b1'
     nb_filters = base

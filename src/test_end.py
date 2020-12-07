@@ -6,7 +6,7 @@ import seaborn as sn
 
 import anodec as ano
 import lightfeaturesextract as lf
-import final_training as ft
+import postTreat as ft
 
 
 def enumMatrix(N, M, block_size):
