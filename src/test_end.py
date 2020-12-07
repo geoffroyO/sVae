@@ -48,7 +48,7 @@ if __name__ == '__main__':
     img = img[..., ::-1]
     img = img.astype('float32') / 255.
 
-    res = model.predict(np.array(img[0:+32, 0:32]))
+    res = model.predict(np.array([img[0:+32, 0:32]]))
     print("*****{}*****".format(res.shape))
     """
     for k in tqdm(range(1, 7)):
