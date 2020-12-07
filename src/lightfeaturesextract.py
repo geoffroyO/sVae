@@ -133,6 +133,13 @@ def load_featex(dir):
     return model
 
 
+def load_all_featex(dir):
+    model_class = light_featex()
+    model_class.load_weights(dir)
+
+    return model_class
+
+
 if __name__ == '__main__':
     model = light_featex()
     model.summary()

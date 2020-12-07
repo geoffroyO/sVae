@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sn
 
 import anodec as ano
+import lightfeaturesextract as lf
 import final_training as ft
 
 
@@ -35,18 +36,12 @@ def pred(model, img, block_size):
     mask /= enum
     return mask
 
-
-if __name__ == '__main__':
+def test_all():
     path_featex = "../pretrained_model/new_featex_250.h5"
     path_anodec = "../pretrained_model/new_anodec_250.h5"
     anodec = ano.load_anodec(path_featex, path_anodec)
 
     model = ft.postTreat(anodec)
-
-    path = "./img_test/{}.jpg".format(1)
-    img = cv2.imread(path, 1)
-    img = img[..., ::-1]
-    img = img.astype('float32') / 255.
 
     for k in tqdm(range(1, 7)):
         path = "./img_test/{}.jpg".format(k)
@@ -60,3 +55,24 @@ if __name__ == '__main__':
         sn.heatmap(mask, cmap="YlGnBu", center=np.mean(mask))
         plt.imsave("./img_test/{}_pred_gt.jpg".format(k), arr=mask, format='jpg')
         plt.close(figure)
+
+def test_featex():
+    path_featex = "../pretrained_model/new_featex_250.h5"
+    model = lf.load_all_featex(path_featex)
+
+    for k in tqdm(range(1, 7)):
+        path = "./img_test/{}.jpg".format(k)
+        img = cv2.imread(path, 1)
+        img = img[..., ::-1]
+        img = img.astype('float32') / 255.
+
+        mask = pred(model, img, 32)
+
+        figure = plt.figure()
+        sn.heatmap(mask, cmap="YlGnBu", center=np.mean(mask))
+        plt.imsave("./img_test/{}_pred_feat_gt.jpg".format(k), arr=mask, format='jpg')
+        plt.close(figure)
+
+
+if __name__ == '__main__':
+    test_featex()
