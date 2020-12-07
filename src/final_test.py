@@ -40,7 +40,7 @@ if __name__=='__main__':
     img = cv2.imread(path, 1)
     img = img[..., ::-1]
     img = img.astype('float32') / 255.
-    dirFeatex = "../pretrained_model/featex_spliced_250.h5"
+    dirFeatex = "../pretrained_model/new_featex_250.h5"
     dirAno = "../pretrained_model/new_anodec_250.h5"
     anodec = ano.load_anodec(dirFeatex, dirAno)
 
