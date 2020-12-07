@@ -49,7 +49,7 @@ if __name__ == '__main__':
     img = img.astype('float32') / 255.
 
     res = model.predict(np.array([img[0:+32, 0:32], img[0:+32, 0:32], img[0:+32, 0:32]]))
-    print("*****{}*****".format(res.shape))
+    print(res[0,:,:,0])
     """
     for k in tqdm(range(1, 7)):
         path = "./img_test/{}.jpg".format(k)
