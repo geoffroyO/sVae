@@ -43,6 +43,14 @@ if __name__ == '__main__':
 
     model = ft.postTreat(anodec)
 
+    path = "./img_test/{}.jpg".format(1)
+    img = cv2.imread(path, 1)
+    img = img[..., ::-1]
+    img = img.astype('float32') / 255.
+
+    res = model.predict(np.array(img[0:+32, 0:32]))
+    print("*****{}*****".format(res.shape))
+    """
     for k in tqdm(range(1, 7)):
         path = "./img_test/{}.jpg".format(k)
         img = cv2.imread(path, 1)
@@ -54,3 +62,4 @@ if __name__ == '__main__':
         sn.heatmap(mask, cmap="YlGnBu", center=np.mean(mask))
         plt.imsave("./img_test/{}_pred_gt.jpg".format(k), arr=mask, format='jpg')
         plt.close(figure)
+    """
