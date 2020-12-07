@@ -25,9 +25,7 @@ class postTreat(keras.Model):
         sqrtanoFeat = tf.math.sqrt(sumanoFeat)
 
         sub = self.subtract([sqrtFeat, sqrtanoFeat])
-        print("****{}****".format(sub.shape))
-        mask = self.reshape(sub)
 
-        return mask
+        return sub
 
 
