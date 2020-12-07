@@ -4,7 +4,9 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 import seaborn as sn
 
-import endVae as ev
+import anodec as ano
+import final_training as ft
+
 
 def enumMatrix(N, M, block_size):
     enum = np.zeros((N, M))
@@ -35,18 +37,11 @@ def pred(model, img, block_size):
 
 
 if __name__ == '__main__':
-    path = "./img_test/1.jpg"
-    img = cv2.imread(path, 1)
-    img = img[..., ::-1]
-    img = img.astype('float32') / 255.
+    path_featex = "../pretrained_model/new_featex_250.h5"
+    path_anodec = "../pretrained_model/new_anodec_250.h5"
+    anodec = ano.load_anodec(path_featex, path_anodec)
 
-
-    encoder = ev.encoder()
-    decoder = ev.decoder()
-
-    model = ev.srmAno(encoder, decoder)
-    model.predict(np.array([img[0:32, 0:32]]))
-    model.load_weights("../pretrained_model/srmAno.h5")
+    model = ft.postTreat(anodec)
 
     for k in tqdm(range(1, 7)):
         path = "./img_test/{}.jpg".format(k)

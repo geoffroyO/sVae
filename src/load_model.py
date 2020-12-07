@@ -40,10 +40,6 @@ def patch_images(images, masks):
         patchs_msk = extractPatchesMask(masks[n], (32, 32), 8)
         for k, patch_img in enumerate(patchs_img):
             patch_msk = patchs_msk[k]
-            name_img = "I_{}P_{}.jpg".format(n, k)
-            name_msk = "I_{}P_{}_gt.jpg".format(n, k)
-            # cv2.imwrite("../data/CASIA2_patch/Sp/{}".format(name_img), cv2.cvtColor(patch_img, cv2.COLOR_RGB2BGR))
-            # cv2.imwrite("../data/CASIA2_patch/mask/{}".format(name_msk), patch_msk)
             data.append(patch_img)
             labels.append(patch_msk)
     return data, labels

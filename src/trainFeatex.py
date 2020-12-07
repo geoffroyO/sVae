@@ -56,6 +56,7 @@ def load_data():
 
 
 if __name__ == '__main__':
+    name = "new_featex_250.h5"
     data = np.load("./data_to_load/spliced.npy", )
     labels = np.load("./data_to_load/spliced_labels.npy")
 
@@ -68,10 +69,10 @@ if __name__ == '__main__':
                                                                             tf.keras.metrics.Precision()])
 
 
-    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/new_featex_250.h5",
+    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/{}".format(name),
                                                     monitor='val_accuracy', verbose=1,
                                                     save_best_only=True, mode='max')
-    csv_logger = CSVLogger("model_new_featex_250.csv", append=True)
+    csv_logger = CSVLogger("{}.csv".format(name), append=True)
 
     callbacks_list = [checkpoint, csv_logger]
 
@@ -79,7 +80,7 @@ if __name__ == '__main__':
                         validation_data=(test_data, test_label), callbacks=callbacks_list)
 
 
-    model.load_weights("../pretrained_model/new_featex_250.h5")
+    model.load_weights("../pretrained_model/{}".format(name))
 
     preds = model.predict(test_data, verbose=1)
     fpr, tpr, _ = roc_curve(test_label, preds)
@@ -98,34 +99,3 @@ if __name__ == '__main__':
     plt.legend(loc="lower right")
     plt.savefig("./ROC")
     plt.close(fig)
-
-    data = np.load("./data_to_load/oriSpliced.npy")
-
-    train_data, test_data, _, _ = train_test_split(data, data, test_size=0.2, random_state=42)
-
-    dir = "../pretrained_model/new_featex_250.h5"
-    featex = lightfeaturesextract.load_featex(dir)
-    encoder = ano.encoder()
-    decoder = ano.decoder()
-    vae = ano.VAE(featex, encoder, decoder)
-
-    vae.compile(optimizer=Adam(lr=1e-6))
-
-    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/new_anodec_250.h5",
-                                                    monitor='val_loss', verbose=1,
-                                                    save_best_only=True, mode='min')
-    csv_logger = CSVLogger("new_anodec_250.csv", append=True)
-
-    callbacks_list = [checkpoint, csv_logger]
-
-    vae.fit(train_data, epochs=250, batch_size=128, validation_data=(test_data, test_data), callbacks=callbacks_list)
-
-
-
-
-
-
-
-
-
-

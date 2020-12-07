@@ -11,7 +11,7 @@ if __name__ == '__main__':
     data = data[:1500]
     labels = labels[:1500]
 
-    dirFeatex = "../pretrained_model/featex_spliced_250.h5"
+    dirFeatex = "../pretrained_model/new_featex_250.h5"
     dirAno = "../pretrained_model/anodec_spliced_250.h5"
 
     anodec = ano.load_anodec(dirFeatex, dirAno)
