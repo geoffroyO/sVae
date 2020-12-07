@@ -25,7 +25,6 @@ def pred(model, img, block_size):
             blocks.append(img[i:(i+block_size), j:(j+block_size)])
     blocks = np.array(blocks)
     pred = model.predict(blocks)
-    print("*****{}*****".format(pred.shape))
     count = 0
     for i in range(N-block_size+1):
         for j in range(M-block_size+1):
@@ -56,9 +55,8 @@ if __name__ == '__main__':
         img = img.astype('float32') / 255.
 
         mask = pred(model, img, 32)
-    """
+
         figure = plt.figure()
         sn.heatmap(mask, cmap="YlGnBu", center=np.mean(mask))
         plt.imsave("./img_test/{}_pred_gt.jpg".format(k), arr=mask, format='jpg')
         plt.close(figure)
-    """
