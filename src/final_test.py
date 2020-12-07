@@ -41,12 +41,10 @@ if __name__=='__main__':
     img = img[..., ::-1]
     img = img.astype('float32') / 255.
     dirFeatex = "../pretrained_model/featex_spliced_250.h5"
-    dirAno = "../pretrained_model/anodec_spliced_250.h5"
+    dirAno = "../pretrained_model/new_anodec_250.h5"
     anodec = ano.load_anodec(dirFeatex, dirAno)
 
     model = ft.postTreat(anodec)
-    model.predict(np.array([img[0:32, 0:32]]))
-    model.load_weights("../pretrained_model/final_250.h5")
 
     for k in tqdm(range(1, 7)):
         path = "./img_test/{}.jpg".format(k)
