@@ -175,11 +175,13 @@ class srmAno(keras.Model):
     def test_step(self, data):
         if isinstance(data, tuple):
             data = data[0]
+        """
         srm_features = self.srmConv2D(data)
         blurred_features = self.blur(data)
         blurred_features = self.srmConv2D(blurred_features)
         features = self.sub([blurred_features, srm_features])
-
+        """
+        features = data
         z_mean, z_log_var, z = self.encoder(features)
         reconstruction = self.decoder(z)
 
