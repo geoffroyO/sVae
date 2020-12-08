@@ -116,7 +116,7 @@ def test_featex():
 
 
 def test_endVae():
-    pathModel = "../pretrained_model/srmAno.h5"
+    pathModel = "../pretrained_model/endAno.h5"
 
     encoder = ev.encoder()
     decoder = ev.decoder()
