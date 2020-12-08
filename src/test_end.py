@@ -115,6 +115,11 @@ def test_endVae():
     encoder = ev.encoder()
     decoder = ev.decoder()
     model = ev.srmAno(encoder, decoder)
+    path = "./img_test/{}.jpg".format(1)
+    img = cv2.imread(path, 1)
+    img = img[..., ::-1]
+    img = img.astype('float32') / 255.
+    model.predict(np.array([img]))
     model.load_weights(path)
 
     for k in tqdm(range(1, 7)):
