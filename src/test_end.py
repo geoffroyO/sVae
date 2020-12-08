@@ -50,11 +50,18 @@ def test_all():
         img = img.astype('float32') / 255.
 
         mask = pred(model, img, 32)
-
+        n, m = mask.shape
+        for i in range(n):
+            for j in range(m):
+                if mask[i, j] > 0.8:
+                    mask[i, j] = 255
+                else:
+                    mask[i, j] = 0
         figure = plt.figure()
+        """        
         sn.heatmap(mask, cmap="YlGnBu", center=np.mean(mask))
-        plt.savefig("./img_test/{}_pred_gt.jgp".format(k), format='jpg')
-        #plt.imsave("./img_test/{}_pred_gt.jpg".format(k), arr=mask, format='jpg')
+        plt.savefig("./img_test/{}_pred_gt.jgp".format(k), format='jpg')"""
+        plt.imsave("./img_test/{}_pred_gt.jpg".format(k), arr=mask, format='jpg')
         plt.close(figure)
 
 
