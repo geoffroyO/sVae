@@ -72,11 +72,13 @@ def test_featex():
         img = img.astype('float32') / 255.
 
         mask = pred(model, img, 32)
-
+        np.save("./img_test/{}.npy".format(k), mask)
+        """
         figure = plt.figure()
         sn.heatmap(mask, cmap="YlGnBu", center=np.mean(mask))
         plt.imsave("./img_test/{}_pred_feat_gt.jpg".format(k), arr=mask, format='jpg')
         plt.close(figure)
+        """
 
 
 if __name__ == '__main__':
