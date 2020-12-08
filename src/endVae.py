@@ -6,7 +6,7 @@ from tensorflow import keras
 from tensorflow.python.keras import Input, Model
 from tensorflow.python.keras.callbacks import CSVLogger
 from tensorflow.python.keras.layers import Conv2D, Dense, Flatten, \
-    Conv2DTranspose, Reshape, BatchNormalization, LeakyReLU, Dropout
+    Conv2DTranspose, Reshape, BatchNormalization, LeakyReLU, Dropout, Subtract
 from tensorflow.keras.optimizers import Adam
 from tensorflow.python.ops.losses.losses_impl import absolute_difference, Reduction
 
@@ -39,6 +39,24 @@ def _build_SRM_kernel():
     initializer_srm = tf.constant_initializer(filters)
 
     return initializer_srm
+
+
+def _gaussian_kernel(size, mean, std, ):
+    d = tfp.distributions.Normal(mean, std)
+
+    vals = d.prob(tf.range(start=-size, limit=size + 1, dtype=tf.float32))
+
+    gauss_kernel = tf.einsum('i,j->ij', vals, vals)
+    gauss_kernel = gauss_kernel / tf.reduce_sum(gauss_kernel)
+    gauss_kernel = np.asarray(gauss_kernel, dtype=float)
+    gauss_kernel = [[gauss_kernel, gauss_kernel, gauss_kernel],
+                    [gauss_kernel, gauss_kernel, gauss_kernel],
+                    [gauss_kernel, gauss_kernel, gauss_kernel]]
+    gauss_kernel = np.einsum('klij->ijlk', gauss_kernel)
+    gauss_kernel = gauss_kernel.flatten()
+    initializer_gauss = tf.constant_initializer(gauss_kernel)
+
+    return initializer_gauss
 
 
 class Sampling(tf.keras.layers.Layer):
@@ -101,11 +119,21 @@ class srmAno(keras.Model):
         super(srmAno, self).__init__(**kwargs)
         self.srmConv2D = Conv2D(3, [5, 5], trainable=False, kernel_initializer=_build_SRM_kernel(),
                                 activation=None, padding='same', strides=1)
+        self.blur = Conv2D(filters=3,
+                           kernel_size=[5, 5],
+                           kernel_initializer=_gaussian_kernel(2, 0, 11),
+                           padding='same',
+                           name='gaussian_blur',
+                           trainable=False)
         self.encoder = encoder
         self.decoder = decoder
+        self.sub = Subtract()
 
     def call(self, inputs):
-        features = self.srmConv2D(inputs)
+        srm_features = self.srmConv2D(inputs)
+        blurred_features = self.blur(inputs)
+        blurred_features = self.srmConv2D(blurred_features)
+        features = self.sub([blurred_features, srm_features])
         _, _, z = self.encoder(features)
         reconstruction = self.decoder(z)
         L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
@@ -153,8 +181,8 @@ class srmAno(keras.Model):
 
 
 if __name__ == '__main__':
-    data = np.load("./data_to_load/spliced.npy")
-    train_data, test_data = data[:int(len(data)*0.7)], data[int(len(data)*0.7):]
+    data = np.load("./data_to_load/oriSpliced.npy")
+    train_data, test_data = data[:int(len(data) * 0.7)], data[int(len(data) * 0.7):]
 
     model = srmAno(encoder(), decoder())
     model.compile(optimizer=Adam(lr=1e-6))
