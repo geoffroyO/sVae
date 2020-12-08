@@ -1,12 +1,10 @@
-import lightfeaturesextract as lf
-
 import tensorflow as tf
-
+import tensorflow_probability as tfp
 from tensorflow import keras
 from tensorflow.python.keras import Input, Model
 from tensorflow.python.keras.callbacks import CSVLogger
 from tensorflow.python.keras.layers import Conv2D, Dense, Flatten, \
-    Conv2DTranspose, Reshape, BatchNormalization, LeakyReLU, Dropout, Subtract
+    Conv2DTranspose, Reshape, BatchNormalization, Dropout, Subtract
 from tensorflow.keras.optimizers import Adam
 from tensorflow.python.ops.losses.losses_impl import absolute_difference, Reduction
 
