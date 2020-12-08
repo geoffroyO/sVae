@@ -63,8 +63,10 @@ def predendVae(model, img, block_size):
             count += 1
     enum = enumMatrix(N, M, block_size)
     mask_error /= enum
-    reconstuction_img /= enum
-    features_img /= enum
+    enum_3D = np.dstack((enum, enum))
+    enum_3D = np.dstack((enum_3D, enum))
+    reconstuction_img /= enum_3D
+    features_img /= enum_3D
     return reconstuction_img, features_img, mask_error
 
 
