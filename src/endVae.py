@@ -115,6 +115,7 @@ def decoder():
 class srmAno(keras.Model):
     def __init__(self, encoder, decoder, **kwargs):
         super(srmAno, self).__init__(**kwargs)
+        """
         self.srmConv2D = Conv2D(3, [5, 5], trainable=False, kernel_initializer=_build_SRM_kernel(),
                                 activation=None, padding='same', strides=1)
         self.blur = Conv2D(filters=3,
@@ -123,9 +124,10 @@ class srmAno(keras.Model):
                            padding='same',
                            name='gaussian_blur',
                            trainable=False)
+        """
         self.encoder = encoder
         self.decoder = decoder
-        self.sub = Subtract()
+        # self.sub = Subtract()
 
     def call(self, inputs):
         """
