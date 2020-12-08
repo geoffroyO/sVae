@@ -128,26 +128,29 @@ class srmAno(keras.Model):
         self.sub = Subtract()
 
     def call(self, inputs):
+        """
         srm_features = self.srmConv2D(inputs)
         blurred_features = self.blur(inputs)
         blurred_features = self.srmConv2D(blurred_features)
         features = self.sub([blurred_features, srm_features])
-        _, _, z = self.encoder(features)
+        """
+        _, _, z = self.encoder(inputs)
         reconstruction = self.decoder(z)
-        L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
+        L1 = absolute_difference(inputs, reconstruction, reduction=Reduction.NONE)
         error = tf.reduce_sum(L1, axis=-1)
-        return features, reconstruction, error
+        return error #features, reconstruction, error
 
     def train_step(self, data):
         if isinstance(data, tuple):
             data = data[0]
         with tf.GradientTape() as tape:
-
+            """
             srm_features = self.srmConv2D(data)
             blurred_features = self.blur(data)
             blurred_features = self.srmConv2D(blurred_features)
             features = self.sub([blurred_features, srm_features])
-
+            """
+            features = data
             z_mean, z_log_var, z = self.encoder(features)
             reconstruction = self.decoder(z)
 
