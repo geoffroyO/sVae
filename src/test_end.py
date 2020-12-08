@@ -119,7 +119,7 @@ def test_endVae():
     img = cv2.imread(path, 1)
     img = img[..., ::-1]
     img = img.astype('float32') / 255.
-    model.predict(np.array([img]))
+    model.predict(np.array([img[0:32, 0:32]]))
     model.load_weights(path)
 
     for k in tqdm(range(1, 7)):
