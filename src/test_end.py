@@ -53,7 +53,7 @@ def test_all():
         n, m = mask.shape
         for i in range(n):
             for j in range(m):
-                if mask[i, j] > 0.8:
+                if mask[i, j] > 0.99:
                     mask[i, j] = 255
                 else:
                     mask[i, j] = 0
