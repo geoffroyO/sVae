@@ -53,7 +53,8 @@ def test_all():
 
         figure = plt.figure()
         sn.heatmap(mask, cmap="YlGnBu", center=np.mean(mask))
-        plt.imsave("./img_test/{}_pred_gt.jpg".format(k), arr=mask, format='jpg')
+        plt.savefig("./img_test/{}_pred_gt.jgp".format(k), format='jpg')
+        #plt.imsave("./img_test/{}_pred_gt.jpg".format(k), arr=mask, format='jpg')
         plt.close(figure)
 
 
