@@ -30,6 +30,7 @@ def pred(model, img, block_size):
     for i in range(N-block_size+1):
         for j in range(M-block_size+1):
             mask_pred = pred[count]
+            print("****{}****".format(mask_pred.shape))
             mask[i:(i+block_size), j:(j+block_size)] += mask_pred
             count += 1
     enum = enumMatrix(N, M, block_size)
@@ -37,8 +38,8 @@ def pred(model, img, block_size):
     return mask
 
 def test_all():
-    path_featex = "../pretrained_model/new_featex_250.h5"
-    path_anodec = "../pretrained_model/new_anodec_250.h5"
+    path_featex = "../pretrained_model/blurred_featex_250.h5"
+    path_anodec = "../pretrained_model/anodec_spliced_250.h5"
     anodec = ano.load_anodec(path_featex, path_anodec)
 
     model = ft.postTreat(anodec)
