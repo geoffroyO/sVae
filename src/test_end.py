@@ -135,7 +135,7 @@ def test_endVae():
         img = img[..., ::-1]
         img = img.astype('float32') / 255.
 
-        reconstruction, features, error = pred(model, img, 32)
+        reconstruction, features, error = predendVae(model, img, 32)
         np.save("./img_test/{}_reconstruction.npy".format(k), reconstruction)
         np.save("./img_test/{}_features.npy".format(k), features)
         np.save("./img_test/{}_error.npy".format(k), error)
