@@ -57,8 +57,9 @@ def test_all():
         plt.imsave("./img_test/{}_pred_gt.jpg".format(k), arr=mask, format='jpg')
         plt.close(figure)
 
+
 def test_featex():
-    path_featex = "../pretrained_model/new_featex_250.h5"
+    path_featex = "../pretrained_model/blurred_featex_250.h5"
     model = lf.load_all_featex(path_featex)
 
     for k in tqdm(range(1, 7)):
@@ -76,4 +77,4 @@ def test_featex():
 
 
 if __name__ == '__main__':
-    test_all()
+    test_featex()
