@@ -110,8 +110,10 @@ def test_featex():
         plt.close(figure)
         """
 
+
 def test_endVae():
-    path = "../pretrained_model/srmAno.h5"
+    pathModel = "../pretrained_model/srmAno.h5"
+
     encoder = ev.encoder()
     decoder = ev.decoder()
     model = ev.srmAno(encoder, decoder)
@@ -120,7 +122,8 @@ def test_endVae():
     img = img[..., ::-1]
     img = img.astype('float32') / 255.
     model.predict(np.array([img[0:32, 0:32]]))
-    model.load_weights(path)
+
+    model.load_weights(pathModel)
 
     for k in tqdm(range(1, 7)):
         path = "./img_test/{}.jpg".format(k)
