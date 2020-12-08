@@ -120,12 +120,29 @@ def light_featex():
 def featex():
     base = 32
     img_input = Input(shape=(32, 32, 3), name='image_in')
+
+    blur = Conv2D(filters=3,
+                  kernel_size=[5, 5],
+                  kernel_initializer=_gaussian_kernel(2, 0, 11),
+                  padding='same',
+                  name='gaussian_blur',
+                  trainable=False)(img_input)
+
+    blur = Conv2D(filters=3,
+                  kernel_size=[5, 5],
+                  kernel_initializer=_build_SRM_kernel(),
+                  padding='same',
+                  name='srm_blur',
+                  trainable=False)(blur)
+
     x = Conv2D(filters=3,
                kernel_size=[5, 5],
                kernel_initializer=_build_SRM_kernel(),
                padding='same',
                name='srm',
                trainable=False)(img_input)
+
+    x = Subtract()([x, blur])
     # block 1
     bname = 'b1'
     nb_filters = base
