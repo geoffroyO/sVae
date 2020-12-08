@@ -76,4 +76,4 @@ def test_featex():
 
 
 if __name__ == '__main__':
-    test_featex()
+    test_all()
