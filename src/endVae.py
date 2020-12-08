@@ -136,7 +136,7 @@ class srmAno(keras.Model):
         reconstruction = self.decoder(z)
         L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
         error = tf.reduce_sum(L1, axis=-1)
-        return error
+        return features, reconstruction, error
 
     def train_step(self, data):
         if isinstance(data, tuple):

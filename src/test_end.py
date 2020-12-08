@@ -37,6 +37,35 @@ def pred(model, img, block_size):
     mask /= enum
     return mask
 
+def predendVae(model, img, block_size):
+    N, M, C = img.shape
+    reconstuction_img, features_img, mask_error = np.zeros((N, M, C)), np.zeros((N, M, C)), np.zeros((N, M))
+
+    blocks = []
+    for i in range(N-block_size+1):
+        for j in range(M-block_size+1):
+            blocks.append(img[i:(i+block_size), j:(j+block_size)])
+
+    blocks = np.array(blocks)
+    features, reconstruction, error = model.predict(blocks)
+    count = 0
+
+    for i in range(N-block_size+1):
+        for j in range(M-block_size+1):
+            mask_error_pred = error[count]
+            mask_error[i:(i+block_size), j:(j+block_size)] += mask_error_pred
+
+            block_reconstruction = reconstruction[count]
+            reconstuction_img[i:(i+block_size), j:(j+block_size)] += block_reconstruction
+
+            block_features = features[count]
+            features_img[i:(i+block_size), j:(j+block_size)] += block_features
+            count += 1
+    enum = enumMatrix(N, M, block_size)
+    mask_error /= enum
+    return mask_error
+
+
 def test_all():
     path_featex = "../pretrained_model/blurred_featex_250.h5"
     path_anodec = "../pretrained_model/anodec_spliced_250.h5"
@@ -88,7 +117,15 @@ def test_endVae():
     model = ev.srmAno(encoder, decoder)
     model.load_weights(path)
 
+    for k in tqdm(range(1, 7)):
+        path = "./img_test/{}.jpg".format(k)
+        img = cv2.imread(path, 1)
+        img = img[..., ::-1]
+        img = img.astype('float32') / 255.
+
+        mask = predendVae(model, img, 32)
+        np.save("./img_test/{}.npy".format(k), mask)
 
 
 if __name__ == '__main__':
-    test_featex()
+    test_endVae()
