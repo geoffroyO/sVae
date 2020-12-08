@@ -142,14 +142,22 @@ class srmAno(keras.Model):
         if isinstance(data, tuple):
             data = data[0]
         with tf.GradientTape() as tape:
-            features = self.srmConv2D(data)
+
+            srm_features = self.srmConv2D(data)
+            blurred_features = self.blur(data)
+            blurred_features = self.srmConv2D(blurred_features)
+            features = self.sub([blurred_features, srm_features])
+
             z_mean, z_log_var, z = self.encoder(features)
             reconstruction = self.decoder(z)
+
             L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
             reconstruction_loss = tf.reduce_mean(tf.reduce_sum(L1, axis=[1, 2, 3]))
+
             kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
             kl_loss = tf.reduce_mean(kl_loss)
             kl_loss *= -0.5
+
             total_loss = reconstruction_loss + kl_loss
         grads = tape.gradient(total_loss, self.trainable_weights)
         self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
@@ -162,14 +170,21 @@ class srmAno(keras.Model):
     def test_step(self, data):
         if isinstance(data, tuple):
             data = data[0]
-        features = self.srmConv2D(data)
+        srm_features = self.srmConv2D(data)
+        blurred_features = self.blur(data)
+        blurred_features = self.srmConv2D(blurred_features)
+        features = self.sub([blurred_features, srm_features])
+
         z_mean, z_log_var, z = self.encoder(features)
         reconstruction = self.decoder(z)
+
         L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
         reconstruction_loss = tf.reduce_mean(tf.reduce_sum(L1, axis=[1, 2, 3]))
+
         kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
         kl_loss = tf.reduce_mean(kl_loss)
         kl_loss *= -0.5
+
         total_loss = reconstruction_loss + kl_loss
         return {
             "loss": total_loss,

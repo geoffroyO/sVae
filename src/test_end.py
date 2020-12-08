@@ -7,6 +7,7 @@ import seaborn as sn
 import anodec as ano
 import lightfeaturesextract as lf
 import postTreat as ft
+import endVae as ev
 
 
 def enumMatrix(N, M, block_size):
@@ -79,6 +80,14 @@ def test_featex():
         plt.imsave("./img_test/{}_pred_feat_gt.jpg".format(k), arr=mask, format='jpg')
         plt.close(figure)
         """
+
+def test_endVae():
+    path = "../pretrained_model/srmAno.h5"
+    encoder = ev.encoder()
+    decoder = ev.decoder()
+    model = ev.srmAno(encoder, decoder)
+    model.load_weights(path)
+
 
 
 if __name__ == '__main__':
