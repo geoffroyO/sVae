@@ -30,7 +30,6 @@ def pred(model, img, block_size):
     for i in range(N-block_size+1):
         for j in range(M-block_size+1):
             mask_pred = pred[count]
-            print(mask_pred[0])
             mask[i:(i+block_size), j:(j+block_size)] += mask_pred[0]
             count += 1
     enum = enumMatrix(N, M, block_size)
