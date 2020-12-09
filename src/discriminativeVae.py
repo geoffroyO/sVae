@@ -12,8 +12,6 @@ from tensorflow.python.ops.losses.losses_impl import absolute_difference, Reduct
 import numpy as np
 from tensorflow.python.ops.math_ops import reduce_std
 
-tf.compat.v1.enable_eager_execution()
-
 
 def _build_SRM_kernel():
     q = [4.0, 12.0, 2.0]
@@ -176,7 +174,7 @@ class disciminativeAno(keras.Model):
             L2 = squared_difference(features, reconstruction)
             error = tf.reduce_mean(L2, axis=-1)
 
-            treshold, sigma_b = otsu(error.numpy())
+            treshold, sigma_b = otsu(error.eval(session=tf.compat.v1.Session()))
             sigma, tau = reduce_std(error), 5
 
             discr_err = discriminative_labelling(error, treshold)
