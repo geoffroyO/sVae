@@ -120,9 +120,13 @@ def otsu(error):
 
     for eps in np.arange(0, 1.01, 0.01):
         cond1 = tf.where(error >= eps, error, tf.zeros_like(error))
-        print(cond1)
+        mean1 = tf.reduce_mean(cond1)
+        count1 = tf.reduce_sum(error >= eps, tf.zeros_like(error)+1, tf.zeros_like(error))
+        print("******", mean1)
+        print("******", count1)
+
         cond2 = tf.where(error < eps, error, tf.zeros_like(error))
-        print(cond2)
+
         if cond1:
             break
 
