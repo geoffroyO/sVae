@@ -98,7 +98,8 @@ def decoder():
 
 def otsu(error):
     sig_max, opti_tresh = 0, 0
-    n, m = error.get_shape()
+    l = error.get_shape()
+    print("****{}*****".format(l))
     for eps in range(0, 1, 0.01):
         mean1, mean2, count1, count2 = 0, 0, 0, 0
 
