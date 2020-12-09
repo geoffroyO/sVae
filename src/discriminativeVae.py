@@ -113,7 +113,8 @@ def otsu(error):
         sig = (count1*count2/(count1+count2)**2)*(mean1-mean2)**2
 
         bool = tf.math.greater(sig, sig_max)
-        if bool:
+        sess = tf.Session()
+        if sess.run(bool):
             sig_max, opti_tresh = sig, eps
     return opti_tresh, sig_max
 
