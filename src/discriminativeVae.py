@@ -102,12 +102,14 @@ def otsu(error):
     for eps in np.arange(0, 1.01, 0.01):
 
         cond1 = tf.where(error >= eps, tf.zeros_like(error) + 1, tf.zeros_like(error))
-        count1 = tf.where(error >= eps).get_shape().as_list()[0]
+        count1 = tf.where(error >= eps).get_shape().as_list()[1]
         mean1 = tf.reduce_mean(cond1)
 
         cond2 = tf.where(error < eps, tf.zeros_like(error), tf.zeros_like(error))
-        count2 = tf.where(error < eps).get_shape().as_list()[0]
+        count2 = tf.where(error < eps).get_shape().as_list()[1]
         mean2 = tf.reduce_mean(cond2)
+
+        print("*****{}*****".format(count1, mean1, count2, mean2))
 
         sig = (count1*count2/(count1+count2)**2)*(mean1-mean2)**2
 
