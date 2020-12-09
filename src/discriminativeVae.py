@@ -10,6 +10,7 @@ from tensorflow.python.ops.gen_math_ops import squared_difference
 from tensorflow.python.ops.losses.losses_impl import absolute_difference, Reduction
 
 import numpy as np
+import sys
 from tensorflow.python.ops.math_ops import reduce_std
 
 
@@ -108,9 +109,9 @@ def otsu(error):
         cond2 = tf.where(error < eps, tf.zeros_like(error), tf.zeros_like(error))
         count2 = tf.reduce_sum(cond2)
         mean2 = tf.reduce_mean(cond2)
-        tf.print(cond1)
-        tf.print(mean1)
-        tf.print(count1)
+        tf.print("tensors:", cond1, output_stream=sys.stdout)
+        tf.print("tensors:", mean1, output_stream=sys.stdout)
+        tf.print("tensors:", count1, output_stream=sys.stdout)
         print("*****{}*****".format(count1.get_shape().as_list()))
         print("*****{}*****".format(mean1.get_shape().as_list()))
         print("*****{}*****".format(count2.get_shape().as_list()))
