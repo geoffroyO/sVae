@@ -142,7 +142,7 @@ def dicriminative_error(error, treshold):
 
 class disciminativeAno(keras.Model):
     def __init__(self, encoder, decoder, **kwargs):
-        super(srmAno, self).__init__(**kwargs)
+        super(disciminativeAno, self).__init__(**kwargs)
         self.srmConv2D = Conv2D(3, [5, 5], trainable=False, kernel_initializer=_build_SRM_kernel(),
                                 activation=None, padding='same', strides=1)
 
