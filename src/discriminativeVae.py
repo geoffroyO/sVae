@@ -123,16 +123,14 @@ def otsu(error):
         mean1 = tf.reduce_mean(cond1, axis=[1, 2])
         count1 = tf.where(error >= eps, tf.zeros_like(error)+1, tf.zeros_like(error))
         count1 = tf.reduce_sum(count1, axis=[1, 2])
-        mean1 = tf.math.divide(mean1, count1)
-        print("***************")
-        print(mean1)
-        print(count1)
 
         cond2 = tf.where(error < eps, error, tf.zeros_like(error))
         mean2 = tf.reduce_mean(cond2, axis=[1, 2])
         count2 = tf.where(error < eps, tf.zeros_like(error) + 1, tf.zeros_like(error))
         count2 = tf.reduce_sum(count2, axis=[1, 2])
-        mean2 = tf.math.divide(mean2, count2)
+
+        sig = count1*count2
+        print(sig)
 
 
         if cond1:
