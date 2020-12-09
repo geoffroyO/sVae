@@ -98,20 +98,16 @@ def decoder():
 
 def otsu(error):
     sig_max, opti_tresh = 0, 0
-    l = error.get_shape().as_list()
-    n, m = l[1], l[2]
-    for eps in np.arange(0, 1.01, 0.01):
-        mean1, mean2, count1, count2 = 0, 0, 0, 0
 
-        for i in range(n):
-            for j in range(m):
-                elt = error[0, i, j]
-                if elt < eps:
-                    mean1 += elt
-                    count1 += 1
-                else:
-                    mean2 += elt
-                    count2 += 1
+    for eps in np.arange(0, 1.01, 0.01):
+
+        cond1 = tf.where(error >= eps, tf.zeros_like(error) + 1, tf.zeros_like(error))
+        count1 = tf.where(error >= eps).get_shape().as_list()[0]
+        mean1 = tf.reduce_mean(cond1)
+
+        cond2 = tf.where(error < eps, tf.zeros_like(error), tf.zeros_like(error))
+        count2 = tf.where(error < eps).get_shape().as_list()[0]
+        mean2 = tf.reduce_mean(cond2)
 
         sig = (count1*count2/(count1+count2)**2)*(mean1-mean2)**2
 
@@ -121,24 +117,16 @@ def otsu(error):
 
 
 def discriminative_labelling(error, treshold):
-    n, m = error.shape
-    mask = np.zeros((n, m))
-
-    for i in range(n):
-        for j in range(m):
-            mask[i, j] = 1 if error[i, j] > treshold else 0
+    cond1 = tf.where(error >= treshold, tf.zeros_like(error)+1, tf.zeros_like(error))
+    cond2 = tf.where(error < treshold, tf.zeros_like(error), tf.zeros_like(error))
+    mask = cond1 + cond2
     return mask
 
 
 def dicriminative_error(error, treshold):
-    n, m = error.shape
-    err, count = 0, 0
-    for i in range(n):
-        for j in range(m):
-            if error[i, j] < treshold:
-                count += 1
-                err += error[i, j]
-    return err/count
+    cond1 = tf.where(error < treshold, error, tf.zeros_like(error))
+    discr_err = tf.reduce_mean(cond1)
+    return discr_err
 
 
 class disciminativeAno(keras.Model):
