@@ -95,41 +95,35 @@ def decoder():
     decoder = Model(latent_inputs, decoder_outputs, name="decoder")
     return decoder
 
-"""
+
 def otsu(error):
     sig_max, opti_tresh = 0, 0
 
     for eps in np.arange(0, 1.01, 0.01):
 
         cond1 = tf.where(error >= eps, tf.zeros_like(error) + 1, tf.zeros_like(error))
-        count1 = tf.where(error >= eps).get_shape().as_list()[1]
+        count1 = tf.reduce_sum(cond1)
         mean1 = tf.reduce_mean(cond1)
 
         cond2 = tf.where(error < eps, tf.zeros_like(error), tf.zeros_like(error))
-        count2 = tf.where(error < eps).get_shape().as_list()[1]
+        count2 = tf.reduce_sum(cond2)
         mean2 = tf.reduce_mean(cond2)
         print(cond1)
-        print("*****{}*****".format(count1))
-        print("*****{}*****".format(mean1))
-        print("*****{}*****".format(count2))
-        print("*****{}*****".format(mean2))
+        print("*****{}*****".format(count1.get_shape().as_list()))
+        print("*****{}*****".format(mean1.get_shape().as_list()))
+        print("*****{}*****".format(count2.get_shape().as_list()))
+        print("*****{}*****".format(mean2.get_shape().as_list()))
 
         sig = (count1*count2/(count1+count2)**2)*(mean1-mean2)**2
 
         if sig > sig_max:
             sig_max, opti_tresh = sig, eps
     return opti_tresh, sig_max
-"""
-
-def otsu(error):
-    print(error.numpy())
-    return 2, 4
 
 
 def discriminative_labelling(error, treshold):
     cond1 = tf.where(error >= treshold, tf.zeros_like(error)+1, tf.zeros_like(error))
-    cond2 = tf.where(error < treshold, tf.zeros_like(error), tf.zeros_like(error))
-    mask = cond1 + cond2
+    mask = cond1
     return mask
 
 
@@ -173,7 +167,7 @@ class disciminativeAno(keras.Model):
             L2 = squared_difference(features, reconstruction)
             error = tf.reduce_mean(L2, axis=-1)
 
-            treshold, sigma_b = tf.py_function(otsu, [error], tf.float32)
+            treshold, sigma_b = otsu(error)
             sigma, tau = reduce_std(error), 5
 
             discr_err = discriminative_labelling(error, treshold)
