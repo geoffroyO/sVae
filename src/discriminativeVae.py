@@ -98,7 +98,7 @@ def decoder():
 
 def otsu(error):
     sig_max, opti_tresh = 0, 0
-    n, m = error.shape
+    n, m = error.get_shape()
     for eps in range(0, 1, 0.01):
         mean1, mean2, count1, count2 = 0, 0, 0, 0
 
@@ -174,7 +174,7 @@ class disciminativeAno(keras.Model):
             L2 = squared_difference(features, reconstruction)
             error = tf.reduce_mean(L2, axis=-1)
 
-            treshold, sigma_b = otsu(np.array(error))
+            treshold, sigma_b = otsu(error)
             sigma, tau = reduce_std(error), 5
 
             discr_err = discriminative_labelling(error, treshold)
