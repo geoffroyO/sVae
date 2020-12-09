@@ -98,7 +98,7 @@ def decoder():
 
 
 def otsu(error):
-    sig_max, opti_tresh = 0, 0
+    sig_max, opti_tresh = tf.zeros_like(tf.reduce_mean(error)), 0
 
     for eps in np.arange(0, 1.01, 0.01):
 
@@ -109,13 +109,6 @@ def otsu(error):
         cond2 = tf.where(error < eps, tf.zeros_like(error), tf.zeros_like(error))
         count2 = tf.reduce_sum(cond2)
         mean2 = tf.reduce_mean(cond2)
-        tf.print("tensors:", cond1, output_stream=sys.stderr)
-        tf.print("tensors:", mean1, output_stream=sys.stderr)
-        tf.print("tensors:", count1, output_stream=sys.stderr)
-        print("*****{}*****".format(count1.get_shape().as_list()))
-        print("*****{}*****".format(mean1.get_shape().as_list()))
-        print("*****{}*****".format(count2.get_shape().as_list()))
-        print("*****{}*****".format(mean2.get_shape().as_list()))
 
         sig = (count1*count2/(count1+count2)**2)*(mean1-mean2)**2
 
