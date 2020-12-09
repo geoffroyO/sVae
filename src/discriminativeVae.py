@@ -115,6 +115,7 @@ def decoder():
             sig_max = sig
             opti_tresh = eps"""
 
+
 def otsu(error):
     sig_max, opti_tresh = 0, 0
 
@@ -129,9 +130,8 @@ def otsu(error):
         count2 = tf.where(error < eps, tf.zeros_like(error) + 1, tf.zeros_like(error))
         count2 = tf.reduce_sum(count2, axis=[1, 2])
 
-        sig = count1*count2
+        sig = (count1*count2/(count1+count2)**2)*(mean1-mean2)**2
         print(sig)
-
 
         if cond1:
             break
