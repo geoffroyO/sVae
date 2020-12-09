@@ -120,7 +120,7 @@ def otsu(error):
 
     for eps in np.arange(0, 1.01, 0.01):
         cond1 = tf.where(error >= eps, error, tf.zeros_like(error))
-        mean1 = tf.reduce_mean(cond1)
+        mean1 = tf.reduce_mean(cond1, keepdims=True)
         count1 = tf.where(error >= eps, tf.zeros_like(error)+1, tf.zeros_like(error))
         count1 = tf.reduce_sum(count1)
         print("***************")
