@@ -108,7 +108,7 @@ def otsu(error):
         cond2 = tf.where(error < eps, tf.zeros_like(error), tf.zeros_like(error))
         count2 = tf.where(error < eps).get_shape().as_list()[1]
         mean2 = tf.reduce_mean(cond2)
-
+        print(cond1)
         print("*****{}*****".format(count1))
         print("*****{}*****".format(mean1))
         print("*****{}*****".format(count2))
