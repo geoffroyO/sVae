@@ -142,7 +142,7 @@ def discriminative_labelling(error, treshold):
     mask = tf.where(error >= treshold, tf.zeros_like(error)+1, tf.zeros_like(error))
     print(mask)
     if mask:
-
+        print("ok")
     return mask
 
 
