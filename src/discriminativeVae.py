@@ -98,7 +98,7 @@ def decoder():
 
 
 def otsu(error):
-    sig_max, opti_tresh = tf.zeros_like(tf.reduce_mean(error)), 0
+    sig_max, opti_tresh = tf.zeros_like(tf.reduce_mean(error)), tf.zeros_like(tf.reduce_mean(error))
 
     for eps in np.arange(0, 1.01, 0.01):
 
@@ -113,9 +113,12 @@ def otsu(error):
         sig = (count1*count2/(count1+count2)**2)*(mean1-mean2)**2
 
         bool = tf.math.greater(sig, sig_max)
-        sess = tf.Session()
-        if sess.run(bool):
-            sig_max, opti_tresh = sig, eps
+        sig_max = tf.where(bool == True, tf.zeros_like(tf.reduce_mean(error))+sig,
+                           tf.zeros_like(tf.reduce_mean(error)))
+
+        opti_tresh = tf.where(bool == True, tf.zeros_like(tf.reduce_mean(error)) + eps,
+                          tf.zeros_like(tf.reduce_mean(error)))
+
     return opti_tresh, sig_max
 
 
