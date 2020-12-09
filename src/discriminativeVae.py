@@ -100,7 +100,6 @@ def decoder():
 def otsu(error):
     sig_max, opti_tresh = 0, 0
     error = error.numpy()
-    print(error)
     n, m = error.shape
 
     for eps in np.arange(0, 1.01, 0.01):
@@ -181,6 +180,7 @@ class disciminativeAno(keras.Model):
 
             z_mean, z_log_var, z = self.encoder(features)
             reconstruction = self.decoder(z)
+            print(reconstruction)
 
             L2 = squared_difference(features, reconstruction)
             error = tf.reduce_mean(L2, axis=-1)
