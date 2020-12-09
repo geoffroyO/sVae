@@ -100,6 +100,7 @@ def decoder():
 def otsu(error):
     sig_max, opti_tresh = 0, 0
     error = error.numpy()
+    print(error)
     n, m = error.shape
 
     for eps in np.arange(0, 1.01, 0.01):
