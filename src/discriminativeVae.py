@@ -116,8 +116,8 @@ def decoder():
             opti_tresh = eps"""
 
 
-def otsu(error):
-    sig_max, opti_tresh = 0, 0
+def otsu(error, batch_size):
+    sig_max, opti_tresh = tf.zeros((batch_size,)), tf.zeros((batch_size,))
 
     for eps in np.arange(0, 1.01, 0.01):
         cond1 = tf.where(error >= eps, error, tf.zeros_like(error))
@@ -131,7 +131,9 @@ def otsu(error):
         count2 = tf.reduce_sum(count2, axis=[1, 2])
 
         sig = (count1*count2/(count1+count2)**2)*(mean1-mean2)**2
-        print(sig)
+        bool = tf.math.greater_equal(sig, sig_max)
+        sig_max = tf.where(bool, sig, sig_max)
+        print(sig_max)
 
         if cond1:
             break
@@ -198,7 +200,7 @@ class disciminativeAno(keras.Model):
             L2 = squared_difference(features, reconstruction)
             error = tf.reduce_mean(L2, axis=-1)
 
-            treshold, sigma_b = otsu(error)
+            treshold, sigma_b = otsu(error, self.batch_size)
             sigma, tau = reduce_std(error), 5
 
             discr_err = discriminative_labelling(error, treshold)
