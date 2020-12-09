@@ -174,7 +174,7 @@ class disciminativeAno(keras.Model):
             L2 = squared_difference(features, reconstruction)
             error = tf.reduce_mean(L2, axis=-1)
 
-            treshold, sigma_b = otsu(error.eval(session=tf.compat.v1.Session()))
+            treshold, sigma_b = otsu(np.array(error))
             sigma, tau = reduce_std(error), 5
 
             discr_err = discriminative_labelling(error, treshold)
