@@ -109,7 +109,10 @@ def otsu(error):
         count2 = tf.where(error < eps).get_shape().as_list()[1]
         mean2 = tf.reduce_mean(cond2)
 
-        print("*****{}*****".format(count1, mean1, count2, mean2))
+        print("*****{}*****".format(count1))
+        print("*****{}*****".format(mean1))
+        print("*****{}*****".format(count2))
+        print("*****{}*****".format(mean2))
 
         sig = (count1*count2/(count1+count2)**2)*(mean1-mean2)**2
 
