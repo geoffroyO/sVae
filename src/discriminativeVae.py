@@ -133,22 +133,15 @@ def otsu(error, batch_size):
         sig = (count1*count2/(count1+count2)**2)*(mean1-mean2)**2
         bool = tf.math.greater_equal(sig, sig_max)
         sig_max = tf.where(bool, sig, sig_max)
-        print(sig_max)
-
-        if cond1:
-            break
+        opti_tresh = tf.where(bool, tf.zeros_like(opti_tresh)+eps, opti_tresh)
 
     return opti_tresh, sig_max
 
 
 def discriminative_labelling(error, treshold):
-    error = error.numpy()
-    n, m = error.shape
-    mask = np.zeros((n, m))
-    for i in range(n):
-        for j in range(m):
-            if error[i, j] > treshold:
-                mask[i, j] = 1
+    mask = tf.where(error >= treshold, tf.zeros_like(error)+1, tf.zeros_like(error))
+    if mask:
+
     return mask
 
 
@@ -201,7 +194,7 @@ class disciminativeAno(keras.Model):
             error = tf.reduce_mean(L2, axis=-1)
 
             treshold, sigma_b = otsu(error, 128)
-            sigma, tau = reduce_std(error), 5
+            sigma, tau = reduce_std(error, axis=[1, 2]), 5
 
             discr_err = discriminative_labelling(error, treshold)
 
