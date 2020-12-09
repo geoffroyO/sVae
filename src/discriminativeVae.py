@@ -98,32 +98,35 @@ def decoder():
 
 
 def otsu(error):
-    sig_max, opti_tresh = tf.zeros_like(tf.reduce_mean(error)), tf.zeros_like(tf.reduce_mean(error))
+    sig_max, opti_tresh = 0, 0
+    error = error.numpy()
+    n, m = error.shape
 
     for eps in np.arange(0, 1.01, 0.01):
+        mean1, mean2, count1, count2 = 0, 0, 0, 0
+        for i in range(n):
+            for j in range(m):
+                if error[i, j] >= eps:
+                    count1 += 1
+                    mean1 += error[i, j]
+                else:
+                    count2 += 1
+                    mean2 += error[i, j]
 
-        cond1 = tf.where(error >= eps, tf.zeros_like(error) + 1, tf.zeros_like(error))
-        count1 = tf.reduce_sum(cond1)
-        mean1 = tf.reduce_mean(cond1)
+        mean1 /= count1
+        mean2 /= count2
 
-        cond2 = tf.where(error < eps, tf.zeros_like(error), tf.zeros_like(error))
-        count2 = tf.reduce_sum(cond2)
-        mean2 = tf.reduce_mean(cond2)
+        sig = (count1 * count2 / (count1 + count2) ** 2) * (mean1 - mean2) ** 2
 
-        sig = (count1*count2/(count1+count2)**2)*(mean1-mean2)**2
-
-        bool = tf.math.greater(sig, sig_max)
-        sig_max = tf.where(bool == True, tf.zeros_like(tf.reduce_mean(error))+sig,
-                           tf.zeros_like(tf.reduce_mean(error)))
-
-        opti_tresh = tf.where(bool == True, tf.zeros_like(tf.reduce_mean(error)) + eps,
-                          tf.zeros_like(tf.reduce_mean(error)))
+        if sig > sig_max:
+            sig_max = sig
+            opti_tresh = eps
 
     return opti_tresh, sig_max
 
 
 def discriminative_labelling(error, treshold):
-    cond1 = tf.where(error >= treshold, tf.zeros_like(error)+1, tf.zeros_like(error))
+    cond1 = tf.where(error >= treshold, tf.zeros_like(error) + 1, tf.zeros_like(error))
     mask = cond1
     return mask
 
@@ -173,7 +176,7 @@ class disciminativeAno(keras.Model):
 
             discr_err = discriminative_labelling(error, treshold)
 
-            reconstruction_loss = discr_err + tau*(1-(sigma_b/sigma)**2)
+            reconstruction_loss = discr_err + tau * (1 - (sigma_b / sigma) ** 2)
 
             kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
             kl_loss = tf.reduce_mean(kl_loss)
@@ -221,7 +224,8 @@ if __name__ == '__main__':
     train_data, test_data = data[:int(len(data) * 0.7)], data[int(len(data) * 0.7):]
 
     model = disciminativeAno(encoder(), decoder())
-    model.compile(optimizer=Adam(lr=1e-6))
+    tf.config.experimental_run_functions_eagerly(True)
+    model.compile(optimizer=Adam(lr=1e-6), run_eagerly=True)
 
     checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/disciminativeAno.h5",
                                                     monitor='val_loss', verbose=1,
@@ -231,4 +235,3 @@ if __name__ == '__main__':
     callbacks_list = [checkpoint, csv_logger]
 
     model.fit(train_data, epochs=250, batch_size=128, validation_data=(test_data, test_data), callbacks=callbacks_list)
-
