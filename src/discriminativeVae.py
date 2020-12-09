@@ -180,7 +180,7 @@ class disciminativeAno(keras.Model):
 
             z_mean, z_log_var, z = self.encoder(features)
             reconstruction = self.decoder(z)
-            print(reconstruction)
+            print(features)
 
             L2 = squared_difference(features, reconstruction)
             error = tf.reduce_mean(L2, axis=-1)
