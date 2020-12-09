@@ -96,15 +96,7 @@ def decoder():
     decoder = Model(latent_inputs, decoder_outputs, name="decoder")
     return decoder
 
-
-def otsu(error):
-    sig_max, opti_tresh = 0, 0
-    error = error.numpy()
-    print(error.shape)
-    n, m = error.shape
-
-    for eps in np.arange(0, 1.01, 0.01):
-        mean1, mean2, count1, count2 = 0, 0, 0, 0
+""" mean1, mean2, count1, count2 = 0, 0, 0, 0
         for i in range(n):
             for j in range(m):
                 if error[i, j] >= eps:
@@ -121,7 +113,14 @@ def otsu(error):
 
         if sig > sig_max:
             sig_max = sig
-            opti_tresh = eps
+            opti_tresh = eps"""
+
+def otsu(error):
+    sig_max, opti_tresh = 0, 0
+
+    for eps in np.arange(0, 1.01, 0.01):
+        cond1 = tf.where(error >= eps, error, tf.zeros_like(error))
+        print(cond1)
 
     return opti_tresh, sig_max
 
