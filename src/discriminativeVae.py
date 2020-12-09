@@ -105,7 +105,7 @@ def otsu(error):
 
         for i in range(n):
             for j in range(m):
-                elt = error[i, j]
+                elt = error[0, i, j]
                 if elt < eps:
                     mean1 += elt
                     count1 += 1
