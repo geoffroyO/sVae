@@ -121,6 +121,8 @@ def otsu(error):
     for eps in np.arange(0, 1.01, 0.01):
         cond1 = tf.where(error >= eps, error, tf.zeros_like(error))
         print(cond1)
+        if cond1:
+            break
 
     return opti_tresh, sig_max
 
