@@ -151,6 +151,7 @@ def dicriminative_error(error, threshold):
     out = error < thresh_
 
     mask1 = tf.cast(out, dtype=tf.int32)
+    mask1 = tf.cast(out, dtype=tf.float32)
     mask2 = 1 - mask1
 
     error1 = tf.math.multiply(error, mask1)
