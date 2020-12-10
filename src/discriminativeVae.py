@@ -170,6 +170,8 @@ def dicriminative_error(error, threshold):
     mean2 = tf.math.divide(tf.reduce_sum(error2, axis=[1, 2]), N2)
 
     sigmab = prob1*prob2*(mean1-mean2)**2
+    if N1:
+        print('ok')
 
     return mean1, sigmab
 
