@@ -118,7 +118,7 @@ def decoder():
 
 def otsu(error):
     error = error.numpy()
-    batch_size, n, m = error.shape()
+    batch_size, n, m = error.shape
     sig_max, opti_tresh = np.zeros((batch_size)), np.zeros((batch_size))
 
     for eps in np.arange(0, 1.01, 0.01):
@@ -152,7 +152,7 @@ def discriminative_labelling(error, treshold):
 
 def dicriminative_error(error, threshold):
     error = error.numpy()
-    batch_size, n, m = error.shape()
+    batch_size, n, m = error.shape
     discr_err = np.zeros((batch_size))
 
     for batch in range(batch_size):
