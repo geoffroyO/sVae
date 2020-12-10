@@ -158,6 +158,7 @@ def dicriminative_error(error, threshold):
 
     N1 = tf.reduce_sum(mask1, axis=[1, 2])
     N2 = tf.reduce_sum(mask2, axis=[1, 2])
+    print(N2)
 
     prob1 = tf.reduce_mean(mask1, axis=[1, 2])
     prob2 = tf.reduce_mean(mask2, axis=[1, 2])
@@ -212,10 +213,6 @@ class disciminativeAno(keras.Model):
 
             reconstruction_loss = discr_err + 5 * (1 - (sigma_b / sigma) ** 2)
             reconstruction_loss = tf.reduce_mean(reconstruction_loss)
-
-            print(reconstruction_loss)
-            if reconstruction_loss:
-                print('ok')
 
             kl_loss = -0.5*tf.reduce_mean(1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var))
 
