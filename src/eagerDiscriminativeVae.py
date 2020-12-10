@@ -160,15 +160,23 @@ def dicriminative_error(error, threshold):
                     class_0.append(error[batch, i, j])
                 else:
                     class_1.append(error[batch, i, j])
+
         p0 = len(class_0)/(n*m)
         p1 = len(class_1)/(n*m)
 
-        sig_0 = np.std(class_0)**2
-        sig_1 = np.std(class_1)**2
-
-        sig = np.std(class_0 + class_1)**2
-
-        discr_err[batch_size] = np.mean(class_0) + 5*(p0*sig_0 + p1*sig_1)/sig
+        if p0 == 0:
+            sig_1 = np.std(class_1) ** 2
+            sig = np.std(class_0 + class_1) ** 2
+            discr_err[batch_size] = 5 * p1 * sig_1 / sig
+        if p1 == 0:
+            sig_0 = np.std(class_0) ** 2
+            sig = np.std(class_0 + class_1) ** 2
+            discr_err[batch_size] = np.mean(class_0) + 5 * p0 * sig_0  / sig
+        else:
+            sig_0 = np.std(class_0)**2
+            sig_1 = np.std(class_1)**2
+            sig = np.std(class_0 + class_1)**2
+            discr_err[batch_size] = np.mean(class_0) + 5*(p0*sig_0 + p1*sig_1)/sig
     return discr_err
 
 
