@@ -116,7 +116,8 @@ def decoder():
             opti_tresh = eps"""
 
 
-def otsu(error, batch_size):
+def otsu(error):
+    batch_size = error.get_shape().as_list()[0]
     sig_max, opti_tresh = tf.zeros((batch_size,)), tf.zeros((batch_size,))
 
     for eps in np.arange(0, 1.01, 0.01):
@@ -187,7 +188,7 @@ class disciminativeAno(keras.Model):
             L2 = squared_difference(features, reconstruction)
             error = tf.reduce_mean(L2, axis=-1)
 
-            treshold, sigma_b = otsu(error, 128)
+            treshold, sigma_b = otsu(error)
             sigma, tau = reduce_std(error, axis=[1, 2]), 5
 
             discr_err = dicriminative_error(error, treshold)
