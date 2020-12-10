@@ -118,7 +118,10 @@ def decoder():
 
 def otsu(error):
     batch_size = error.get_shape().as_list()[0]
-    sig_max, opti_tresh = tf.zeros((batch_size,)), tf.zeros((batch_size,))
+    if batch_size is not None:
+        sig_max, opti_tresh = tf.zeros((batch_size,)), tf.zeros((batch_size,))
+    else:
+        sig_max, opti_tresh = tf.zeros((128,)), tf.zeros((128,))
 
     for eps in np.arange(0, 1.01, 0.01):
         cond1 = tf.keras.activations.relu(error, threshold=eps)
