@@ -150,15 +150,18 @@ def dicriminative_error(error, threshold):
     thresh_ = threshold[..., tf.newaxis, tf.newaxis]
     out = error < thresh_
 
-    mask1 = tf.cast(out, dtype=tf.int32)
     mask1 = tf.cast(out, dtype=tf.float32)
+    print(mask1)
     mask2 = 1 - mask1
+    print(mask2)
 
     error1 = tf.math.multiply(error, mask1)
     error2 = tf.math.multiply(error, mask2)
 
     N1 = tf.reduce_sum(mask1, axis=[1, 2])
     N2 = tf.reduce_sum(mask2, axis=[1, 2])
+    print(N1)
+    print(N2)
 
     prob1 = tf.reduce_mean(mask1, axis=[1, 2])
     prob2 = tf.reduce_mean(mask2, axis=[1, 2])
@@ -257,7 +260,7 @@ if __name__ == '__main__':
     train_data, test_data = data[:int(len(data) * 0.7)], data[int(len(data) * 0.7):]
 
     model = disciminativeAno(encoder(), decoder())
-    model.compile(optimizer=Adam(lr=1e-6))
+    model.compile(optimizer=Adam(lr=1e-6), run_eagerly=True)
 
     checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/disciminativeAno.h5",
                                                     monitor='val_loss', verbose=1,
