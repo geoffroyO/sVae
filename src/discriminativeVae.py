@@ -154,7 +154,10 @@ def discriminative_labelling(error, treshold):
 def dicriminative_error(error, treshold):
     tresh_ = treshold[..., tf.newaxis, tf.newaxis]
     out = error < tresh_
+    print(out)
+    print(error)
     error = tf.where(out, error, tf.zeros_like(error))
+    print(error)
     discr_err = tf.reduce_mean(error, axis=[1, 2])
     return discr_err
 
