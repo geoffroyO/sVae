@@ -158,7 +158,7 @@ def dicriminative_error(error, threshold):
 
     N1 = tf.reduce_sum(mask1, axis=[1, 2])
     N2 = tf.reduce_sum(mask2, axis=[1, 2])
-    print(N2)
+
 
     prob1 = tf.reduce_mean(mask1, axis=[1, 2])
     prob2 = tf.reduce_mean(mask2, axis=[1, 2])

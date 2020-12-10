@@ -121,7 +121,7 @@ def otsu(error):
     batch_size, n, m = error.shape
     sig_min, opti_tresh = np.zeros((batch_size)), np.zeros((batch_size))
 
-    for eps in np.arange(0, 1.01, 0.01):
+    for eps in np.arange(0.1, 0.91, 0.01):
         for batch in range(batch_size):
             class_0, class_1 = [], []
             for i in range(n):
