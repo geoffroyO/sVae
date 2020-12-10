@@ -120,10 +120,12 @@ def otsu(error, batch_size):
     sig_max, opti_tresh = tf.zeros((batch_size,)), tf.zeros((batch_size,))
 
     for eps in np.arange(0, 1.01, 0.01):
-        cond1 = tf.where(error >= eps, error, tf.zeros_like(error))
+        cond1 = tf.nn.relu(error, treshold=eps)
         mean1 = tf.reduce_mean(cond1, axis=[1, 2])
-        count1 = tf.where(error >= eps, tf.zeros_like(error)+1, tf.zeros_like(error))
-        count1 = tf.reduce_sum(count1, axis=[1, 2])
+        epsilon = tf.keras.backend.epsilon()
+        count1 = tf.reduce_sum(tf.math.abs(cond1/(tf.math.abs(cond1)+epsilon)), axis=[1, 2])
+        print(mean1)
+        print(count1)
 
         cond2 = tf.where(error < eps, error, tf.zeros_like(error))
         mean2 = tf.reduce_mean(cond2, axis=[1, 2])
