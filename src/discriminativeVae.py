@@ -211,10 +211,11 @@ class disciminativeAno(keras.Model):
             discr_err, sigma_b = dicriminative_error(error, threshold)
 
             reconstruction_loss = discr_err + 5 * (1 - (sigma_b / sigma) ** 2)
+            reconstruction_loss = tf.reduce_mean(reconstruction_loss)
+
             print(reconstruction_loss)
             if reconstruction_loss:
                 print('ok')
-            reconstruction_loss = tf.reduce_mean(reconstruction_loss)
 
             kl_loss = -0.5*tf.reduce_mean(1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var))
 
