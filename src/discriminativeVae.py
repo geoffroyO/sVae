@@ -151,30 +151,21 @@ def dicriminative_error(error, threshold):
     out = error < thresh_
 
     mask1 = tf.cast(out, dtype=tf.float32)
-    print(mask1)
     mask2 = 1 - mask1
-    print(mask2)
 
     error1 = tf.math.multiply(error, mask1)
     error2 = tf.math.multiply(error, mask2)
 
     N1 = tf.reduce_sum(mask1, axis=[1, 2])
     N2 = tf.reduce_sum(mask2, axis=[1, 2])
-    print(N1)
-    print(N2)
 
     prob1 = tf.reduce_mean(mask1, axis=[1, 2])
     prob2 = tf.reduce_mean(mask2, axis=[1, 2])
-    print(prob1)
 
     mean1 = tf.math.divide(tf.reduce_sum(error1, axis=[1, 2]), N1)
     mean2 = tf.math.divide(tf.reduce_sum(error2, axis=[1, 2]), N2)
-    print(mean1)
 
     sigmab = prob1*prob2*(mean1-mean2)**2
-    print(sigmab)
-    if N1:
-        print('ok')
 
     return mean1, sigmab
 
@@ -219,7 +210,11 @@ class disciminativeAno(keras.Model):
             sigma = reduce_std(error, axis=[1, 2])
             discr_err, sigma_b = dicriminative_error(error, threshold)
 
-            reconstruction_loss = tf.reduce_mean(discr_err + 5 * (1 - (sigma_b / sigma) ** 2))
+            reconstruction_loss = discr_err + 5 * (1 - (sigma_b / sigma) ** 2)
+            print(reconstruction_loss)
+            if reconstruction_loss:
+                print('ok')
+            reconstruction_loss = tf.reduce_mean(reconstruction_loss)
 
             kl_loss = -0.5*tf.reduce_mean(1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var))
 
