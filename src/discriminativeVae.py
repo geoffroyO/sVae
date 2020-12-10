@@ -124,13 +124,11 @@ def otsu(error, batch_size):
         mean1 = tf.reduce_mean(cond1, axis=[1, 2])
         epsilon = tf.keras.backend.epsilon()
         count1 = tf.reduce_sum(tf.math.abs(cond1/(tf.math.abs(cond1)+epsilon)), axis=[1, 2])
-        print(mean1)
-        print(count1)
 
-        cond2 = tf.where(error < eps, error, tf.zeros_like(error))
+        cond2 = error - cond1
         mean2 = tf.reduce_mean(cond2, axis=[1, 2])
-        count2 = tf.where(error < eps, tf.zeros_like(error) + 1, tf.zeros_like(error))
-        count2 = tf.reduce_sum(count2, axis=[1, 2])
+        epsilon = tf.keras.backend.epsilon()
+        count2 = tf.reduce_sum(tf.math.abs(cond2 / (tf.math.abs(cond2) + epsilon)), axis=[1, 2])
 
         sig = (count1*count2/(count1+count2)**2)*(mean1-mean2)**2
         bool = tf.math.greater_equal(sig, sig_max)
@@ -141,15 +139,9 @@ def otsu(error, batch_size):
 
 
 def discriminative_labelling(error, treshold):
-    print(treshold)
     tresh_ = treshold[..., tf.newaxis, tf.newaxis]
-    print(tresh_)
     out = error < tresh_
-    out = tf.cast(out, dtype=tf.int32)
-    print(out)
-    mask = tf.where(error >= treshold, tf.zeros_like(error)+1, tf.zeros_like(error))
-    if mask:
-        print("ok")
+    mask = tf.cast(out, dtype=tf.int32)
     return mask
 
 
