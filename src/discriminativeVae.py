@@ -136,7 +136,7 @@ def otsu(error):
         sig_max = tf.where(bool, sig, sig_max)
         opti_tresh = tf.where(bool, tf.zeros_like(opti_tresh)+eps, opti_tresh)
 
-    return opti_tresh, sig_max
+    return opti_tresh
 
 
 def discriminative_labelling(error, treshold):
@@ -146,12 +146,28 @@ def discriminative_labelling(error, treshold):
     return mask
 
 
-def dicriminative_error(error, treshold):
-    tresh_ = treshold[..., tf.newaxis, tf.newaxis]
-    out = error < tresh_
-    error = tf.where(out, error, tf.zeros_like(error))
-    discr_err = tf.reduce_mean(error, axis=[1, 2])
-    return discr_err
+def dicriminative_error(error, threshold):
+    thresh_ = threshold[..., tf.newaxis, tf.newaxis]
+    out = error < thresh_
+
+    mask1 = tf.cast(out, dtype=tf.int32)
+    mask2 = 1 - mask1
+
+    error1 = tf.math.multiply(error, mask1)
+    error2 = tf.math.multiply(error, mask2)
+
+    N1 = tf.reduce_sum(mask1, axis=[1, 2])
+    N2 = tf.reduce_sum(mask2, axis=[1, 2])
+
+    prob1 = tf.reduce_mean(mask1, axis=[1, 2])
+    prob2 = tf.reduce_mean(mask2, axis=[1, 2])
+
+    mean1 = tf.math.divide(tf.reduce_sum(error1, axis=[1, 2]), N1)
+    mean2 = tf.math.divide(tf.reduce_sum(error2, axis=[1, 2]), N2)
+
+    sigmab = prob1*prob2*(mean1-mean2)**2
+
+    return mean1, sigmab
 
 
 class disciminativeAno(keras.Model):
@@ -188,16 +204,15 @@ class disciminativeAno(keras.Model):
             L2 = squared_difference(features, reconstruction)
             error = tf.reduce_mean(L2, axis=-1)
 
-            treshold, sigma_b = otsu(error)
-            sigma, tau = reduce_std(error, axis=[1, 2]), 5
+            with tape.stop_recording():
+                threshold = otsu(error)
 
-            discr_err = dicriminative_error(error, treshold)
-            reconstruction_loss = discr_err + tau * (1 - (sigma_b / sigma) ** 2)
-            reconstruction_loss = tf.reduce_mean(reconstruction_loss)
+            sigma = reduce_std(error, axis=[1, 2])
+            discr_err, sigma_b = dicriminative_error(error, threshold)
 
-            kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
-            kl_loss = tf.reduce_mean(kl_loss)
-            kl_loss *= -0.5
+            reconstruction_loss = tf.reduce_mean(discr_err + 5 * (1 - (sigma_b / sigma) ** 2))
+
+            kl_loss = -0.5*tf.reduce_mean(1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var))
 
             total_loss = reconstruction_loss + kl_loss
         grads = tape.gradient(total_loss, self.trainable_weights)
