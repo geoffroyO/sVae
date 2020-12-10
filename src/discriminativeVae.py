@@ -139,7 +139,9 @@ def otsu(error, batch_size):
 
 
 def discriminative_labelling(error, treshold):
+    print(treshold)
     tresh_ = treshold[..., tf.newaxis, tf.newaxis]
+    print(tresh_)
     out = error < tresh_
     out = tf.cast(out, dtype=tf.int32)
     print(out)
@@ -198,7 +200,6 @@ class disciminativeAno(keras.Model):
             error = tf.reduce_mean(L2, axis=-1)
 
             treshold, sigma_b = otsu(error, 128)
-            print(treshold)
             sigma, tau = reduce_std(error, axis=[1, 2]), 5
 
             discr_err = discriminative_labelling(error, treshold)
