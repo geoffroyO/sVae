@@ -139,8 +139,10 @@ def otsu(error, batch_size):
 
 
 def discriminative_labelling(error, treshold):
-    mask = tf.zeros_like(error) + treshold
-    print(mask)
+    tresh_ = treshold[..., tf.newaxis, tf.newaxis]
+    out = error < tresh_
+    out = tf.cast(out, dtype=tf.int32)
+    print(out)
     mask = tf.where(error >= treshold, tf.zeros_like(error)+1, tf.zeros_like(error))
     if mask:
         print("ok")
