@@ -240,8 +240,7 @@ if __name__ == '__main__':
     train_data, test_data = data[:int(len(data) * 0.7)], data[int(len(data) * 0.7):]
 
     model = disciminativeAno(encoder(), decoder())
-    tf.config.experimental_run_functions_eagerly(True)
-    model.compile(optimizer=Adam(lr=1e-6), run_eagerly=True)
+    model.compile(optimizer=Adam(lr=1e-6))
 
     checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/disciminativeAno.h5",
                                                     monitor='val_loss', verbose=1,
