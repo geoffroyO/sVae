@@ -165,11 +165,14 @@ def dicriminative_error(error, threshold):
 
     prob1 = tf.reduce_mean(mask1, axis=[1, 2])
     prob2 = tf.reduce_mean(mask2, axis=[1, 2])
+    print(prob1)
 
     mean1 = tf.math.divide(tf.reduce_sum(error1, axis=[1, 2]), N1)
     mean2 = tf.math.divide(tf.reduce_sum(error2, axis=[1, 2]), N2)
+    print(mean1)
 
     sigmab = prob1*prob2*(mean1-mean2)**2
+    print(sigmab)
     if N1:
         print('ok')
 
