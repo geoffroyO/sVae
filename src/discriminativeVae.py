@@ -152,17 +152,11 @@ def discriminative_labelling(error, treshold):
 
 
 def dicriminative_error(error, treshold):
-    discr_err = 0
-    count = 0
-    error = error.numpy()
-    n, m = error.shape
-    for i in range(n):
-        for j in range(m):
-            if error[i, j] < treshold:
-                discr_err += error[i, j]
-                count += 1
-
-    return discr_err/count
+    tresh_ = treshold[..., tf.newaxis, tf.newaxis]
+    out = error < tresh_
+    error = tf.where(out, error, tf.zeros_like(error))
+    discr_err = tf.reduce_mean(error, axis=[1, 2])
+    return discr_err
 
 
 class disciminativeAno(keras.Model):
@@ -202,8 +196,10 @@ class disciminativeAno(keras.Model):
             treshold, sigma_b = otsu(error, 128)
             sigma, tau = reduce_std(error, axis=[1, 2]), 5
 
-            discr_err = discriminative_labelling(error, treshold)
-
+            discr_err = dicriminative_error(error, treshold)
+            print(discr_err)
+            if discr_err:
+                print("True")
             reconstruction_loss = discr_err + tau * (1 - (sigma_b / sigma) ** 2)
 
             kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
