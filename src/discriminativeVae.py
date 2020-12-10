@@ -117,8 +117,8 @@ def decoder():
 
 
 def otsu(error):
-    print(error.get_shape())
-    sig_max, opti_tresh = tf.zeros((128,)), tf.zeros((128,))
+    sig_max, opti_tresh = tf.reduce_sum(tf.zeros_like(error), axis=[1, 2]), \
+                          tf.reduce_sum(tf.zeros_like(error), axis=[1, 2])
 
     for eps in np.arange(0, 1.01, 0.01):
         cond1 = tf.keras.activations.relu(error, threshold=eps)
