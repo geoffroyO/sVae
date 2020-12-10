@@ -133,7 +133,7 @@ def otsu(error):
                         class_1.append(err)
 
             prob1, prob2 = len(class_0) / (n + m), len(class_1) / (n + m)
-
+            print(prob1, prob2)
             if prob1 == 0:
                 sig2 = np.std(class_1) ** 2
                 sigma_b = prob2 * sig2
