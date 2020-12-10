@@ -120,7 +120,7 @@ def otsu(error):
     sig_max, opti_tresh = tf.reduce_sum(tf.zeros_like(error), axis=[1, 2]), \
                           tf.reduce_sum(tf.zeros_like(error), axis=[1, 2])
 
-    for eps in np.arange(0, 1.01, 0.01):
+    for eps in np.arange(0.1, 0.91, 0.01):
         cond1 = tf.keras.activations.relu(error, threshold=eps)
         mean1 = tf.reduce_mean(cond1, axis=[1, 2])
         epsilon = tf.keras.backend.epsilon()
