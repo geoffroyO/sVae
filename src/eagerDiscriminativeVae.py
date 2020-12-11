@@ -125,14 +125,12 @@ def otsu(error):
             if sig_max[batch] < sigma_w:
                 sig_max[batch] = sigma_w
                 opti_tresh[batch] = eps
-    print(opti_tresh)
-    np.array(opti_tresh + None)
     return opti_tresh
 
 
 def discriminative_labelling(error, treshold):
-    tresh_ = treshold[..., tf.newaxis, tf.newaxis]
-    out = error < tresh_
+    thresh_ = treshold[..., tf.newaxis, tf.newaxis]
+    out = error < thresh_
     mask = tf.cast(out, dtype=tf.int32)
     return mask
 
@@ -150,6 +148,9 @@ def dicriminative_error(error, threshold):
                     class_0.append(error[batch, i, j])
                 else:
                     class_1.append(error[batch, i, j])
+        print(class_0)
+        print(class_1)
+        class_0 += 3
 
         p0 = len(class_0)/(n*m)
         p1 = len(class_1)/(n*m)
