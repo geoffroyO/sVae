@@ -211,6 +211,8 @@ class disciminativeAno(keras.Model):
         }
 
     def test_step(self, data):
+        if isinstance(data, tuple):
+            data = data[0]
         # features = self.srmConv2D(data)
         features = data
         z_mean, z_log_var, z = self.encoder(features)
