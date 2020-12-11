@@ -205,12 +205,10 @@ class disciminativeAno(keras.Model):
 
             reconstruction_loss = dicriminative_error(error, threshold)
             reconstruction_loss = tf.reduce_mean(reconstruction_loss)
-            print("******{}*****".format(tf.cast(reconstruction_loss, dtype=tf.float32)))
+            reconstruction_loss = tf.cast(reconstruction_loss, dtype=tf.float32)
 
             kl_loss = -0.5*tf.reduce_mean(1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var))
-            print("******{}*****".format(kl_loss.astype("float32")))
-            print(type(kl_loss))
-            print(type(reconstruction_loss))
+            kl_loss = tf.cast(kl_loss, dtype=tf.float32)
 
             total_loss = reconstruction_loss + kl_loss
         grads = tape.gradient(total_loss, self.trainable_weights)
