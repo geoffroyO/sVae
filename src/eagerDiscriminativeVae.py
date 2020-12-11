@@ -116,7 +116,7 @@ def otsu(error):
             print(class_0)
             print(class_1)
 
-            prob1, prob2 = len(class_0) / (n + m), len(class_1) / (n + m)
+            prob1, prob2 = len(class_0) / (n * m), len(class_1) / (n * m)
             print(prob1, prob2)
             class_0 += 2
             if prob1 == 0:
