@@ -11,7 +11,7 @@ from tensorflow.python.ops.losses.losses_impl import absolute_difference, Reduct
 
 import numpy as np
 import sys
-from tensorflow.python.ops.math_ops import reduce_std
+from tensorflow.python.ops.math_ops import reduce_std, reduce_variance
 
 
 def _build_SRM_kernel():
@@ -154,9 +154,6 @@ def dicriminative_error(error, threshold):
 
     sigmab = prob1*prob2*(mean1-mean2)**2
 
-    print(mean1)
-    print(sigmab)
-
     return mean1, sigmab
 
 
@@ -197,10 +194,10 @@ class disciminativeAno(keras.Model):
             with tape.stop_recording():
                 threshold = otsu(error)
 
-            sigma = reduce_std(error, axis=[1, 2])
-            discr_err, sigma_b = dicriminative_error(error, threshold)
+            sigma = reduce_variance(error, axis=[1, 2])
+            mean_0, sigma_b = dicriminative_error(error, threshold)
 
-            reconstruction_loss = discr_err + 5 * (1 - (sigma_b / sigma) ** 2)
+            reconstruction_loss = mean_0 + 5 * (1 - sigma_b/sigma)
             reconstruction_loss = tf.reduce_mean(reconstruction_loss)
 
             kl_loss = -0.5*tf.reduce_mean(1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var))
