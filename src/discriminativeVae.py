@@ -113,6 +113,7 @@ def otsu(error):
         mean1 = tf.reduce_mean(cond1, axis=[1, 2])*((N1+N0)/N1)
 
         print(mean0)
+        mean0 += 2
         prob0 = N0/(N1+N0)
         prob1 = N1/(N1+N0)
 
