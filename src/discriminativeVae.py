@@ -197,10 +197,9 @@ class disciminativeAno(keras.Model):
 
             with tape.stop_recording():
                 threshold = otsu(error)
-                print(threshold)
-                threshold += 2
 
             sigma = reduce_std(error, axis=[1, 2])
+            print(sigma)
             discr_err, sigma_b = dicriminative_error(error, threshold)
 
             reconstruction_loss = discr_err + 5 * (1 - (sigma_b / sigma) ** 2)
