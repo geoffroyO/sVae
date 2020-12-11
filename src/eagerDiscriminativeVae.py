@@ -117,13 +117,15 @@ def otsu(error):
 
             if prob0 == 0:
                 sig1 = np.std(class_1) ** 2
-                print(sig1)
+                print(class_0)
+                print(class_1)
+                print("******{}*****".format(sig1))
                 class_0 += 2
                 sigma_b = prob1*sig1
 
             elif prob1 == 0:
                 sig0 = np.std(class_0) ** 2
-                print("******{}*****".format(sig1))
+
                 class_0 += 2
                 sigma_b = prob0 * sig0
 
