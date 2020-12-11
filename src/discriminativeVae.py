@@ -252,5 +252,5 @@ if __name__ == '__main__':
 
     callbacks_list = [checkpoint, csv_logger]
 
-    model.fit(train_data, epochs=20, batch_size=128, callbacks=callbacks_list) # , validation_data=(test_data, test_data),
+    model.fit(train_data, epochs=20, batch_size=128, validation_data=(test_data, test_data), callbacks=callbacks_list)
 
