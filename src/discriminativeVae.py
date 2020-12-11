@@ -107,16 +107,17 @@ def otsu(error):
 
         N0 = tf.math.count_nonzero(cond0, axis=[1, 2], dtype=tf.float32)
         N1 = tf.math.count_nonzero(cond1, axis=[1, 2], dtype=tf.float32)
-        print(cond0)
-        print(N0)
+
         mean0 = tf.reduce_mean(cond0, axis=[1, 2])*((N1+N0)/N0)
         mean0 = tf.where(tf.math.is_nan(mean0), tf.zeros_like(mean0), mean0)
         mean1 = tf.reduce_mean(cond1, axis=[1, 2])*((N1+N0)/N1)
+        mean1 = tf.where(tf.math.is_nan(mean1), tf.zeros_like(mean1), mean1)
 
-        print(mean0)
-        mean0.append(3)
+
         prob0 = N0/(N1+N0)
         prob1 = N1/(N1+N0)
+        print(prob0)
+        prob0.append(3)
 
         sig_b = prob0*prob1*(mean0-mean1)**2
         bool = tf.math.greater_equal(sig_b, sig_max)
