@@ -110,7 +110,7 @@ def otsu(error):
         print(cond0)
         print(N0)
         mean0 = tf.reduce_mean(cond0, axis=[1, 2])*((N1+N0)/N0)
-        mean0 = tf.where(tf.is_nan(mean0), tf.zeros_like(mean0), mean0)
+        mean0 = tf.where(tf.math.is_nan(mean0), tf.zeros_like(mean0), mean0)
         mean1 = tf.reduce_mean(cond1, axis=[1, 2])*((N1+N0)/N1)
 
         print(mean0)
