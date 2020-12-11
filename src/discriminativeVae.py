@@ -121,8 +121,6 @@ def otsu(error):
         bool = tf.math.greater_equal(sig_b, sig_max)
         sig_max = tf.where(bool, sig_b, sig_max)
         opti_tresh = tf.where(bool, tf.zeros_like(opti_tresh)+eps, opti_tresh)
-        print(opti_tresh)
-        opti_tresh.append(3)
 
     return opti_tresh
 
@@ -143,6 +141,10 @@ def dicriminative_error(error, threshold):
 
     error1 = tf.math.multiply(error, mask1)
     error2 = tf.math.multiply(error, mask2)
+
+    print(error1)
+    print(error2)
+    error.append(3)
 
     N1 = tf.reduce_sum(mask1, axis=[1, 2])
     N2 = tf.reduce_sum(mask2, axis=[1, 2])
