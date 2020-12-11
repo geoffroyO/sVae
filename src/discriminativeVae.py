@@ -151,13 +151,13 @@ def dicriminative_error(error, threshold):
 
     mean1 = tf.math.divide_no_nan(tf.reduce_sum(error1, axis=[1, 2]), N1)
     mean2 = tf.math.divide_no_nan(tf.reduce_sum(error2, axis=[1, 2]), N2)
-    print(N2)
-    print(mean2)
-    mean1.append(0)
 
-    sigmab = prob1*prob2*(mean1-mean2)**2
+    sigmaw = prob1*prob2*(mean1-mean2)**2
 
-    return mean1, sigmab
+    print(mean1)
+    print(sigmaw)
+
+    return mean1, sigmaw
 
 
 class disciminativeAno(keras.Model):
