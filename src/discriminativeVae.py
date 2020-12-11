@@ -96,44 +96,27 @@ def decoder():
     decoder = Model(latent_inputs, decoder_outputs, name="decoder")
     return decoder
 
-""" mean1, mean2, count1, count2 = 0, 0, 0, 0
-        for i in range(n):
-            for j in range(m):
-                if error[i, j] >= eps:
-                    count1 += 1
-                    mean1 += error[i, j]
-                else:
-                    count2 += 1
-                    mean2 += error[i, j]
-
-        mean1 /= count1
-        mean2 /= count2
-
-        sig = (count1 * count2 / (count1 + count2) ** 2) * (mean1 - mean2) ** 2
-
-        if sig > sig_max:
-            sig_max = sig
-            opti_tresh = eps"""
-
-
 def otsu(error):
     sig_max, opti_tresh = tf.reduce_sum(tf.zeros_like(error), axis=[1, 2]), \
                           tf.reduce_sum(tf.zeros_like(error), axis=[1, 2])
 
     for eps in np.arange(0.1, 0.91, 0.01):
-        cond1 = tf.keras.activations.relu(error, threshold=eps)
-        mean1 = tf.reduce_mean(cond1, axis=[1, 2])
-        epsilon = tf.keras.backend.epsilon()
-        count1 = tf.reduce_sum(tf.math.abs(cond1/(tf.math.abs(cond1)+epsilon)), axis=[1, 2])
 
-        cond2 = error - cond1
-        mean2 = tf.reduce_mean(cond2, axis=[1, 2])
-        epsilon = tf.keras.backend.epsilon()
-        count2 = tf.reduce_sum(tf.math.abs(cond2 / (tf.math.abs(cond2) + epsilon)), axis=[1, 2])
+        cond0 = tf.where(error < eps, error, tf.zeros_like(error))
+        cond1 = tf.where(error >= eps, error, tf.zeros_like(error))
 
-        sig = (count1*count2/(count1+count2)**2)*(mean1-mean2)**2
-        bool = tf.math.greater_equal(sig, sig_max)
-        sig_max = tf.where(bool, sig, sig_max)
+        N0 = tf.math.count_nonzero(cond0, axis=[1, 2])
+        N1 = tf.math.count_nonzero(cond1, axis=[1, 2])
+
+        mean0 = tf.reduce_mean(cond0, axis=[1, 2])*((N1+N0)/N0)
+        mean1 = tf.reduce_mean(cond1, axis=[1, 2])*((N1+N0)/N1)
+
+        prob0 = N0/(N1+N0)
+        prob1 = N1/(N1+N0)
+
+        sig_b = prob0*prob1*(mean0-mean1)**2
+        bool = tf.math.greater_equal(sig_b, sig_max)
+        sig_max = tf.where(bool, sig_b, sig_max)
         opti_tresh = tf.where(bool, tf.zeros_like(opti_tresh)+eps, opti_tresh)
 
     return opti_tresh
@@ -207,6 +190,8 @@ class disciminativeAno(keras.Model):
 
             with tape.stop_recording():
                 threshold = otsu(error)
+                print(threshold)
+                threshold += 2
 
             sigma = reduce_std(error, axis=[1, 2])
             discr_err, sigma_b = dicriminative_error(error, threshold)
