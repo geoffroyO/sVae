@@ -105,13 +105,14 @@ def otsu(error):
         cond0 = tf.where(error < eps, error, tf.zeros_like(error))
         cond1 = tf.where(error >= eps, error, tf.zeros_like(error))
 
-        N0 = tf.math.count_nonzero(cond0, axis=[1, 2])
-        N1 = tf.math.count_nonzero(cond1, axis=[1, 2])
-        print(N0)
+        N0 = tf.math.count_nonzero(cond0, axis=[1, 2], dtype=tf.float32)
+        N1 = tf.math.count_nonzero(cond1, axis=[1, 2], dtype=tf.float32)
         print(cond0)
+        print(N0)
         mean0 = tf.reduce_mean(cond0, axis=[1, 2])*((N1+N0)/N0)
         mean1 = tf.reduce_mean(cond1, axis=[1, 2])*((N1+N0)/N1)
 
+        print(mean0)
         prob0 = N0/(N1+N0)
         prob1 = N1/(N1+N0)
 
