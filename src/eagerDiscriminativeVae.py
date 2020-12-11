@@ -96,25 +96,6 @@ def decoder():
     decoder = Model(latent_inputs, decoder_outputs, name="decoder")
     return decoder
 
-""" mean1, mean2, count1, count2 = 0, 0, 0, 0
-        for i in range(n):
-            for j in range(m):
-                if error[i, j] >= eps:
-                    count1 += 1
-                    mean1 += error[i, j]
-                else:
-                    count2 += 1
-                    mean2 += error[i, j]
-
-        mean1 /= count1
-        mean2 /= count2
-
-        sig = (count1 * count2 / (count1 + count2) ** 2) * (mean1 - mean2) ** 2
-
-        if sig > sig_max:
-            sig_max = sig
-            opti_tresh = eps"""
-
 
 def otsu(error):
     error = error.numpy()
@@ -131,6 +112,10 @@ def otsu(error):
                         class_0.append(err)
                     else:
                         class_1.append(err)
+
+            print(class_0)
+            print(class_1)
+            class_0 += 2
 
             prob1, prob2 = len(class_0) / (n + m), len(class_1) / (n + m)
             print(prob1, prob2)
