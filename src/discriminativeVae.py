@@ -141,9 +141,8 @@ def dicriminative_error(error, threshold):
 
     error1 = tf.math.multiply(error, mask1)
     error2 = tf.math.multiply(error, mask2)
-
+    print(mask1)
     print(error1)
-    print(error2)
     error.append(3)
 
     N1 = tf.reduce_sum(mask1, axis=[1, 2])
@@ -199,7 +198,6 @@ class disciminativeAno(keras.Model):
                 threshold = otsu(error)
 
             sigma = reduce_std(error, axis=[1, 2])
-            print(sigma)
             discr_err, sigma_b = dicriminative_error(error, threshold)
 
             reconstruction_loss = discr_err + 5 * (1 - (sigma_b / sigma) ** 2)
