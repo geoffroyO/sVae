@@ -102,7 +102,7 @@ def otsu(error):
     batch_size, n, m = error.shape
     sig_min, opti_tresh = np.zeros((batch_size)), np.zeros((batch_size))
 
-    for eps in np.arange(0.1, 0.91, 0.01):
+    for eps in np.arange(0, 0.91, 0.01):
         for batch in range(batch_size):
             class_0, class_1 = [], []
             for i in range(n):
@@ -113,24 +113,23 @@ def otsu(error):
                     else:
                         class_1.append(err)
 
-            print(class_0)
-            print(class_1)
+            prob0, prob1 = len(class_0) / (n * m), len(class_1) / (n * m)
 
-            prob1, prob2 = len(class_0) / (n * m), len(class_1) / (n * m)
-            print(prob1, prob2)
-            class_0 += 2
-            if prob1 == 0:
-                sig2 = np.std(class_1) ** 2
-                sigma_b = prob2 * sig2
+            if prob0 == 0:
+                sig1 = np.std(class_1) ** 2
+                print(sig1)
+                class_0 += 2
+                sigma_b = prob1*sig1
 
-            if prob2 == 0:
-                prob1 = len(class_0) / (n + m)
-                sig1 = np.std(class_0) ** 2
-                sigma_b = prob1 * sig1
+            elif prob1 == 0:
+                sig0 = np.std(class_0) ** 2
+                print("******{}*****".format(sig1))
+                class_0 += 2
+                sigma_b = prob0 * sig0
 
             else:
                 sig1, sig2 = np.std(class_0)**2, np.std(class_1)**2
-                sigma_b = prob1*sig1+prob2*sig2
+                sigma_b = prob1*sig1+prob1*sig2
 
             if sig_min[batch] > sigma_b:
                 sig_min[batch] = sigma_b
