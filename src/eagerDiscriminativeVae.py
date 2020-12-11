@@ -115,10 +115,10 @@ def otsu(error):
 
             print(class_0)
             print(class_1)
-            class_0 += 2
 
             prob1, prob2 = len(class_0) / (n + m), len(class_1) / (n + m)
             print(prob1, prob2)
+            class_0 += 2
             if prob1 == 0:
                 sig2 = np.std(class_1) ** 2
                 sigma_b = prob2 * sig2
