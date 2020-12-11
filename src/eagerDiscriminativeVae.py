@@ -200,8 +200,7 @@ class disciminativeAno(keras.Model):
             L2 = squared_difference(features, reconstruction)
             error = tf.reduce_mean(L2, axis=-1)
 
-            with tape.stop_recording():
-                threshold = otsu(error)
+            threshold = otsu(error)
 
             reconstruction_loss = dicriminative_error(error, threshold)
             reconstruction_loss = tf.reduce_mean(reconstruction_loss)
