@@ -14,7 +14,8 @@ def enumMatrix(N, M, block_size):
 
 def preddiscrVae(model, img, block_size):
     N, M, C = img.shape
-    reconstuction_img, features_img, mask_error = np.zeros((N, M, C)), np.zeros((N, M, C)), np.zeros((N, M))
+    reconstuction_img, features_img, mask_error, mask = np.zeros((N, M, C)), np.zeros((N, M, C)), \
+                                                        np.zeros((N, M)), np.zeros((N, M))
 
     blocks = []
     for i in range(N-block_size+1):
@@ -22,11 +23,14 @@ def preddiscrVae(model, img, block_size):
             blocks.append(img[i:(i+block_size), j:(j+block_size)])
 
     blocks = np.array(blocks)
-    features, reconstruction, error = model.predict(blocks)
+    features, reconstruction, error, mask_predict = model.predict(blocks)
     count = 0
 
     for i in range(N-block_size+1):
         for j in range(M-block_size+1):
+            mask_pred = mask_predict[count]
+            mask[i:(i+block_size), j:(j+block_size)] += mask_pred
+
             mask_error_pred = error[count]
             mask_error[i:(i+block_size), j:(j+block_size)] += mask_error_pred
 
@@ -38,11 +42,12 @@ def preddiscrVae(model, img, block_size):
             count += 1
     enum = enumMatrix(N, M, block_size)
     mask_error /= enum
+    mask /= enum
     enum_3D = np.dstack((enum, enum))
     enum_3D = np.dstack((enum_3D, enum))
     reconstuction_img /= enum_3D
     features_img /= enum_3D
-    return reconstuction_img, features_img, mask_error
+    return reconstuction_img, features_img, mask_error, mask
 
 
 if __name__=='__main__':
@@ -70,4 +75,9 @@ if __name__=='__main__':
         img = img[..., ::-1]
         img = img.astype('float32') / 255.
 
-        reconstruction, features, error = preddiscrVae(model, img, 32)
+        reconstruction, features, error, mask = preddiscrVae(model, img, 32)
+        np.save("./img_test/{}_reconstruction.npy".format(k), reconstruction)
+        np.save("./img_test/{}_features.npy".format(k), features)
+        np.save("./img_test/{}_error.npy".format(k), error)
+        np.save("./img_test/{}_mask.npy".format(k), mask)
+
