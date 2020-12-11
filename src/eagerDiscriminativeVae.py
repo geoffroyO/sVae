@@ -138,7 +138,7 @@ def discriminative_labelling(error, treshold):
 def dicriminative_error(error, threshold):
     error = error.numpy()
     batch_size, n, m = error.shape
-    discr_err = np.zeros((batch_size))
+    discr_err = []
 
     for batch in range(batch_size):
         class_0, class_1 = [], []
@@ -153,16 +153,16 @@ def dicriminative_error(error, threshold):
         p1 = len(class_1)/(n*m)
 
         if p0 == 0:
-            discr_err[batch_size] = 5
+            discr_err.append(5)
 
         elif p1 == 0:
-            discr_err[batch_size] = np.mean(class_0) + 5
+            discr_err.append(np.mean(class_0) + 5)
 
         else:
             sig_0 = np.std(class_0)**2
             sig_1 = np.std(class_1)**2
             sig = np.std(class_0 + class_1)**2
-            discr_err[batch_size] = np.mean(class_0) + 5*(p0*sig_0 + p1*sig_1)/sig
+            discr_err.append(np.mean(class_0) + 5*(p0*sig_0 + p1*sig_1)/sig)
     print(discr_err)
     return discr_err
 
