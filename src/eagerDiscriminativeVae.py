@@ -163,7 +163,6 @@ def dicriminative_error(error, threshold):
             sig_1 = np.std(class_1)**2
             sig = np.std(class_0 + class_1)**2
             discr_err.append(np.mean(class_0) + 5*(p0*sig_0 + p1*sig_1)/sig)
-    print(discr_err)
     return discr_err
 
 
@@ -206,8 +205,10 @@ class disciminativeAno(keras.Model):
 
             reconstruction_loss = dicriminative_error(error, threshold)
             reconstruction_loss = tf.reduce_mean(reconstruction_loss)
+            print("******{}*****".format(reconstruction_loss))
 
             kl_loss = -0.5*tf.reduce_mean(1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var))
+            print("******{}*****".format(kl_loss))
 
             total_loss = reconstruction_loss + kl_loss
         grads = tape.gradient(total_loss, self.trainable_weights)
