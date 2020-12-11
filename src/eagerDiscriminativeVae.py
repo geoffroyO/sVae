@@ -100,7 +100,7 @@ def decoder():
 def otsu(error):
     error = error.numpy()
     batch_size, n, m = error.shape
-    sig_min, opti_tresh = np.zeros((batch_size)), np.zeros((batch_size))
+    sig_max, opti_tresh = np.zeros((batch_size)), np.zeros((batch_size))
 
     for eps in np.arange(0, 0.91, 0.01):
         for batch in range(batch_size):
@@ -115,23 +115,18 @@ def otsu(error):
 
             prob0, prob1 = len(class_0) / (n * m), len(class_1) / (n * m)
 
-            if prob0 == 0:
-                sig1 = np.std(class_1) ** 2
-                sigma_b = prob1*sig1
-
-            elif prob1 == 0:
-                sig0 = np.std(class_0) ** 2
-                sigma_b = prob0 * sig0
+            if prob0 == 0 or prob1 == 0:
+                sigma_w = 0
 
             else:
-                sig1, sig2 = np.std(class_0)**2, np.std(class_1)**2
-                sigma_b = prob1*sig1+prob1*sig2
+                mean0, mean1 = np.mean(class_0), np.mean(class_1)
+                sigma_w = prob0*prob1*(mean0 - mean1)**2
 
-            if sig_min[batch] > sigma_b:
-                sig_min[batch] = sigma_b
+            if sig_max[batch] < sigma_w:
+                sig_max[batch] = sigma_w
                 opti_tresh[batch] = eps
     print(opti_tresh)
-    opti_tresh += 3
+    np.array(opti_tresh + None)
     return opti_tresh
 
 
