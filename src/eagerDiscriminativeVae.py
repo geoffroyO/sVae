@@ -209,6 +209,8 @@ class disciminativeAno(keras.Model):
 
             kl_loss = -0.5*tf.reduce_mean(1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var))
             print("******{}*****".format(kl_loss))
+            print(type(kl_loss))
+            print(type(reconstruction_loss))
 
             total_loss = reconstruction_loss + kl_loss
         grads = tape.gradient(total_loss, self.trainable_weights)
