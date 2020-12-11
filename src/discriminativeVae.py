@@ -160,15 +160,15 @@ def dicriminative_error(error, threshold):
 class disciminativeAno(keras.Model):
     def __init__(self, encoder, decoder, **kwargs):
         super(disciminativeAno, self).__init__(**kwargs)
-        # self.srmConv2D = Conv2D(3, [5, 5], trainable=False, kernel_initializer=_build_SRM_kernel(),
-        #                         activation=None, padding='same', strides=1)
+        self.srmConv2D = Conv2D(3, [5, 5], trainable=False, kernel_initializer=_build_SRM_kernel(),
+                                activation=None, padding='same', strides=1,
+                                bias_initializer=tf.constant_initializer(0.5))
 
         self.encoder = encoder
         self.decoder = decoder
 
     def call(self, inputs):
-        # features = self.srmConv2D(inputs)
-        features = inputs
+        features = self.srmConv2D(inputs)
         z_mean, z_log_var, z = self.encoder(features)
         reconstruction = self.decoder(z)
 
@@ -182,8 +182,7 @@ class disciminativeAno(keras.Model):
 
     def train_step(self, data):
         with tf.GradientTape() as tape:
-            # features = self.srmConv2D(data)
-            features = data
+            features = self.srmConv2D(data)
             z_mean, z_log_var, z = self.encoder(features)
             reconstruction = self.decoder(z)
 
