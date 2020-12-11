@@ -116,10 +116,10 @@ def otsu(error):
 
         prob0 = N0/(N1+N0)
         prob1 = N1/(N1+N0)
-        print(prob0)
-        prob0.append(3)
 
         sig_b = prob0*prob1*(mean0-mean1)**2
+        print(sig_b)
+        sig_b.append(3)
         bool = tf.math.greater_equal(sig_b, sig_max)
         sig_max = tf.where(bool, sig_b, sig_max)
         opti_tresh = tf.where(bool, tf.zeros_like(opti_tresh)+eps, opti_tresh)
