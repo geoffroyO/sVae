@@ -246,12 +246,12 @@ if __name__ == '__main__':
     model = disciminativeAno(encoder(), decoder())
     model.compile(optimizer=Adam(lr=1e-6))
 
-    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/disciminativeAno_20.h5",
+    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/disciminativeAno_250_we.h5",
                                                     monitor='val_loss', verbose=1,
                                                     save_best_only=True, mode='min')
-    csv_logger = CSVLogger("disciminativeAno_spliced_20.csv", append=True)
+    csv_logger = CSVLogger("disciminativeAno_250_we.csv", append=True)
 
     callbacks_list = [checkpoint, csv_logger]
 
-    model.fit(train_data, epochs=20, batch_size=128, validation_data = (test_data, test_data), callbacks=callbacks_list)
+    model.fit(train_data, epochs=250, batch_size=128, validation_data=(test_data, test_data), callbacks=callbacks_list)
 
