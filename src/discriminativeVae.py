@@ -167,19 +167,18 @@ class disciminativeAno(keras.Model):
         self.decoder = decoder
 
     def call(self, inputs):
-        # srm_features = self.srmConv2D(inputs)
-        srm_features = inputs
-        _, _, z = self.encoder(srm_features)
-
+        # features = self.srmConv2D(inputs)
+        features = inputs
+        z_mean, z_log_var, z = self.encoder(features)
         reconstruction = self.decoder(z)
 
-        L2 = squared_difference(inputs, reconstruction)
+        L2 = squared_difference(features, reconstruction)
         error = tf.reduce_mean(L2, axis=-1)
 
-        treshold, _ = otsu(error)
-        mask = discriminative_labelling(error, treshold)
+        threshold = otsu(error)
 
-        return mask
+        mask = discriminative_labelling(error, threshold)
+        return mask, error
 
     def train_step(self, data):
         with tf.GradientTape() as tape:
@@ -212,23 +211,23 @@ class disciminativeAno(keras.Model):
         }
 
     def test_step(self, data):
-        features = self.srmConv2D(data)
-
+        # features = self.srmConv2D(data)
+        features = data
         z_mean, z_log_var, z = self.encoder(features)
         reconstruction = self.decoder(z)
 
         L2 = squared_difference(features, reconstruction)
         error = tf.reduce_mean(L2, axis=-1)
-        treshold, sigma_b = otsu(error)
-        sigma, tau = reduce_std(error), 5
 
-        discr_err = discriminative_labelling(error, treshold)
+        threshold = otsu(error)
 
-        reconstruction_loss = discr_err + tau * (1 - (sigma_b / sigma) ** 2)
+        sigma = reduce_variance(error, axis=[1, 2])
+        mean_0, sigma_b = dicriminative_error(error, threshold)
 
-        kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
-        kl_loss = tf.reduce_mean(kl_loss)
-        kl_loss *= -0.5
+        reconstruction_loss = mean_0 + 5 * (1 - sigma_b / sigma)
+        reconstruction_loss = tf.reduce_mean(reconstruction_loss)
+
+        kl_loss = -0.5 * tf.reduce_mean(1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var))
 
         total_loss = reconstruction_loss + kl_loss
 
@@ -246,11 +245,12 @@ if __name__ == '__main__':
     model = disciminativeAno(encoder(), decoder())
     model.compile(optimizer=Adam(lr=1e-6))
 
-    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/disciminativeAno.h5",
+    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/disciminativeAno_20.h5",
                                                     monitor='val_loss', verbose=1,
                                                     save_best_only=True, mode='min')
-    csv_logger = CSVLogger("disciminativeAno_spliced_250.csv", append=True)
+    csv_logger = CSVLogger("disciminativeAno_spliced_20.csv", append=True)
 
     callbacks_list = [checkpoint, csv_logger]
 
-    model.fit(train_data, epochs=250, batch_size=128) # , validation_data=(test_data, test_data), callbacks=callbacks_list
+    model.fit(train_data, epochs=20, batch_size=128, callbacks=callbacks_list) # , validation_data=(test_data, test_data),
+
