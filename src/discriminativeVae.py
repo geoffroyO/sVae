@@ -107,7 +107,8 @@ def otsu(error):
 
         N0 = tf.math.count_nonzero(cond0, axis=[1, 2])
         N1 = tf.math.count_nonzero(cond1, axis=[1, 2])
-
+        print(N0)
+        print(cond0)
         mean0 = tf.reduce_mean(cond0, axis=[1, 2])*((N1+N0)/N0)
         mean1 = tf.reduce_mean(cond1, axis=[1, 2])*((N1+N0)/N1)
 
