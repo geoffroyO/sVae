@@ -118,6 +118,10 @@ def otsu(error):
         prob1 = N1/(N1+N0)
 
         sig_b = prob0*prob1*(mean0-mean1)**2
+        print(prob0)
+        print(prob1)
+        print(mean0)
+        print(mean1)
         print(sig_b)
         sig_b.append(3)
         bool = tf.math.greater_equal(sig_b, sig_max)
