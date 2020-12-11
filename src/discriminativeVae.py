@@ -149,8 +149,8 @@ def dicriminative_error(error, threshold):
     prob1 = N1/(N1+N2)
     prob2 = N2/(N1+N2)
 
-    mean1 = tf.math.divide(tf.reduce_sum(error1, axis=[1, 2]), N1)
-    mean2 = tf.math.divide(tf.reduce_sum(error2, axis=[1, 2]), N2)
+    mean1 = tf.math.divide_no_nan(tf.reduce_sum(error1, axis=[1, 2]), N1)
+    mean2 = tf.math.divide_no_nan(tf.reduce_sum(error2, axis=[1, 2]), N2)
     print(N2)
     print(mean2)
     mean1.append(0)
