@@ -1,6 +1,5 @@
 import tensorflow as tf
 import tensorflow_probability as tfp
-from sklearn.model_selection import train_test_split
 from tensorflow import keras, square
 from tensorflow.python.keras import Input, Model
 from tensorflow.python.keras.callbacks import CSVLogger
@@ -133,27 +132,7 @@ def discriminative_labelling(error, treshold):
     return mask
 
 
-def dicriminative_error(error, mask):
-    mask1 = 1 - mask
-    mask2 = mask
-
-    error1 = tf.math.multiply(error, mask1)
-    error2 = tf.math.multiply(error, mask2)
-
-    N1 = tf.reduce_sum(mask1, axis=[1, 2])
-    N2 = tf.reduce_sum(mask2, axis=[1, 2])
-
-    prob1 = N1 / (N1 + N2)
-    prob2 = N2 / (N1 + N2)
-
-    mean1 = tf.math.divide_no_nan(tf.reduce_sum(error1, axis=[1, 2]), N1)
-    mean2 = tf.math.divide_no_nan(tf.reduce_sum(error2, axis=[1, 2]), N2)
-
-    sigmab = prob1 * prob2 * (mean1 - mean2) ** 2
-
-    return mean1, sigmab
-
-def dicriminative_errorblind(error, threshold):
+def dicriminative_error(error, threshold):
     thresh_ = threshold[..., tf.newaxis, tf.newaxis]
     out = error < thresh_
 
@@ -202,9 +181,6 @@ class disciminativeAno(keras.Model):
         return features, reconstruction, error, mask
 
     def train_step(self, data):
-        if isinstance(data, tuple):
-            mask = data[1]
-            data = data[0]
         with tf.GradientTape() as tape:
             features = self.srmConv2D(data)
             z_mean, z_log_var, z = self.encoder(features)
@@ -213,8 +189,11 @@ class disciminativeAno(keras.Model):
             L2 = squared_difference(features, reconstruction)
             error = tf.reduce_mean(L2, axis=-1)
 
+            with tape.stop_recording():
+                threshold = otsu(error)
+
             sigma = reduce_variance(error, axis=[1, 2])
-            mean_0, sigma_b = dicriminative_error(error, mask)
+            mean_0, sigma_b = dicriminative_error(error, threshold)
 
             reconstruction_loss = mean_0 + 5 * (1 - sigma_b/sigma)
             reconstruction_loss = tf.reduce_mean(reconstruction_loss)
@@ -232,7 +211,6 @@ class disciminativeAno(keras.Model):
 
     def test_step(self, data):
         if isinstance(data, tuple):
-            mask = data[1]
             data = data[0]
         features = self.srmConv2D(data)
         z_mean, z_log_var, z = self.encoder(features)
@@ -244,7 +222,7 @@ class disciminativeAno(keras.Model):
         threshold = otsu(error)
 
         sigma = reduce_variance(error, axis=[1, 2])
-        mean_0, sigma_b = dicriminative_error(error, mask)
+        mean_0, sigma_b = dicriminative_error(error, threshold)
 
         reconstruction_loss = mean_0 + 5 * (1 - sigma_b / sigma)
         reconstruction_loss = tf.reduce_mean(reconstruction_loss)
@@ -261,10 +239,8 @@ class disciminativeAno(keras.Model):
 
 
 if __name__ == '__main__':
-    data = np.load("./data_to_load/splicedFinal.npy")
-    mask = np.load("./data_to_load/maskSplicedFinal.npy")
-
-    train_data, test_data, train_mask, test_mask = train_test_split(data, mask, random_state=42)
+    data = np.load("./data_to_load/spliced.npy")
+    train_data, test_data = data[:int(len(data) * 0.7)], data[int(len(data) * 0.7):]
 
     model = disciminativeAno(encoder(), decoder())
     model.compile(optimizer=Adam(lr=1e-6))
@@ -276,5 +252,5 @@ if __name__ == '__main__':
 
     callbacks_list = [checkpoint, csv_logger]
 
-    model.fit(train_data, train_mask, epochs=250, batch_size=128, validation_data=(test_data, test_mask), callbacks=callbacks_list)
+    model.fit(train_data, epochs=250, batch_size=128, validation_data=(test_data, test_data), callbacks=callbacks_list)
 

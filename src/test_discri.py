@@ -65,8 +65,8 @@ if __name__=='__main__':
 
     model.load_weights(pathModel)
 
-    for k in tqdm(range(1, 9)):
-        if k == 8:
+    for k in tqdm(range(1, 10)):
+        if k == 8 or k == 9:
             path = "./img_test/{}.tif".format(k)
         else:
             path = "./img_test/{}.jpg".format(k)
