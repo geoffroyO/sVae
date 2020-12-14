@@ -51,7 +51,7 @@ def preddiscrVae(model, img, block_size):
 
 
 if __name__=='__main__':
-    pathModel = "../pretrained_model/disciminativeAno_20.h5"
+    pathModel = "../pretrained_model/disciminativeAno_250_we.h5"
 
     encoder = dv.encoder()
     decoder = dv.decoder()
