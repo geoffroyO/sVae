@@ -136,7 +136,10 @@ def discriminative_labelling(error, treshold):
 def dicriminative_error(error, mask):
     mask1 = 1 - mask
     mask2 = mask
-
+    print(mask1)
+    print(mask2)
+    if mask1:
+        print("ok")
     error1 = tf.math.multiply(error, mask1)
     error2 = tf.math.multiply(error, mask2)
 
@@ -150,30 +153,6 @@ def dicriminative_error(error, mask):
     mean2 = tf.math.divide_no_nan(tf.reduce_sum(error2, axis=[1, 2]), N2)
 
     sigmab = prob1 * prob2 * (mean1 - mean2) ** 2
-
-    return mean1, sigmab
-
-def dicriminative_errorblind(error, threshold):
-    thresh_ = threshold[..., tf.newaxis, tf.newaxis]
-    out = error < thresh_
-
-    mask1 = tf.cast(out, dtype=tf.float32)
-    mask2 = 1 - mask1
-
-    error1 = tf.math.multiply(error, mask1)
-    error2 = tf.math.multiply(error, mask2)
-
-    N1 = tf.reduce_sum(mask1, axis=[1, 2])
-    N2 = tf.reduce_sum(mask2, axis=[1, 2])
-
-
-    prob1 = N1/(N1+N2)
-    prob2 = N2/(N1+N2)
-
-    mean1 = tf.math.divide_no_nan(tf.reduce_sum(error1, axis=[1, 2]), N1)
-    mean2 = tf.math.divide_no_nan(tf.reduce_sum(error2, axis=[1, 2]), N2)
-
-    sigmab = prob1*prob2*(mean1-mean2)**2
 
     return mean1, sigmab
 
