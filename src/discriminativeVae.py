@@ -137,13 +137,13 @@ def dicriminative_error(error, mask):
     mask1 = 1 - mask
     error1 = tf.math.multiply(error, mask1)
     N1 = tf.reduce_sum(mask1, axis=[1, 2])
-    mean1 = tf.math.divide_no_nan(tf.reduce_sum(error1, axis=[1, 2]), N1)
+    mean1 = tf.math.divide(tf.reduce_sum(error1, axis=[1, 2]), N1)
     return mean1
 
 
-class disciminativeAno(keras.Model):
+class discriminativeAno(keras.Model):
     def __init__(self, encoder, decoder, **kwargs):
-        super(disciminativeAno, self).__init__(**kwargs)
+        super(discriminativeAno, self).__init__(**kwargs)
         self.srmConv2D = Conv2D(3, [5, 5], trainable=False, kernel_initializer=_build_SRM_kernel(),
                                 activation=None, padding='same', strides=1,
                                 bias_initializer=tf.constant_initializer(0.5))
@@ -203,12 +203,9 @@ class disciminativeAno(keras.Model):
         L2 = squared_difference(features, reconstruction)
         error = tf.reduce_mean(L2, axis=-1)
 
-        threshold = otsu(error)
+        mean_0 = dicriminative_error(error, mask)
 
-        sigma = reduce_variance(error, axis=[1, 2])
-        mean_0, sigma_b = dicriminative_error(error, mask)
-
-        reconstruction_loss = mean_0 + 5 * (1 - sigma_b / sigma)
+        reconstruction_loss = mean_0
         reconstruction_loss = tf.reduce_mean(reconstruction_loss)
 
         kl_loss = -0.5 * tf.reduce_mean(1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var))
@@ -225,12 +222,11 @@ class disciminativeAno(keras.Model):
 if __name__ == '__main__':
     data = np.load("./data_to_load/splicedBorder.npy")
     mask = np.load("./data_to_load/masksplicedBorder.npy")
-    mask = [rgb.astype('float32') / 255. for rgb in mask]
 
     train_data, test_data, train_mask, test_mask = train_test_split(data, mask, random_state=42)
 
-    model = disciminativeAno(encoder(), decoder())
-    model.compile(optimizer=Adam(lr=1e-6), run_eagerly=True)
+    model = discriminativeAno(encoder(), decoder())
+    model.compile(optimizer=Adam(lr=1e-6))
 
     checkpoint = tf.keras.callbacks.ModelCheckpoint("../models/discriminativeAno_250.h5",
                                                     monitor='val_loss', verbose=1,
