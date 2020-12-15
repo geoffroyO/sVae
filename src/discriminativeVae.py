@@ -151,9 +151,8 @@ def dicriminative_error(error, mask):
 
     sigmab = prob1 * prob2 * (mean1 - mean2) ** 2
     print(sigmab)
-    print(mean1)
-    if mean1:
-        print('ok')
+    if sigmab:
+        print("ok")
 
     return mean1, sigmab
 
