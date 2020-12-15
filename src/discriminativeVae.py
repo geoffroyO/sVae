@@ -246,7 +246,7 @@ if __name__ == '__main__':
     train_data, test_data, train_mask, test_mask = train_test_split(data, mask, random_state=42)
 
     model = disciminativeAno(encoder(), decoder())
-    model.compile(optimizer=Adam(lr=1e-6))
+    model.compile(optimizer=Adam(lr=1e-6), run_eagerly=True)
 
     checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/disciminativeAno_250_we.h5",
                                                     monitor='val_loss', verbose=1,
