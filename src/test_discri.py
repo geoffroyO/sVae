@@ -100,7 +100,7 @@ if __name__=='__main__':
 
     encoder = dv.encoder()
     decoder = dv.decoder()
-    model = dv.disciminativeAno(encoder, decoder)
+    model = dv.discriminativeAno(encoder, decoder)
 
     path = "./img_test/{}.jpg".format(1)
     img = cv2.imread(path, 1)
