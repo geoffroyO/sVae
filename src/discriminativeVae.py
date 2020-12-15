@@ -243,7 +243,10 @@ class disciminativeAno(keras.Model):
 if __name__ == '__main__':
     data = np.load("./data_to_load/splicedBorder.npy")
     mask = np.load("./data_to_load/masksplicedBorder.npy")
-    print(mask[0])
+    n, m = mask.shape
+    for i in range(n):
+        for j in range(m):
+            print(mask[i, j])
     train_data, test_data, train_mask, test_mask = train_test_split(data, mask, random_state=42)
 
     model = disciminativeAno(encoder(), decoder())
