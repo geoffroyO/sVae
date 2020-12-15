@@ -20,7 +20,11 @@ def predColumbia1(model, img, block_size):
             blocks.append(img[i:(i + block_size), j:(j + block_size)])
 
     blocks = np.array(blocks)
-    features, reconstruction = model.predict(blocks)
+    features, reconstruction = model.predict(blocks[:int(len(blocks)/2)], batch_size=128)
+    features2, reconstruction2 = model.predict(blocks[int(len(blocks)/2):], batch_size=128)
+    features = np.concatenate(features, features2)
+    reconstruction = np.concatenate(reconstruction, reconstruction2)
+
     np.save("./img_test/featuresCo.npy", features)
     np.save("./img_test/reconstructionCo.npy", reconstruction)
     return None
@@ -67,10 +71,7 @@ def preddiscrVae(model, img, block_size):
             blocks.append(img[i:(i+block_size), j:(j+block_size)])
 
     blocks = np.array(blocks)
-    features, reconstruction = model.predict(blocks[:int(len(blocks)/2)], batch_size=128)
-    features2, reconstruction2 = model.predict(blocks[int(len(blocks)/2):], batch_size=128)
-    features += features2
-    reconstruction += reconstruction2
+    features, reconstruction = model.predict(blocks, batch_size=128)
     count = 0
 
     for i in range(N-block_size+1):
@@ -118,4 +119,12 @@ if __name__=='__main__':
         reconstruction, features = preddiscrVae(model, img, 32)
         np.save("./img_test/{}_reconstruction.npy".format(k), reconstruction)
         np.save("./img_test/{}_features.npy".format(k), features)
+
+    path = "./img_test/{}.tif".format(9)
+    img = cv2.imread(path, 1)
+    img = img[..., ::-1]
+    img = img.astype('float32') / 255.
+
+    predColumbia1(model, img, 32)
+    predColumbia2(img, 32)
 
