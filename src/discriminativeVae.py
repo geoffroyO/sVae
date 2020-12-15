@@ -135,22 +135,10 @@ def discriminative_labelling(error, treshold):
 
 def dicriminative_error(error, mask):
     mask1 = 1 - mask
-    mask2 = mask
-
     error1 = tf.math.multiply(error, mask1)
-    error2 = tf.math.multiply(error, mask2)
-
     N1 = tf.reduce_sum(mask1, axis=[1, 2])
-    N2 = tf.reduce_sum(mask2, axis=[1, 2])
-
-    prob1 = N1 / (N1 + N2)
-    prob2 = N2 / (N1 + N2)
-
     mean1 = tf.math.divide_no_nan(tf.reduce_sum(error1, axis=[1, 2]), N1)
-    mean2 = tf.math.divide_no_nan(tf.reduce_sum(error2, axis=[1, 2]), N2)
-
-    sigmab = prob1 * prob2 * (mean1 - mean2) ** 2
-    return mean1, sigmab
+    return mean1
 
 
 class disciminativeAno(keras.Model):
@@ -188,10 +176,9 @@ class disciminativeAno(keras.Model):
             L2 = squared_difference(features, reconstruction)
             error = tf.reduce_mean(L2, axis=-1)
 
-            sigma = reduce_variance(error, axis=[1, 2])
-            mean_0, sigma_b = dicriminative_error(error, mask)
+            mean_0 = dicriminative_error(error, mask)
 
-            reconstruction_loss = mean_0 + (1 - sigma_b/sigma)
+            reconstruction_loss = mean_0
             reconstruction_loss = tf.reduce_mean(reconstruction_loss)
 
             kl_loss = -0.5*tf.reduce_mean(1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var))

@@ -127,6 +127,7 @@ def training():
 
 if __name__ == '__main__':
     data, mask = load_data_mask()
+    mask = [rgb.astype('float32') / 255. for rgb in mask]
     print("*****{}*****".format(len(data)))
     print("*****{}*****".format(len(mask)))
     np.save("./data_to_load/splicedBorderAndOri.npy", data)
