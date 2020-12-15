@@ -150,10 +150,6 @@ def dicriminative_error(error, mask):
     mean2 = tf.math.divide_no_nan(tf.reduce_sum(error2, axis=[1, 2]), N2)
 
     sigmab = prob1 * prob2 * (mean1 - mean2) ** 2
-    print(sigmab)
-    if sigmab:
-        print("ok")
-
     return mean1, sigmab
 
 
