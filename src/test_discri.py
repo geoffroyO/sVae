@@ -104,8 +104,8 @@ if __name__=='__main__':
     model.predict(np.array([img[0:32, 0:32]]))
 
     model.load_weights(pathModel)
-    """
-    for k in tqdm(range(1, 10)):
+
+    for k in tqdm(range(1, 9)):
         if k == 8 or k == 9:
             path = "./img_test/{}.tif".format(k)
         else:
@@ -118,12 +118,4 @@ if __name__=='__main__':
         reconstruction, features = preddiscrVae(model, img, 32)
         np.save("./img_test/{}_reconstruction.npy".format(k), reconstruction)
         np.save("./img_test/{}_features.npy".format(k), features)
-    """
-    path = "./img_test/{}.tif".format(9)
-    img = cv2.imread(path, 1)
-    img = img[..., ::-1]
-    img = img.astype('float32') / 255.
-
-    predColumbia1(model, img, 32)
-    predColumbia2(img, 32)
 
