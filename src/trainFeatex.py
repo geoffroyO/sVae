@@ -65,12 +65,18 @@ def load_data_mask():
     mask2 = []
     data2 = []
     print("... Labelizing")
+    countBord, countOri = 0, 0
     for k, msk in tqdm(enumerate(mask)):
         tp = np.sum(msk) / 255
         percent = tp * 100 / (32 * 32)
         if 12.5 < percent < 87.5:
             mask2.append(msk)
             data2.append(data[k])
+            countBord += 1
+        if percent == 0 and countOri < countBord:
+            mask2.append(msk)
+            data2.append(data[k])
+            countOri += 1
     return data2, mask2
 
 
@@ -117,10 +123,12 @@ def training():
     plt.savefig("./ROC")
     plt.close(fig)
     return None
+
+
 if __name__ == '__main__':
     data, mask = load_data_mask()
     print("*****{}*****".format(len(data)))
     print("*****{}*****".format(len(mask)))
-    np.save("./data_to_load/splicedBorder.npy", data)
-    np.save("./data_to_load/masksplicedBorder.npy", mask)
+    np.save("./data_to_load/splicedBorderAndOri.npy", data)
+    np.save("./data_to_load/maskSplicedBorderAndOri.npy", mask)
 

@@ -245,10 +245,10 @@ if __name__ == '__main__':
     model = disciminativeAno(encoder(), decoder())
     model.compile(optimizer=Adam(lr=1e-6), run_eagerly=True)
 
-    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/disciminativeAno_250_we.h5",
+    checkpoint = tf.keras.callbacks.ModelCheckpoint("../models/discriminativeAno_250.h5",
                                                     monitor='val_loss', verbose=1,
                                                     save_best_only=True, mode='min')
-    csv_logger = CSVLogger("disciminativeAno_250_we.csv", append=True)
+    csv_logger = CSVLogger("discriminativeAno_250.csv", append=True)
 
     callbacks_list = [checkpoint, csv_logger]
 
