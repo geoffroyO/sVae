@@ -67,7 +67,7 @@ def preddiscrVae(model, img, block_size):
             blocks.append(img[i:(i+block_size), j:(j+block_size)])
 
     blocks = np.array(blocks)
-    features, reconstruction = model.predict(blocks)
+    features, reconstruction = model.predict(blocks, batch_size=128)
     count = 0
 
     for i in range(N-block_size+1):
@@ -102,8 +102,8 @@ if __name__=='__main__':
 
     model.load_weights(pathModel)
 
-    for k in tqdm(range(1, 9)):
-        if k == 8:
+    for k in tqdm(range(1, 10)):
+        if k == 8 and k == 9:
             path = "./img_test/{}.tif".format(k)
         else:
             path = "./img_test/{}.jpg".format(k)
@@ -115,7 +115,7 @@ if __name__=='__main__':
         reconstruction, features = preddiscrVae(model, img, 32)
         np.save("./img_test/{}_reconstruction.npy".format(k), reconstruction)
         np.save("./img_test/{}_features.npy".format(k), features)
-
+"""
     path = "./img_test/{}.tif".format(9)
     img = cv2.imread(path, 1)
     img = img[..., ::-1]
@@ -123,4 +123,5 @@ if __name__=='__main__':
 
     predColumbia1(model, img, 32)
     predColumbia2(img, 32)
+"""
 
