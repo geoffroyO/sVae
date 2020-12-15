@@ -55,7 +55,26 @@ def load_data():
     return data, labels
 
 
-if __name__ == '__main__':
+def load_data_mask():
+    print("... Loading data")
+    spliced, copy_moved, spliced_mask, copy_moved_mask = lm.load_images("../data/CASIA2/Tp/", "../data/CASIA2/gt/")
+    print("... Patching images")
+    data, mask = lm.patch_images(spliced, spliced_mask)
+    print("... Normalizing images")
+    data = [rgb.astype('float32') / 255. for rgb in tqdm(data)]
+    mask2 = []
+    data2 = []
+    print("... Labelizing")
+    for k, msk in tqdm(enumerate(mask)):
+        tp = np.sum(msk) / 255
+        percent = tp * 100 / (32 * 32)
+        if 12.5 < percent < 87.5:
+            mask2.append(msk)
+            data2.append(data[k])
+    return data2, mask2
+
+
+def training():
     name = "blurred_featex_250.h5"
     data = np.load("./data_to_load/spliced.npy", )
     labels = np.load("./data_to_load/spliced_labels.npy")
@@ -68,7 +87,6 @@ if __name__ == '__main__':
                                                                             tf.keras.metrics.AUC(),
                                                                             tf.keras.metrics.Precision()])
 
-
     checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/{}".format(name),
                                                     monitor='val_accuracy', verbose=1,
                                                     save_best_only=True, mode='max')
@@ -78,7 +96,6 @@ if __name__ == '__main__':
 
     history = model.fit(train_data, train_label, epochs=250, batch_size=128,
                         validation_data=(test_data, test_label), callbacks=callbacks_list)
-
 
     model.load_weights("../pretrained_model/{}".format(name))
 
@@ -99,3 +116,9 @@ if __name__ == '__main__':
     plt.legend(loc="lower right")
     plt.savefig("./ROC")
     plt.close(fig)
+    return None
+if __name__ == '__main__':
+    data, mask = load_data_mask()
+    print("*****{}*****".format(len(data)))
+    print("*****{}*****".format(len(mask)))
+

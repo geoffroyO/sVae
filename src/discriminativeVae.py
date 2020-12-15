@@ -196,7 +196,7 @@ class disciminativeAno(keras.Model):
             sigma = reduce_variance(error, axis=[1, 2])
             mean_0, sigma_b = dicriminative_error(error, mask)
 
-            reconstruction_loss = mean_0 + 5 * (1 - sigma_b/sigma)
+            reconstruction_loss = mean_0 + (1 - sigma_b/sigma)
             reconstruction_loss = tf.reduce_mean(reconstruction_loss)
 
             kl_loss = -0.5*tf.reduce_mean(1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var))
