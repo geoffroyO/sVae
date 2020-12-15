@@ -108,6 +108,7 @@ if __name__=='__main__':
         else:
             path = "./img_test/{}.jpg".format(k)
 
+        print(path)
         img = cv2.imread(path, 1)
         img = img[..., ::-1]
         img = img.astype('float32') / 255.
