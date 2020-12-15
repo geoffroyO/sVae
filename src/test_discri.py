@@ -12,6 +12,51 @@ def enumMatrix(N, M, block_size):
     return enum
 
 
+def predColumbia1(model, img, block_size):
+    N, M, C = img.shape
+    blocks = []
+    for i in range(N - block_size + 1):
+        for j in range(M - block_size + 1):
+            blocks.append(img[i:(i + block_size), j:(j + block_size)])
+
+    blocks = np.array(blocks)
+    features, reconstruction = model.predict(blocks)
+    np.save("./img_test/featuresCo.npy", features)
+    np.save("./img_test/reconstructionCo.npy", reconstruction)
+    return None
+
+
+def predColumbia2(img, block_size):
+    N, M, C = img.shape
+    reconstuction_img, features_img = np.zeros((N, M, C)), np.zeros((N, M, C))
+
+    enum = enumMatrix(N, M, block_size)
+    enum_3D = np.dstack((enum, enum))
+    enum_3D = np.dstack((enum_3D, enum))
+
+    features = np.load("./img_test/featuresCo.npy")
+    count = 0
+    for i in range(N - block_size + 1):
+        for j in range(M - block_size + 1):
+            block_features = features[count]
+            features_img[i:(i + block_size), j:(j + block_size)] += block_features
+            count += 1
+    features_img /= enum_3D
+    np.save("./img_test/9_features.npy", features)
+
+    reconstruction = np.load("./img_test/reconstructionCo.npy")
+    count = 0
+    for i in range(N - block_size + 1):
+        for j in range(M - block_size + 1):
+            block_reconstruction = reconstruction[count]
+            reconstuction_img[i:(i + block_size), j:(j + block_size)] += block_reconstruction
+            count += 1
+    reconstuction_img /= enum_3D
+    np.save("./img_test/9_reconstruction.npy", reconstuction_img)
+
+    return None
+
+
 def preddiscrVae(model, img, block_size):
     N, M, C = img.shape
     reconstuction_img, features_img, mask_error, mask = np.zeros((N, M, C)), np.zeros((N, M, C)), \
@@ -51,7 +96,7 @@ def preddiscrVae(model, img, block_size):
 
 
 if __name__=='__main__':
-    pathModel = "../pretrained_model/disciminativeAno_250_we.h5"
+    pathModel = "../models/discriminativeAno_250.h5"
 
     encoder = dv.encoder()
     decoder = dv.decoder()
@@ -65,8 +110,8 @@ if __name__=='__main__':
 
     model.load_weights(pathModel)
 
-    for k in tqdm(range(1, 10)):
-        if k == 8 or k == 9:
+    for k in tqdm(range(1, 9)):
+        if k == 8:
             path = "./img_test/{}.tif".format(k)
         else:
             path = "./img_test/{}.jpg".format(k)
@@ -80,4 +125,12 @@ if __name__=='__main__':
         np.save("./img_test/{}_features.npy".format(k), features)
         np.save("./img_test/{}_error.npy".format(k), error)
         np.save("./img_test/{}_mask.npy".format(k), mask)
+
+    path = "./img_test/{}.tif".format(9)
+    img = cv2.imread(path, 1)
+    img = img[..., ::-1]
+    img = img.astype('float32') / 255.
+
+    predColumbia1(model, img, 32)
+    predColumbia2(img, 32)
 

@@ -155,14 +155,7 @@ class discriminativeAno(keras.Model):
         features = self.srmConv2D(inputs)
         z_mean, z_log_var, z = self.encoder(features)
         reconstruction = self.decoder(z)
-
-        L2 = squared_difference(features, reconstruction)
-        error = tf.reduce_mean(L2, axis=-1)
-
-        threshold = otsu(error)
-
-        mask = discriminative_labelling(error, threshold)
-        return features, reconstruction, error, mask
+        return features, reconstruction
 
     def train_step(self, data):
         if isinstance(data, tuple):
