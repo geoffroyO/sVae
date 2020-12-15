@@ -121,4 +121,6 @@ if __name__ == '__main__':
     data, mask = load_data_mask()
     print("*****{}*****".format(len(data)))
     print("*****{}*****".format(len(mask)))
+    np.save("./data_to_load/splicedBorder.npy", data)
+    np.save("./data_to_load/masksplicedBorder.npy", mask)
 
