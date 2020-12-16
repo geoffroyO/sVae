@@ -155,7 +155,6 @@ def test_distrib():
     model.predict(np.array([img[0:32, 0:32]]))
 
     model.load_weights(pathModel)
-    model.summary()
 
     data = np.load("./data_to_load/splicedBorderAndOri.npy")
     mask = np.load("./data_to_load/maskSplicedBorderAndOri.npy")
@@ -172,8 +171,26 @@ def test_distrib():
                     oriData.append(data[k])
         if countTamp > 5 and countOri > 5:
             break
-    model_x = Model(input=model.encoder.layers[0], output=model.encoder.layers[7])
-    model_x_hat = Model(input=model.layers[0], output=3)
+    model_x = Model(inputs=model.encoder.layers[0], outputs=model.encoder.layers[7])
+    model_tmp = model.encoder
+    model_x_hat = Model(inputs=model.decoder.layers[0], outputs=model.decoder.layers[2])
+
+    ori_x = model_x.predict(oriData)
+    tamp_x = model_x.predict(tampData)
+
+    tmp_ori_x = model_tmp.predict(oriData)
+    tmp_tamp_x = model_tmp.predict(tampData)
+
+    ori_x_hat = model_x_hat.predict(tmp_ori_x)
+    tamp_x_hat = model_x_hat.predict(tmp_tamp_x)
+
+    np.save("./ori_x.npy", ori_x)
+    np.save("./tamp_x.npy", tamp_x)
+
+    np.save("./ori_x_hat.npy", ori_x_hat)
+    np.save("./tamp_x_hat.npy", tamp_x_hat)
+
+    return None
 
 
 

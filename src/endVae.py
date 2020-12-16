@@ -162,7 +162,7 @@ class srmAno(keras.Model):
 
 
 if __name__ == '__main__':
-    data = np.load("./data_to_load/splicedBorderAndOri.npy")
+    """data = np.load("./data_to_load/splicedBorderAndOri.npy")
     mask = np.load("./data_to_load/maskSplicedBorderAndOri.npy")
     train_data, test_data, train_mask, test_mask = train_test_split(data, mask, random_state=42)
 
@@ -179,3 +179,6 @@ if __name__ == '__main__':
     model.fit(train_data, train_mask, epochs=250, batch_size=128,
               validation_data=(test_data, test_mask),
               callbacks=callbacks_list)
+"""
+    encoder = decoder()
+    encoder.summary()
