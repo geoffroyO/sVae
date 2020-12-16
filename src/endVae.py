@@ -117,8 +117,10 @@ class srmAno(keras.Model):
             reconstruction = self.decoder(z)
 
             L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
-            L1 = tf.math.multiply(L1, 1-mask)
-            reconstruction_loss = tf.reduce_mean(tf.reduce_sum(L1, axis=[1, 2, 3]))
+            L1 = tf.reduce_sum(L1, axis=[1, 2, 3])
+            L1 = tf.math.multiply(L1, 1 - mask)
+            N1 = tf.reduce_sum(1-mask)
+            reconstruction_loss = tf.math.divide(tf.reduce_sum(L1), N1)
 
             kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
             kl_loss = tf.reduce_mean(kl_loss)
@@ -142,8 +144,11 @@ class srmAno(keras.Model):
         reconstruction = self.decoder(z)
 
         L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
+        L1 = tf.reduce_sum(L1, axis=[1, 2, 3])
         L1 = tf.math.multiply(L1, 1-mask)
-        reconstruction_loss = tf.reduce_mean(tf.reduce_sum(L1, axis=[1, 2, 3]))
+        N1 = tf.reduce_sum(1 - mask)
+        reconstruction_loss = tf.math.divide(tf.reduce_sum(L1), N1)
+
 
         kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
         kl_loss = tf.reduce_mean(kl_loss)
@@ -158,8 +163,10 @@ class srmAno(keras.Model):
 
 
 if __name__ == '__main__':
+
     data = np.load("./data_to_load/splicedBorderAndOri.npy")
     mask = np.load("./data_to_load/maskSplicedBorderAndOri.npy")
+
     train_data, test_data, train_mask, test_mask = train_test_split(data, mask, random_state=42)
 
     model = srmAno(encoder(), decoder())
