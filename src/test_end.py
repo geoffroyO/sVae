@@ -1,8 +1,7 @@
 import numpy as np
 import cv2
 from tqdm import tqdm
-import matplotlib.pyplot as plt
-import seaborn as sn
+from tensorflow.python.keras import Input, Model
 
 import anodec as ano
 import lightfeaturesextract as lf
@@ -143,6 +142,40 @@ def test_endVae():
         np.save("./img_test/{}_features.npy".format(k), features)
         np.save("./img_test/{}_error.npy".format(k), error)
 
+def test_distrib():
+    pathModel = "../models/noSRMEndAno.h5"
+
+    encoder = ev.encoder()
+    decoder = ev.decoder()
+    model = ev.srmAno(encoder, decoder)
+    path = "./img_test/{}.jpg".format(1)
+    img = cv2.imread(path, 1)
+    img = img[..., ::-1]
+    img = img.astype('float32') / 255.
+    model.predict(np.array([img[0:32, 0:32]]))
+
+    model.load_weights(pathModel)
+    model.summary()
+
+    data = np.load("./data_to_load/splicedBorderAndOri.npy")
+    mask = np.load("./data_to_load/maskSplicedBorderAndOri.npy")
+
+    oriData, tampData = [], []
+    countOri, countTamp = 0, 0
+    for k, msk in enumerate(mask):
+        if countTamp < 5:
+            if np.sum(msk) > 1:
+                    tampData.append(data[k])
+        else:
+            if np.sum(msk) == 0:
+                if countOri < 5:
+                    oriData.append(data[k])
+        if countTamp > 5 and countOri > 5:
+            break
+    model_x = Model(input=model.encoder.layers[0], output=model.encoder.layers[7])
+    model_x_hat = Model(input=model.layers[0], output=3)
+
+
 
 if __name__ == '__main__':
-    test_endVae()
+    test_distrib()
