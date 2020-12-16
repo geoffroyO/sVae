@@ -10,7 +10,6 @@ from tensorflow.python.ops.losses.losses_impl import absolute_difference, Reduct
 
 import numpy as np
 
-
 def _build_SRM_kernel():
     q = [4.0, 12.0, 2.0]
     filter1 = [[0, 0, 0, 0, 0],
@@ -37,24 +36,6 @@ def _build_SRM_kernel():
     initializer_srm = tf.constant_initializer(filters)
 
     return initializer_srm
-
-
-def _gaussian_kernel(size, mean, std, ):
-    d = tfp.distributions.Normal(mean, std)
-
-    vals = d.prob(tf.range(start=-size, limit=size + 1, dtype=tf.float32))
-
-    gauss_kernel = tf.einsum('i,j->ij', vals, vals)
-    gauss_kernel = gauss_kernel / tf.reduce_sum(gauss_kernel)
-    gauss_kernel = np.asarray(gauss_kernel, dtype=float)
-    gauss_kernel = [[gauss_kernel, gauss_kernel, gauss_kernel],
-                    [gauss_kernel, gauss_kernel, gauss_kernel],
-                    [gauss_kernel, gauss_kernel, gauss_kernel]]
-    gauss_kernel = np.einsum('klij->ijlk', gauss_kernel)
-    gauss_kernel = gauss_kernel.flatten()
-    initializer_gauss = tf.constant_initializer(gauss_kernel)
-
-    return initializer_gauss
 
 
 class Sampling(tf.keras.layers.Layer):
@@ -115,48 +96,27 @@ def decoder():
 class srmAno(keras.Model):
     def __init__(self, encoder, decoder, **kwargs):
         super(srmAno, self).__init__(**kwargs)
-        """
-        self.srmConv2D = Conv2D(3, [5, 5], trainable=False, kernel_initializer=_build_SRM_kernel(),
-                                activation=None, padding='same', strides=1)
-        self.blur = Conv2D(filters=3,
-                           kernel_size=[5, 5],
-                           kernel_initializer=_gaussian_kernel(2, 0, 11),
-                           padding='same',
-                           name='gaussian_blur',
-                           trainable=False)
-        """
         self.encoder = encoder
         self.decoder = decoder
-        # self.sub = Subtract()
 
     def call(self, inputs):
-        """
-        srm_features = self.srmConv2D(inputs)
-        blurred_features = self.blur(inputs)
-        blurred_features = self.srmConv2D(blurred_features)
-        features = self.sub([blurred_features, srm_features])
-        """
         _, _, z = self.encoder(inputs)
         reconstruction = self.decoder(z)
         L1 = absolute_difference(inputs, reconstruction, reduction=Reduction.NONE)
         error = tf.reduce_sum(L1, axis=-1)
-        return inputs, reconstruction, error #features, reconstruction, error
+        return inputs, reconstruction, error
 
     def train_step(self, data):
         if isinstance(data, tuple):
+            mask = data[1]
             data = data[0]
         with tf.GradientTape() as tape:
-            """
-            srm_features = self.srmConv2D(data)
-            blurred_features = self.blur(data)
-            blurred_features = self.srmConv2D(blurred_features)
-            features = self.sub([blurred_features, srm_features])
-            """
             features = data
             z_mean, z_log_var, z = self.encoder(features)
             reconstruction = self.decoder(z)
 
             L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
+            L1 = tf.math.multiply(L1, 1-mask)
             reconstruction_loss = tf.reduce_mean(tf.reduce_sum(L1, axis=[1, 2, 3]))
 
             kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
@@ -174,18 +134,14 @@ class srmAno(keras.Model):
 
     def test_step(self, data):
         if isinstance(data, tuple):
+            mask = data[1]
             data = data[0]
-        """
-        srm_features = self.srmConv2D(data)
-        blurred_features = self.blur(data)
-        blurred_features = self.srmConv2D(blurred_features)
-        features = self.sub([blurred_features, srm_features])
-        """
         features = data
         z_mean, z_log_var, z = self.encoder(features)
         reconstruction = self.decoder(z)
 
         L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
+        L1 = tf.math.multiply(L1, 1-mask)
         reconstruction_loss = tf.reduce_mean(tf.reduce_sum(L1, axis=[1, 2, 3]))
 
         kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
