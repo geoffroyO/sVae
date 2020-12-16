@@ -92,7 +92,7 @@ def preddiscrVae(model, img, block_size):
 
 
 if __name__=='__main__':
-    pathModel = "../models/discriminativeAno_30.h5"
+    pathModel = "../models/noSRMdiscriminativeAno_50.h5"
 
     encoder = dv.encoder()
     decoder = dv.decoder()
