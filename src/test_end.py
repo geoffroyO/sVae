@@ -175,6 +175,9 @@ def test_distrib():
     model_tmp = model.encoder
     model_x_hat = Model(inputs=model.decoder.layers[0].input, outputs=model.decoder.layers[2].output)
 
+    oriData = np.array(oriData)
+    tampData = np.array(tampData)
+
     ori_x = model_x.predict(oriData)
     tamp_x = model_x.predict(tampData)
 
