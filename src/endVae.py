@@ -1,5 +1,6 @@
 import tensorflow as tf
 import tensorflow_probability as tfp
+from sklearn.model_selection import train_test_split
 from tensorflow import keras
 from tensorflow.python.keras import Input, Model
 from tensorflow.python.keras.callbacks import CSVLogger
@@ -157,17 +158,20 @@ class srmAno(keras.Model):
 
 
 if __name__ == '__main__':
-    data = np.load("./data_to_load/oriSpliced.npy")
-    train_data, test_data = data[:int(len(data) * 0.7)], data[int(len(data) * 0.7):]
+    data = np.load("./data_to_load/splicedBorderAndOri.npy")
+    mask = np.load("./data_to_load/maskSplicedBorderAndOri.npy")
+    train_data, test_data, train_mask, test_mask = train_test_split(data, mask, random_state=42)
 
     model = srmAno(encoder(), decoder())
     model.compile(optimizer=Adam(lr=1e-6))
 
-    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/endAno.h5",
+    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/npSRMendAno.h5",
                                                     monitor='val_loss', verbose=1,
                                                     save_best_only=True, mode='min')
-    csv_logger = CSVLogger("srmAno_spliced_250.csv", append=True)
+    csv_logger = CSVLogger("npSRMAno_250.csv", append=True)
 
     callbacks_list = [checkpoint, csv_logger]
 
-    model.fit(train_data, epochs=250, batch_size=128, validation_data=(test_data, test_data), callbacks=callbacks_list)
+    model.fit(train_data, train_mask, epochs=250, batch_size=128,
+              validation_data=(test_data, test_mask),
+              callbacks=callbacks_list)
