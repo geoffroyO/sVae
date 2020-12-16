@@ -117,7 +117,7 @@ class srmAno(keras.Model):
             reconstruction = self.decoder(z)
 
             L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
-            L1 = tf.reduce_sum(L1, axis=[1, 2, 3])
+            L1 = tf.reduce_sum(L1, axis=-1)
             L1 = tf.math.multiply(L1, 1 - mask)
             N1 = tf.reduce_sum(1-mask)
             reconstruction_loss = tf.math.divide(tf.reduce_sum(L1), N1)
@@ -144,7 +144,7 @@ class srmAno(keras.Model):
         reconstruction = self.decoder(z)
 
         L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
-        L1 = tf.reduce_sum(L1, axis=[1, 2, 3])
+        L1 = tf.reduce_sum(L1, axis=-1)
         L1 = tf.math.multiply(L1, 1-mask)
         N1 = tf.reduce_sum(1 - mask)
         reconstruction_loss = tf.math.divide(tf.reduce_sum(L1), N1)
