@@ -144,6 +144,9 @@ class srmAno(keras.Model):
 
     def train_step(self, data):
         if isinstance(data, tuple):
+            mask = data[1]
+            mask = 1 - mask
+            mask = tf.stack([mask, mask, mask], axis=3)
             data = data[0]
         with tf.GradientTape() as tape:
             """
@@ -157,7 +160,9 @@ class srmAno(keras.Model):
             reconstruction = self.decoder(z)
 
             L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
-            reconstruction_loss = tf.reduce_mean(tf.reduce_sum(L1, axis=[1, 2, 3]))
+            L1 = tf.math.multiply(L1, mask)
+            N1 = tf.reduce_sum(mask)
+            reconstruction_loss = tf.reduce_sum(L1, axis=[1, 2, 3])/N1
 
             kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
             kl_loss = tf.reduce_mean(kl_loss)
@@ -174,6 +179,9 @@ class srmAno(keras.Model):
 
     def test_step(self, data):
         if isinstance(data, tuple):
+            mask = data[1]
+            mask = 1 - mask
+            mask = tf.stack([mask, mask, mask], axis=3)
             data = data[0]
         """
         srm_features = self.srmConv2D(data)
@@ -186,7 +194,9 @@ class srmAno(keras.Model):
         reconstruction = self.decoder(z)
 
         L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
-        reconstruction_loss = tf.reduce_mean(tf.reduce_sum(L1, axis=[1, 2, 3]))
+        L1 = tf.math.multiply(L1, mask)
+        N1 = tf.reduce_sum(mask)
+        reconstruction_loss = tf.reduce_sum(L1, axis=[1, 2, 3]) / N1
 
         kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
         kl_loss = tf.reduce_mean(kl_loss)
