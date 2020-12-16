@@ -1,6 +1,5 @@
 import tensorflow as tf
 import tensorflow_probability as tfp
-from sklearn.model_selection import train_test_split
 from tensorflow import keras
 from tensorflow.python.keras import Input, Model
 from tensorflow.python.keras.callbacks import CSVLogger
@@ -10,6 +9,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.python.ops.losses.losses_impl import absolute_difference, Reduction
 
 import numpy as np
+
 
 def _build_SRM_kernel():
     q = [4.0, 12.0, 2.0]
@@ -37,6 +37,24 @@ def _build_SRM_kernel():
     initializer_srm = tf.constant_initializer(filters)
 
     return initializer_srm
+
+
+def _gaussian_kernel(size, mean, std, ):
+    d = tfp.distributions.Normal(mean, std)
+
+    vals = d.prob(tf.range(start=-size, limit=size + 1, dtype=tf.float32))
+
+    gauss_kernel = tf.einsum('i,j->ij', vals, vals)
+    gauss_kernel = gauss_kernel / tf.reduce_sum(gauss_kernel)
+    gauss_kernel = np.asarray(gauss_kernel, dtype=float)
+    gauss_kernel = [[gauss_kernel, gauss_kernel, gauss_kernel],
+                    [gauss_kernel, gauss_kernel, gauss_kernel],
+                    [gauss_kernel, gauss_kernel, gauss_kernel]]
+    gauss_kernel = np.einsum('klij->ijlk', gauss_kernel)
+    gauss_kernel = gauss_kernel.flatten()
+    initializer_gauss = tf.constant_initializer(gauss_kernel)
+
+    return initializer_gauss
 
 
 class Sampling(tf.keras.layers.Layer):
@@ -97,30 +115,49 @@ def decoder():
 class srmAno(keras.Model):
     def __init__(self, encoder, decoder, **kwargs):
         super(srmAno, self).__init__(**kwargs)
+        """
+        self.srmConv2D = Conv2D(3, [5, 5], trainable=False, kernel_initializer=_build_SRM_kernel(),
+                                activation=None, padding='same', strides=1)
+        self.blur = Conv2D(filters=3,
+                           kernel_size=[5, 5],
+                           kernel_initializer=_gaussian_kernel(2, 0, 11),
+                           padding='same',
+                           name='gaussian_blur',
+                           trainable=False)
+        """
         self.encoder = encoder
         self.decoder = decoder
+        # self.sub = Subtract()
 
     def call(self, inputs):
+        """
+        srm_features = self.srmConv2D(inputs)
+        blurred_features = self.blur(inputs)
+        blurred_features = self.srmConv2D(blurred_features)
+        features = self.sub([blurred_features, srm_features])
+        """
         _, _, z = self.encoder(inputs)
         reconstruction = self.decoder(z)
         L1 = absolute_difference(inputs, reconstruction, reduction=Reduction.NONE)
         error = tf.reduce_sum(L1, axis=-1)
-        return inputs, reconstruction, error
+        return inputs, reconstruction, error #features, reconstruction, error
 
     def train_step(self, data):
         if isinstance(data, tuple):
-            mask = data[1]
             data = data[0]
         with tf.GradientTape() as tape:
+            """
+            srm_features = self.srmConv2D(data)
+            blurred_features = self.blur(data)
+            blurred_features = self.srmConv2D(blurred_features)
+            features = self.sub([blurred_features, srm_features])
+            """
             features = data
             z_mean, z_log_var, z = self.encoder(features)
             reconstruction = self.decoder(z)
 
             L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
-            L1 = tf.reduce_sum(L1, axis=-1)
-            L1 = tf.math.multiply(L1, 1 - mask)
-            N1 = tf.reduce_sum(1-mask)
-            reconstruction_loss = tf.math.divide(tf.reduce_sum(L1), N1)
+            reconstruction_loss = tf.reduce_mean(tf.reduce_sum(L1, axis=[1, 2, 3]))
 
             kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
             kl_loss = tf.reduce_mean(kl_loss)
@@ -137,18 +174,19 @@ class srmAno(keras.Model):
 
     def test_step(self, data):
         if isinstance(data, tuple):
-            mask = data[1]
             data = data[0]
+        """
+        srm_features = self.srmConv2D(data)
+        blurred_features = self.blur(data)
+        blurred_features = self.srmConv2D(blurred_features)
+        features = self.sub([blurred_features, srm_features])
+        """
         features = data
         z_mean, z_log_var, z = self.encoder(features)
         reconstruction = self.decoder(z)
 
         L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
-        L1 = tf.reduce_sum(L1, axis=-1)
-        L1 = tf.math.multiply(L1, 1-mask)
-        N1 = tf.reduce_sum(1 - mask)
-        reconstruction_loss = tf.math.divide(tf.reduce_sum(L1), N1)
-
+        reconstruction_loss = tf.reduce_mean(tf.reduce_sum(L1, axis=[1, 2, 3]))
 
         kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
         kl_loss = tf.reduce_mean(kl_loss)
@@ -163,22 +201,17 @@ class srmAno(keras.Model):
 
 
 if __name__ == '__main__':
-
     data = np.load("./data_to_load/splicedBorderAndOri.npy")
-    mask = np.load("./data_to_load/maskSplicedBorderAndOri.npy")
-
-    train_data, test_data, train_mask, test_mask = train_test_split(data, mask, random_state=42)
+    train_data, test_data = data[:int(len(data) * 0.7)], data[int(len(data) * 0.7):]
 
     model = srmAno(encoder(), decoder())
     model.compile(optimizer=Adam(lr=1e-6))
 
-    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/npSRMendAno.h5",
+    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/endAno.h5",
                                                     monitor='val_loss', verbose=1,
                                                     save_best_only=True, mode='min')
-    csv_logger = CSVLogger("npSRMAno_250.csv", append=True)
+    csv_logger = CSVLogger("srmAno_spliced_250.csv", append=True)
 
     callbacks_list = [checkpoint, csv_logger]
 
-    model.fit(train_data, train_mask, epochs=250, batch_size=128,
-              validation_data=(test_data, test_mask),
-              callbacks=callbacks_list)
+    model.fit(train_data, epochs=250, batch_size=128, validation_data=(test_data, test_data), callbacks=callbacks_list)
