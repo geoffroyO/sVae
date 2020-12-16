@@ -144,15 +144,16 @@ def dicriminative_error(error, mask):
 class discriminativeAno(keras.Model):
     def __init__(self, encoder, decoder, **kwargs):
         super(discriminativeAno, self).__init__(**kwargs)
-        self.srmConv2D = Conv2D(3, [5, 5], trainable=False, kernel_initializer=_build_SRM_kernel(),
-                                activation=None, padding='same', strides=1,
-                                bias_initializer=tf.constant_initializer(0.5))
+        # self.srmConv2D = Conv2D(3, [5, 5], trainable=False, kernel_initializer=_build_SRM_kernel(),
+        #                        activation=None, padding='same', strides=1,
+        #                        bias_initializer=tf.constant_initializer(0.5))
 
         self.encoder = encoder
         self.decoder = decoder
 
     def call(self, inputs):
-        features = self.srmConv2D(inputs)
+        # features = self.srmConv2D(inputs)
+        features = inputs
         z_mean, z_log_var, z = self.encoder(features)
         reconstruction = self.decoder(z)
         return features, reconstruction
@@ -162,7 +163,8 @@ class discriminativeAno(keras.Model):
             mask = data[1]
             data = data[0]
         with tf.GradientTape() as tape:
-            features = self.srmConv2D(data)
+            # features = self.srmConv2D(data)
+            features = data
             z_mean, z_log_var, z = self.encoder(features)
             reconstruction = self.decoder(z)
 
@@ -189,7 +191,8 @@ class discriminativeAno(keras.Model):
         if isinstance(data, tuple):
             mask = data[1]
             data = data[0]
-        features = self.srmConv2D(data)
+        # features = self.srmConv2D(data)
+        features = data
         z_mean, z_log_var, z = self.encoder(features)
         reconstruction = self.decoder(z)
 
@@ -221,12 +224,13 @@ if __name__ == '__main__':
     model = discriminativeAno(encoder(), decoder())
     model.compile(optimizer=Adam(lr=1e-6))
 
-    checkpoint = tf.keras.callbacks.ModelCheckpoint("../models/discriminativeAno_250.h5",
+    checkpoint = tf.keras.callbacks.ModelCheckpoint("../models/noSRMdiscriminativeAno_250.h5",
                                                     monitor='val_loss', verbose=1,
                                                     save_best_only=True, mode='min')
-    csv_logger = CSVLogger("discriminativeAno_250.csv", append=True)
+    csv_logger = CSVLogger("noSRMdiscriminativeAno_250.csv", append=True)
 
     callbacks_list = [checkpoint, csv_logger]
 
-    model.fit(train_data, train_mask, epochs=250, batch_size=128, validation_data=(test_data, test_mask), callbacks=callbacks_list)
-
+    model.fit(train_data, train_mask, epochs=250, batch_size=128,
+              validation_data=(test_data, test_mask),
+              callbacks=callbacks_list)
