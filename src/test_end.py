@@ -143,7 +143,7 @@ def test_endVae():
         np.save("./img_test/{}_error.npy".format(k), error)
 
 def test_distrib():
-    pathModel = "../models/noSRMEndAno.h5"
+    pathModel = "../models/noSRMEndAno_200.h5"
 
     encoder = ev.encoder()
     decoder = ev.decoder()
