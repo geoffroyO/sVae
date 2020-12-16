@@ -173,7 +173,7 @@ def test_distrib():
             break
     model_x = Model(inputs=model.encoder.layers[0].input, outputs=model.encoder.layers[7].output)
     model_tmp = model.encoder
-    model_x_hat = Model(inputs=model.decoder.layers[0], outputs=model.decoder.layers[2])
+    model_x_hat = Model(inputs=model.decoder.layers[0].input, outputs=model.decoder.layers[2].output)
 
     ori_x = model_x.predict(oriData)
     tamp_x = model_x.predict(tampData)
