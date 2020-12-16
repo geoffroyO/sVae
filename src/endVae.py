@@ -213,10 +213,10 @@ if __name__ == '__main__':
     model = srmAno(encoder(), decoder())
     model.compile(optimizer=Adam(lr=1e-6))
 
-    checkpoint = tf.keras.callbacks.ModelCheckpoint("../pretrained_model/endAno.h5",
+    checkpoint = tf.keras.callbacks.ModelCheckpoint("../models/noSRMEndAno.h5",
                                                     monitor='val_loss', verbose=1,
                                                     save_best_only=True, mode='min')
-    csv_logger = CSVLogger("srmAno_spliced_250.csv", append=True)
+    csv_logger = CSVLogger("noSRMEndAno_250.csv", append=True)
 
     callbacks_list = [checkpoint, csv_logger]
 
