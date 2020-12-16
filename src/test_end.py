@@ -171,7 +171,7 @@ def test_distrib():
                     oriData.append(data[k])
         if countTamp > 5 and countOri > 5:
             break
-    model_x = Model(inputs=model.encoder.layers[0], outputs=[model.encoder.layers[7]])
+    model_x = Model(inputs=model.encoder.layers[0], outputs=model.encoder.layers[7].output)
     model_tmp = model.encoder
     model_x_hat = Model(inputs=model.decoder.layers[0], outputs=model.decoder.layers[2])
 
