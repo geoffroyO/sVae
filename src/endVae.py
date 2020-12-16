@@ -146,8 +146,6 @@ class srmAno(keras.Model):
     def train_step(self, data):
         if isinstance(data, tuple):
             mask = data[1]
-            mask = 1 - mask
-            mask = tf.stack([mask, mask, mask], axis=3)
             data = data[0]
         with tf.GradientTape() as tape:
             """
@@ -181,8 +179,6 @@ class srmAno(keras.Model):
     def test_step(self, data):
         if isinstance(data, tuple):
             mask = data[1]
-            mask = 1 - mask
-            mask = tf.stack([mask, mask, mask], axis=3)
             data = data[0]
         """
         srm_features = self.srmConv2D(data)
