@@ -97,14 +97,14 @@ def decoder():
 class srmAno(keras.Model):
     def __init__(self, encoder, decoder, **kwargs):
         super(srmAno, self).__init__(**kwargs)
-        #self.srmConv2D = Conv2D(3, [5, 5], trainable=False, kernel_initializer=_build_SRM_kernel(),
-        #                        activation=None, padding='same', strides=1,
-        #                        bias_initializer=tf.constant_initializer(0.5))
+        self.srmConv2D = Conv2D(3, [5, 5], trainable=False, kernel_initializer=_build_SRM_kernel(),
+                                activation=None, padding='same', strides=1,
+                                bias_initializer=tf.constant_initializer(0.5))
         self.encoder = encoder
         self.decoder = decoder
 
     def call(self, inputs):
-        features = inputs #self.srmConv2D(inputs)
+        features = self.srmConv2D(inputs)
         _, _, z = self.encoder(features)
         reconstruction = self.decoder(z)
         L1 = absolute_difference(inputs, reconstruction, reduction=Reduction.NONE)
@@ -116,7 +116,7 @@ class srmAno(keras.Model):
             mask = data[1]
             data = data[0]
         with tf.GradientTape() as tape:
-            features = data #self.srmConv2D(data)
+            features = self.srmConv2D(data)
             z_mean, z_log_var, z = self.encoder(features)
             reconstruction = self.decoder(z)
 
@@ -141,7 +141,7 @@ class srmAno(keras.Model):
         if isinstance(data, tuple):
             mask = data[1]
             data = data[0]
-        features = data #self.srmConv2D(data)
+        features = self.srmConv2D(data)
         z_mean, z_log_var, z = self.encoder(features)
         reconstruction = self.decoder(z)
 
@@ -162,7 +162,7 @@ class srmAno(keras.Model):
 
 
 if __name__ == '__main__':
-    """data = np.load("./data_to_load/splicedBorderAndOri.npy")
+    data = np.load("./data_to_load/splicedBorderAndOri.npy")
     mask = np.load("./data_to_load/maskSplicedBorderAndOri.npy")
     train_data, test_data, train_mask, test_mask = train_test_split(data, mask, random_state=42)
 
@@ -179,6 +179,3 @@ if __name__ == '__main__':
     model.fit(train_data, train_mask, epochs=250, batch_size=128,
               validation_data=(test_data, test_mask),
               callbacks=callbacks_list)
-"""
-    encoder = decoder()
-    encoder.summary()

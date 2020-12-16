@@ -198,4 +198,4 @@ def test_distrib():
 
 
 if __name__ == '__main__':
-    test_distrib()
+    test_endVae()
