@@ -115,7 +115,7 @@ def test_featex():
 
 
 def test_endVae():
-    pathModel = "../models/noSRMEndAno.h5"
+    pathModel = "../models/srmEndAno.h5"
 
     encoder = ev.encoder()
     decoder = ev.decoder()
@@ -141,6 +141,7 @@ def test_endVae():
         np.save("./img_test/{}_reconstruction.npy".format(k), reconstruction)
         np.save("./img_test/{}_features.npy".format(k), features)
         np.save("./img_test/{}_error.npy".format(k), error)
+
 
 def test_distrib():
     pathModel = "../models/noSRMEndAno_200.h5"
