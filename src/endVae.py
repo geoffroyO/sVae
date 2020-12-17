@@ -104,7 +104,7 @@ class srmAno(keras.Model):
         self.decoder = decoder
 
     def call(self, inputs):
-        features = inputs #self.srmConv2D(inputs)
+        features = self.srmConv2D(inputs)
         _, _, z = self.encoder(features)
         reconstruction = self.decoder(z)
         L1 = absolute_difference(inputs, reconstruction, reduction=Reduction.NONE)
@@ -116,7 +116,7 @@ class srmAno(keras.Model):
             mask = data[1]
             data = data[0]
         with tf.GradientTape() as tape:
-            features = data #self.srmConv2D(data)
+            features = self.srmConv2D(data)
             z_mean, z_log_var, z = self.encoder(features)
             reconstruction = self.decoder(z)
 
@@ -141,7 +141,7 @@ class srmAno(keras.Model):
         if isinstance(data, tuple):
             mask = data[1]
             data = data[0]
-        features = data # self.srmConv2D(data)
+        features = self.srmConv2D(data)
         z_mean, z_log_var, z = self.encoder(features)
         reconstruction = self.decoder(z)
 
