@@ -39,6 +39,22 @@ def _build_SRM_kernel():
     return initializer_srm
 
 
+def gaussian_blur(data, kernel_size=11, sigma=5):
+    def gauss_kernel(channels, kernel_size, sigma):
+        ax = tf.range(-kernel_size // 2 + 1.0, kernel_size // 2 + 1.0)
+        xx, yy = tf.meshgrid(ax, ax)
+        kernel = tf.exp(-(xx ** 2 + yy ** 2) / (2.0 * sigma ** 2))
+        kernel = kernel / tf.reduce_sum(kernel)
+        kernel = tf.tile(kernel[..., tf.newaxis], [1, 1, channels])
+        return kernel
+
+    gaussian_kernel = gauss_kernel(tf.shape(data)[-1], kernel_size, sigma)
+    gaussian_kernel = gaussian_kernel[..., tf.newaxis]
+    data = tf.nn.depthwise_conv2d(data, gaussian_kernel, [1, 1, 1, 1],
+                                  padding='SAME', data_format='NHWC')
+    return data
+
+
 class Sampling(tf.keras.layers.Layer):
     """Uses (z_mean, z_log_var) to sample z, the vector encoding a digit."""
 
@@ -104,7 +120,11 @@ class srmAno(keras.Model):
         self.decoder = decoder
 
     def call(self, inputs):
-        features = self.srmConv2D(inputs)
+        blurred = gaussian_blur(data, kernel_size=3, sigma=5)
+        noise_blurred = self.srmConv2D(blurred)
+
+        features = self.srmConv2D(data)
+        features = (features - noise_blurred) / 2 + 0.5
         _, _, z = self.encoder(features)
         reconstruction = self.decoder(z)
         L1 = absolute_difference(inputs, reconstruction, reduction=Reduction.NONE)
@@ -115,8 +135,14 @@ class srmAno(keras.Model):
         if isinstance(data, tuple):
             mask = data[1]
             data = data[0]
+
         with tf.GradientTape() as tape:
+            blurred = tf.stop_gradient(gaussian_blur(data, kernel_size=3, sigma=5))
+            noise_blurred = self.srmConv2D(blurred)
+
             features = self.srmConv2D(data)
+            features = (features - noise_blurred)/2 + 0.5
+
             z_mean, z_log_var, z = self.encoder(features)
             reconstruction = self.decoder(z)
 
@@ -141,7 +167,12 @@ class srmAno(keras.Model):
         if isinstance(data, tuple):
             mask = data[1]
             data = data[0]
+        blurred = gaussian_blur(data, kernel_size=3, sigma=5)
+        noise_blurred = self.srmConv2D(blurred)
+
         features = self.srmConv2D(data)
+        features = (features - noise_blurred) / 2 + 0.5
+
         z_mean, z_log_var, z = self.encoder(features)
         reconstruction = self.decoder(z)
 
@@ -169,10 +200,10 @@ if __name__ == '__main__':
     model = srmAno(encoder(), decoder())
     model.compile(optimizer=Adam(lr=1e-6))
 
-    checkpoint = tf.keras.callbacks.ModelCheckpoint("../models/srmEndAno.h5",
+    checkpoint = tf.keras.callbacks.ModelCheckpoint("../models/srmBlurredEndAno.h5",
                                                     monitor='val_loss', verbose=1,
                                                     save_best_only=True, mode='min')
-    csv_logger = CSVLogger("srmEndAno_250.csv", append=True)
+    csv_logger = CSVLogger("srmBlurredEndAno_250.csv", append=True)
 
     callbacks_list = [checkpoint, csv_logger]
 
