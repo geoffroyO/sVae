@@ -120,7 +120,7 @@ class srmAno(keras.Model):
         self.decoder = decoder
 
     def call(self, inputs):
-        blurred = gaussian_blur(data, kernel_size=3, sigma=5)
+        blurred = gaussian_blur(inputs, kernel_size=3, sigma=5)
         noise_blurred = self.srmConv2D(blurred)
 
         features = self.srmConv2D(data)
