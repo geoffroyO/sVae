@@ -129,7 +129,7 @@ def test_endVae():
     model.load_weights(pathModel)
 
     for k in tqdm(range(1, 14)):
-        if k == 8 or k == 12:
+        if k == 7 or k == 11:
             path = "./img_test/{}.tif".format(k)
         else:
             path = "./img_test/{}.jpg".format(k)
