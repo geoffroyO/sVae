@@ -130,16 +130,16 @@ def test_endVae():
 
     for k in tqdm(range(0, 30, 1)):
         k /= 100
-        path = "./img_test/5_{}.jpg".format(k)
+        path = "./add_noise_test/5_{}.jpg".format(k)
 
         img = cv2.imread(path, 1)
         img = img[..., ::-1]
         img = img.astype('float32') / 255.
 
         reconstruction, features, error = predendVae(model, img, 32)
-        np.save("./img_test/{}_reconstruction.npy".format(k), reconstruction)
-        np.save("./img_test/{}_features.npy".format(k), features)
-        np.save("./img_test/{}_error.npy".format(k), error)
+        np.save("./add_noise_test/5_{}_reconstruction.npy".format(k), reconstruction)
+        np.save("./add_noise_test/5_{}_features.npy".format(k), features)
+        np.save("./add_noise_test/5_{}_error.npy".format(k), error)
 
 
 def test_distrib():
