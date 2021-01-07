@@ -128,11 +128,10 @@ def test_endVae():
 
     model.load_weights(pathModel)
 
-    for k in tqdm(range(1, 16)):
-        if k == 7 or k == 10:
-            path = "./img_test/{}.tif".format(k)
-        else:
-            path = "./img_test/{}.jpg".format(k)
+    for k in tqdm(range(0, 30, 1)):
+        k /= 100
+        path = "./img_test/5_{}.jpg".format(k)
+
         img = cv2.imread(path, 1)
         img = img[..., ::-1]
         img = img.astype('float32') / 255.

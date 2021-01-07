@@ -46,8 +46,9 @@ if __name__=='__main__':
 
     model = ft.postTreat(anodec)
 
-    for k in tqdm(range(1, 7)):
-        path = "./img_test/{}.jpg".format(k)
+    for k in tqdm(range(0, 30, 1)):
+        k /= 100
+        path = "./img_test/5_{}.jpg".format(k)
         img = cv2.imread(path, 1)
         img = img[..., ::-1]
         img = img.astype('float32') / 255.
