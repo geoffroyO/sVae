@@ -200,7 +200,7 @@ if __name__ == '__main__':
     model = srmAno(encoder(), decoder())
     model.compile(optimizer=Adam(lr=1e-6))
 
-    checkpoint = tf.keras.callbacks.ModelCheckpoint("../models/srmBlurredEndAno.h5",
+    checkpoint = tf.keras.callbacks.ModelCheckpoint("../models/srmBlurredEndAno_250.h5",
                                                     monitor='val_loss', verbose=1,
                                                     save_best_only=True, mode='min')
     csv_logger = CSVLogger("srmBlurredEndAno_250.csv", append=True)
