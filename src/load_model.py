@@ -62,3 +62,11 @@ def extractPatchesMask(msk, window_shape, stride):
 
     return patches
 
+
+if __name__=='__main__':
+    data, msk = np.load("./data_to_load/dataAll.npy"), np.load("./data_to_load/labelsAll.npy")
+    list_ori = []
+    for k, mask in tqdm(enumerate(msk)):
+        if 1 not in mask:
+            list_ori.append(k)
+    np.save("./data_to_load/Ori.npy", [data[k] for k in list_ori])
