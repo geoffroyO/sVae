@@ -147,7 +147,7 @@ class srmAno(keras.Model):
             reconstruction = self.decoder(z)
 
             L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
-            L1 = tf.math.multiply(mask, L1)
+            #L1 = tf.math.multiply(mask, L1)
             reconstruction_loss = tf.reduce_mean(tf.reduce_sum(L1, axis=[1, 2, 3]))
 
             kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
@@ -177,7 +177,7 @@ class srmAno(keras.Model):
         reconstruction = self.decoder(z)
 
         L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
-        L1 = tf.math.multiply(mask, L1)
+        #L1 = tf.math.multiply(mask, L1)
         reconstruction_loss = tf.reduce_mean(tf.reduce_sum(L1, axis=[1, 2, 3]))
 
         kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
@@ -193,10 +193,10 @@ class srmAno(keras.Model):
 
 
 if __name__ == '__main__':
-    data = np.load("./data_to_load/splicedBorderAndOri.npy")
-    mask = np.load("./data_to_load/maskSplicedBorderAndOri.npy")
-    train_data, test_data, train_mask, test_mask = train_test_split(data, mask, random_state=42)
-
+    data = np.load("./data_to_load/Ori.npy")
+    #mask = np.load("./data_to_load/maskSplicedBorderAndOri.npy")
+    #train_data, test_data, train_mask, test_mask = train_test_split(data, mask, random_state=42)
+    train_data, test_data = data[:int(0.75*len(data))], data[int(0.75*len(data)):]
     model = srmAno(encoder(), decoder())
     model.compile(optimizer=Adam(lr=1e-6))
 
@@ -207,6 +207,6 @@ if __name__ == '__main__':
 
     callbacks_list = [checkpoint, csv_logger]
 
-    model.fit(train_data, train_mask, epochs=250, batch_size=128,
-              validation_data=(test_data, test_mask),
+    model.fit(train_data, epochs=250, batch_size=128,
+              validation_data=(test_data, test_data),
               callbacks=callbacks_list)
