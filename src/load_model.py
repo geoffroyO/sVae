@@ -64,7 +64,11 @@ def extractPatchesMask(msk, window_shape, stride):
 
 
 if __name__=='__main__':
-    data, msk = np.load("./data_to_load/dataAll.npy"), np.load("./data_to_load/labelsAll.npy")
+    print("... Loading data")
+    data = np.load("./data_to_load/dataAll.npy")
+
+    print("... Loading labels")
+    msk = np.load("./data_to_load/labelsAll.npy")
     list_ori = []
     for k, mask in tqdm(enumerate(msk)):
         if np.sum(mask)  == 0:
