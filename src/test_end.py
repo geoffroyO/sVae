@@ -151,7 +151,7 @@ def test_endVae4K():
     encoder = ev.encoder()
     decoder = ev.decoder()
     model = ev.srmAno(encoder, decoder)
-    path = "./4K/{}.png".format(1)
+    path = "./4K_test/{}.png".format(1)
     img = cv2.imread(path, 1)
     img = img[..., ::-1]
     img = img.astype('float32') / 255.
@@ -167,9 +167,9 @@ def test_endVae4K():
         img = img.astype('float32') / 255.
 
         reconstruction, features, error = predendVae(model, img, 32)
-        np.save("./img_test/{}_reconstruction.npy".format(k), reconstruction)
-        np.save("./img_test/{}_features.npy".format(k), features)
-        np.save("./img_test/{}_error.npy".format(k), error)
+        np.save("./4K_test/{}_reconstruction.npy".format(k), reconstruction)
+        np.save("./4K_test/{}_features.npy".format(k), features)
+        np.save("./4K_test/{}_error.npy".format(k), error)
 
 
 def test_distrib():
