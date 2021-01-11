@@ -80,4 +80,4 @@ if __name__=='__main__':
     data = []
     for im in tqdm(images):
         data.append(extractPatches(im, (32, 32, 3), 50))
-    print("***{}***".format(len(data)))
+    print("***{}***".format(data[0].shape))
