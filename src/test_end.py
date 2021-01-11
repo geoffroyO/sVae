@@ -147,8 +147,8 @@ def test_endVae():
 
 def enumMatrix4K(N, M, block_size):
     enum = np.zeros((N, M))
-    for i in range(0, N-block_size+1, 40):
-        for j in range(0, M-block_size+1, 40):
+    for i in range(0, N-block_size+1, block_size):
+        for j in range(0, M-block_size+1, block_size):
             enum[i:(i+block_size), j:(j+block_size)] += 1
     return enum
 
@@ -159,16 +159,16 @@ def predendVae4K(model, img, block_size):
 
     blocks = []
     print("... Creating blocks")
-    for i in tqdm(range(0, N-block_size+1, 40)):
-        for j in range(0, M-block_size+1, 40):
+    for i in tqdm(range(0, N-block_size+1, block_size)):
+        for j in range(0, M-block_size+1, block_size):
             blocks.append(img[i:(i+block_size), j:(j+block_size)])
 
     blocks = np.array(blocks)
     features, reconstruction, error = model.predict(blocks)
     count = 0
     print("... Prediction for each blocks")
-    for i in tqdm(range(0, N-block_size+1, 40)):
-        for j in range(0, M-block_size+1, 40):
+    for i in tqdm(range(0, N-block_size+1, block_size)):
+        for j in range(0, M-block_size+1, block_size):
             mask_error_pred = error[count]
             mask_error[i:(i+block_size), j:(j+block_size)] += mask_error_pred
 
