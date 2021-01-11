@@ -208,7 +208,7 @@ def test_endVae4K():
         img = img[..., ::-1]
         img = img.astype('float32') / 255.
 
-        reconstruction, features, error = predendVae(model, img, 32)
+        reconstruction, features, error = predendVae4K(model, img, 32)
         np.save("./4K_test/{}_reconstruction.npy".format(k), reconstruction)
         np.save("./4K_test/{}_features.npy".format(k), features)
         np.save("./4K_test/{}_error.npy".format(k), error)
