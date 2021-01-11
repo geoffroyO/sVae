@@ -79,5 +79,7 @@ if __name__=='__main__':
     images = load_images4K(path_img)
     data = []
     for im in tqdm(images):
-        data.append(extractPatches(im, (32, 32, 3), 50))
-    print("***{}***".format(data[0].shape))
+        patches = extractPatches(im, (32, 32, 3), 20)
+        n, _ = patches.shape
+        data += [patches[n] for k in range(n)]
+    print(len(data))
