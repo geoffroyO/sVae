@@ -82,4 +82,4 @@ if __name__=='__main__':
         patches = extractPatches(im, (32, 32, 3), 20)
         data.append(patches)
     final = np.concatenate(data, axis=0)
-    print(final.shape)
+    np.save("./data_to_load/4K_data.npy", final)
