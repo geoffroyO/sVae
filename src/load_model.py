@@ -64,16 +64,8 @@ def extractPatchesMask(msk, window_shape, stride):
 
 
 if __name__=='__main__':
-    print("... Loading data")
-    data = np.load("./data_to_load/dataAll.npy")
-
-    print("... Loading labels")
-    msk = np.load("./data_to_load/labelsAll.npy")
-    print(data[0])
-    list_ori = []
-    for k, mask in enumerate(msk):
-        print(mask)
-        n, m = mask.shape
-        if np.sum(mask)  == 0 or np.sum(mask) == n*m:
-            list_ori.append(k)
-    np.save("./data_to_load/Ori.npy", [data[k] for k in list_ori])
+    path_img = "../data/CASIA2/Tp"
+    path_msk = "../data/CASIA2/gt"
+    spliced, _, spliced_msk, _ = load_images(path_img, path_msk)
+    np.save("./data_to_load/splicedAll.npy", spliced)
+    np.save("./data_to_load/splicedMask.npy", spliced_msk)
