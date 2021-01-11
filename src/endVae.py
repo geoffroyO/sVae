@@ -189,16 +189,16 @@ class srmAno(keras.Model):
 
 
 if __name__ == '__main__':
-    data = np.load("./data_to_load/Ori.npy")
+    data = np.load("./data_to_load/4K_data.npy")
 
     train_data, test_data = data[:int(0.75*len(data))], data[int(0.75*len(data)):]
     model = srmAno(encoder(), decoder())
     model.compile(optimizer=Adam(lr=1e-6))
 
-    checkpoint = tf.keras.callbacks.ModelCheckpoint("../models/srmBlurredEndAno_250.h5",
+    checkpoint = tf.keras.callbacks.ModelCheckpoint("../models/srmBlurredEndAno4K_250.h5",
                                                     monitor='val_loss', verbose=1,
                                                     save_best_only=True, mode='min')
-    csv_logger = CSVLogger("srmBlurredEndAno_250.csv", append=True)
+    csv_logger = CSVLogger("srmBlurredEndAno4K_250.csv", append=True)
 
     callbacks_list = [checkpoint, csv_logger]
 
