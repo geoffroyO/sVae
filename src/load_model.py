@@ -69,6 +69,7 @@ if __name__=='__main__':
 
     print("... Loading labels")
     msk = np.load("./data_to_load/labelsAll.npy")
+    print("****{}****".format(msk.shape))
     list_ori = []
     for k, mask in enumerate(msk):
         print(mask)
