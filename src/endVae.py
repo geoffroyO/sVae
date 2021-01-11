@@ -133,7 +133,6 @@ class srmAno(keras.Model):
 
     def train_step(self, data):
         if isinstance(data, tuple):
-            mask = data[1]
             data = data[0]
 
         with tf.GradientTape() as tape:
@@ -147,7 +146,6 @@ class srmAno(keras.Model):
             reconstruction = self.decoder(z)
 
             L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
-            #L1 = tf.math.multiply(mask, L1)
             reconstruction_loss = tf.reduce_mean(tf.reduce_sum(L1, axis=[1, 2, 3]))
 
             kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
@@ -165,7 +163,6 @@ class srmAno(keras.Model):
 
     def test_step(self, data):
         if isinstance(data, tuple):
-            mask = data[1]
             data = data[0]
         blurred = gaussian_blur(data, kernel_size=3, sigma=5)
         noise_blurred = self.srmConv2D(blurred)
@@ -177,7 +174,6 @@ class srmAno(keras.Model):
         reconstruction = self.decoder(z)
 
         L1 = absolute_difference(features, reconstruction, reduction=Reduction.NONE)
-        #L1 = tf.math.multiply(mask, L1)
         reconstruction_loss = tf.reduce_mean(tf.reduce_sum(L1, axis=[1, 2, 3]))
 
         kl_loss = 1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var)
@@ -194,8 +190,7 @@ class srmAno(keras.Model):
 
 if __name__ == '__main__':
     data = np.load("./data_to_load/Ori.npy")
-    #mask = np.load("./data_to_load/maskSplicedBorderAndOri.npy")
-    #train_data, test_data, train_mask, test_mask = train_test_split(data, mask, random_state=42)
+
     train_data, test_data = data[:int(0.75*len(data))], data[int(0.75*len(data)):]
     model = srmAno(encoder(), decoder())
     model.compile(optimizer=Adam(lr=1e-6))
