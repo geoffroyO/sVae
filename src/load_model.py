@@ -33,6 +33,16 @@ def load_images(path_img, path_msk):
     return spliced, copy_moved, spliced_msk, copy_moved_msk
 
 
+def load_images4K(path_img):
+    images = []
+    names = os.listdir(path_img)
+    names.sort()
+    for name in tqdm(names):
+        img = cv2.imread(path_img + name, 1)
+        images.append(img[..., ::-1])
+    return images
+
+
 def patch_images(images, masks):
     data, labels = [], []
     for n, image in enumerate(tqdm(images)):
@@ -65,13 +75,8 @@ def extractPatchesMask(msk, window_shape, stride):
 
 if __name__=='__main__':
     print("... Loading data")
-    data = np.load("./data_to_load/dataAll.npy")
-
-    print("... Loading labels")
-    msk = np.load("./data_to_load/labelsAll.npy")
-
-    list_ori = []
-    for k, mask in enumerate(msk):
-        if not mask:
-            list_ori.append(k)
-    np.save("./data_to_load/Ori.npy", [data[k] for k in list_ori])
+    path_img = "../data/4k_dga/"
+    images = load_images4K(path_img)
+    for im in tqdm(images):
+        patches = extractPatches(im, 32, 90)
+    print("***{}***".format(patches.shape))

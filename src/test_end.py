@@ -115,7 +115,7 @@ def test_featex():
 
 
 def test_endVae():
-    pathModel = "../models/srmBlurredEndAno.h5"
+    pathModel = "../models/srmBlurredEndAno_250.h5"
 
     encoder = ev.encoder()
     decoder = ev.decoder()
@@ -128,18 +128,20 @@ def test_endVae():
 
     model.load_weights(pathModel)
 
-    for k in tqdm(range(0, 300, 1)):
-        k /= 1000
-        path = "./add_noise_test/6_{}.jpg".format(k)
+    for k in range(15):
+        if k == 7 or k == 10:
+            path = "./img_test/{}.tif".format(k)
+        else:
+            path = "./img_test/{}.jpg".format(k)
 
         img = cv2.imread(path, 1)
         img = img[..., ::-1]
         img = img.astype('float32') / 255.
 
         reconstruction, features, error = predendVae(model, img, 32)
-        np.save("./add_noise_test/6_{}_reconstruction.npy".format(k), reconstruction)
-        np.save("./add_noise_test/6_{}_features.npy".format(k), features)
-        np.save("./add_noise_test/6_{}_error.npy".format(k), error)
+        np.save("./img_test/{}_reconstruction.npy".format(k), reconstruction)
+        np.save("./img_test/{}_features.npy".format(k), features)
+        np.save("./img_test/{}_error.npy".format(k), error)
 
 
 def test_distrib():
