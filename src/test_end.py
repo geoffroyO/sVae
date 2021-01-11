@@ -178,12 +178,7 @@ def predendVae4K(model, img, block_size):
             block_features = features[count]
             features_img[i:(i+block_size), j:(j+block_size)] += block_features
             count += 1
-    enum = enumMatrix4K(N, M, block_size)
-    mask_error /= enum
-    enum_3D = np.dstack((enum, enum))
-    enum_3D = np.dstack((enum_3D, enum))
-    reconstuction_img /= enum_3D
-    features_img /= enum_3D
+
     return reconstuction_img, features_img, mask_error
 
 
