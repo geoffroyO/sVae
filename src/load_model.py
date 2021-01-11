@@ -76,10 +76,6 @@ def extractPatchesMask(msk, window_shape, stride):
 if __name__=='__main__':
     print("... Loading data")
     path_img = "../data/4k_dga/"
-    images = load_images4K(path_img)
-    data = []
-    for im in tqdm(images):
-        patches = extractPatches(im, (32, 32, 3), 20)
-        data.append(patches)
-    final = np.concatenate(data, axis=0)
-    np.save("./data_to_load/4K_data.npy", final)
+    data = np.load("./data_to_load/4K_data.npy")
+    data = (data / 255.).astype("float32")
+    np.save("./data_to_load/4K_data.npy", data)
