@@ -80,6 +80,6 @@ if __name__=='__main__':
     data = []
     for im in tqdm(images):
         patches = extractPatches(im, (32, 32, 3), 20)
-        n, _, _, _ = patches.shape
-        data += [patches[n] for k in range(n)]
-    print(len(data))
+        data.append(patches)
+    final = np.concatenate(data, axis=0)
+    print(final.shape)
