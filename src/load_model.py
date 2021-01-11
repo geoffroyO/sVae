@@ -79,7 +79,7 @@ if __name__=='__main__':
     images = load_images4K(path_img)
     data = []
     for im in tqdm(images):
-        patches = extractPatches(im, (32, 32, 3), 400)
+        patches = extractPatches(im, (32, 32, 3), 80)
         data.append(patches)
     final = np.concatenate(data, axis=0)
     final = (final / 255.).astype('float32')
