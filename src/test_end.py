@@ -228,4 +228,4 @@ def test_distrib():
 
 
 if __name__ == '__main__':
-    test_endVae()
+    test_endVae4K()
