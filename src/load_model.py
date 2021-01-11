@@ -78,5 +78,5 @@ if __name__=='__main__':
     path_img = "../data/4k_dga/"
     images = load_images4K(path_img)
     for im in tqdm(images):
-        patches = extractPatches(im, 32, 90)
+        patches = extractPatches(im, (32, 32, 3), 90)
     print("***{}***".format(patches.shape))
