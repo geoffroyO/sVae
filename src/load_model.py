@@ -70,7 +70,7 @@ if __name__=='__main__':
     print("... Loading labels")
     msk = np.load("./data_to_load/labelsAll.npy")
     list_ori = []
-    for k, mask in tqdm(enumerate(msk)):
+    for k, mask in enumerate(msk):
         print(mask)
         n, m = mask.shape
         if np.sum(mask)  == 0 or np.sum(mask) == n*m:
