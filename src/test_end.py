@@ -41,15 +41,16 @@ def predendVae(model, img, block_size):
     reconstuction_img, features_img, mask_error = np.zeros((N, M, C)), np.zeros((N, M, C)), np.zeros((N, M))
 
     blocks = []
-    for i in range(N-block_size+1):
+    print("... Creating blocks")
+    for i in tqdm(range(N-block_size+1)):
         for j in range(M-block_size+1):
             blocks.append(img[i:(i+block_size), j:(j+block_size)])
 
     blocks = np.array(blocks)
     features, reconstruction, error = model.predict(blocks)
     count = 0
-
-    for i in range(N-block_size+1):
+    print("... Prediction for each blocks")
+    for i in tqdm(range(N-block_size+1)):
         for j in range(M-block_size+1):
             mask_error_pred = error[count]
             mask_error[i:(i+block_size), j:(j+block_size)] += mask_error_pred
@@ -133,6 +134,33 @@ def test_endVae():
             path = "./img_test/{}.tif".format(k)
         else:
             path = "./img_test/{}.jpg".format(k)
+
+        img = cv2.imread(path, 1)
+        img = img[..., ::-1]
+        img = img.astype('float32') / 255.
+
+        reconstruction, features, error = predendVae(model, img, 32)
+        np.save("./img_test/{}_reconstruction.npy".format(k), reconstruction)
+        np.save("./img_test/{}_features.npy".format(k), features)
+        np.save("./img_test/{}_error.npy".format(k), error)
+
+
+def test_endVae4K():
+    pathModel = "../models/srmBlurredEndAno4K_250.h5"
+
+    encoder = ev.encoder()
+    decoder = ev.decoder()
+    model = ev.srmAno(encoder, decoder)
+    path = "./4K/{}.png".format(1)
+    img = cv2.imread(path, 1)
+    img = img[..., ::-1]
+    img = img.astype('float32') / 255.
+    model.predict(np.array([img[0:32, 0:32]]))
+
+    model.load_weights(pathModel)
+
+    for k in range(1, 3):
+        path = "./4K_test/{}.png".format(k)
 
         img = cv2.imread(path, 1)
         img = img[..., ::-1]
