@@ -188,7 +188,7 @@ def test_endVae4K():
     encoder = ev.encoder()
     decoder = ev.decoder()
     model = ev.srmAno(encoder, decoder)
-    path = "./4K_scaled/{}.png".format(1)
+    path = "./4K_cmb/{}.png".format(1)
     img = cv2.imread(path, 1)
     img = img[..., ::-1]
     img = img.astype('float32') / 255.
@@ -196,17 +196,17 @@ def test_endVae4K():
 
     model.load_weights(pathModel)
 
-    for k in range(1, 6):
-        path = "./4K_scaled/{}.png".format(k)
+    for k in range(1, 7):
+        path = "./4K_cmb/{}.png".format(k)
 
         img = cv2.imread(path, 1)
         img = img[..., ::-1]
         img = img.astype('float32') / 255.
 
         reconstruction, features, error = predendVae4K(model, img, 32)
-        np.save("./4K_scaled/{}_reconstruction.npy".format(k), reconstruction)
-        np.save("./4K_scaled/{}_features.npy".format(k), features)
-        np.save("./4K_scaled/{}_error.npy".format(k), error)
+        np.save("./4K_cmb/{}_reconstruction.npy".format(k), reconstruction)
+        np.save("./4K_cmb/{}_features.npy".format(k), features)
+        np.save("./4K_cmb/{}_error.npy".format(k), error)
 
 
 def test_distrib():
