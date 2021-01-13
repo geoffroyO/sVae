@@ -196,7 +196,7 @@ def test_endVae4K():
 
     model.load_weights(pathModel)
 
-    for k in range(1, 8):
+    for k in range(1, 10):
         path = "./4K_cmb/{}.png".format(k)
 
         img = cv2.imread(path, 1)
