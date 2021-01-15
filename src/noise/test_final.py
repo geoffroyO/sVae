@@ -10,11 +10,12 @@ from sklearn.cluster import KMeans
 from sklearn.cluster import DBSCAN
 import skimage.morphology as morph
 from scipy.ndimage.measurements import label
+from tqdm import tqdm
 
 
 if __name__=='__main__':
     res = []
-    for noise in [20, 40, 60, 80, 100]:
+    for noise in tqdm([20, 40, 60, 80, 100]):
         for k in range(1, 11):
             n = "{}_".format(noise) + "{}".format(k)
             reconstruction = np.load("./{}_reconstruction.npy".format(n))
