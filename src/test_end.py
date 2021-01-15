@@ -205,8 +205,8 @@ def test_endVae4K():
 
             reconstruction, features, error = predendVae4K(model, img, 32)
             np.save("./noise/{}".format(noise) + "_{}_reconstruction.npy".format(k), reconstruction)
-            np.save("./noise/{}_features.npy".format(k), features)
-            np.save("./noise/{}_error.npy".format(k), error)
+            np.save("./noise/{}".format(noise) + "_{}_features.npy".format(k), features)
+            np.save("./noise/{}".format(noise) + "_{}_error.npy".format(k), error)
 
 
 def test_distrib():
