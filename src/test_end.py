@@ -204,7 +204,7 @@ def test_endVae4K():
             img = img.astype('float32') / 255.
 
             reconstruction, features, error = predendVae4K(model, img, 32)
-            np.save("./noise/{}_reconstruction.npy".format(k), reconstruction)
+            np.save("./noise/{}".format(noise) + "_{}_reconstruction.npy".format(k), reconstruction)
             np.save("./noise/{}_features.npy".format(k), features)
             np.save("./noise/{}_error.npy".format(k), error)
 
