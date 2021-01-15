@@ -188,7 +188,7 @@ def test_endVae4K():
     encoder = ev.encoder()
     decoder = ev.decoder()
     model = ev.srmAno(encoder, decoder)
-    path = "./noise/{}.png".format(20_1)
+    path = "./noise/{}.png".format("20_1")
     img = cv2.imread(path, 1)
     img = img[..., ::-1]
     img = img.astype('float32') / 255.
