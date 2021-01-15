@@ -16,7 +16,7 @@ from tqdm import tqdm
 if __name__=='__main__':
     res = []
     for noise in tqdm([20, 40, 60, 80, 100]):
-        for k in range(1, 11):
+        for k in tqdm(range(1, 11)):
             n = "{}_".format(noise) + "{}".format(k)
             reconstruction = np.load("./{}_reconstruction.npy".format(n))
             features = np.load("./{}_features.npy".format(n))
